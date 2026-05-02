@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QA Enterprise Tracker</title>
+<title>BUG OS</title>
+<link rel="icon" type="image/png" href="header%20icon.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -46,7 +47,10 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 
 /* SIDEBAR */
 .sidebar { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
-.sidebar-logo { padding: 20px 16px 16px; border-bottom: 1px solid var(--border); }
+.sidebar-logo { display: flex; align-items: center; gap: 12px; padding: 20px 16px 16px; border-bottom: 1px solid var(--border); }
+.logo-icon { width: 42px; height: 42px; flex-shrink: 0; border-radius: 14px; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.logo-icon img { width: 100%; height: 100%; object-fit: contain; }
+.logo-text { min-width: 0; }
 .logo-mark { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
 .logo-name { font-size: 16px; font-weight: 600; color: var(--text); margin-top: 2px; }
 .sidebar-user { padding: 12px 16px; border-bottom: 1px solid var(--border); }
@@ -73,6 +77,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 .page-title { font-size: 16px; font-weight: 600; }
 .page-sub { font-size: 12px; color: var(--text3); font-family: var(--mono); }
 .topbar-actions { display: flex; gap: 8px; align-items: center; }
+.topbar-right { display: flex; align-items: center; gap: 16px; }
 .content { flex: 1; overflow-y: auto; padding: 24px; }
 
 /* BUTTONS */
@@ -181,12 +186,14 @@ tr:hover td { background: var(--bg3); }
 .actor-admin { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
 
 /* LOGIN */
-.login-screen { display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at top, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at bottom right, rgba(34,197,94,0.08), transparent 30%), var(--bg); }
+.login-screen { display: flex; min-height: 100vh; align-items: center; justify-content: center; gap: 80px; padding: 24px; background: radial-gradient(circle at top, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at bottom right, rgba(34,197,94,0.08), transparent 30%), var(--bg); }
 .login-card { width: min(420px, 100%); padding: 32px; border-radius: var(--radius2); background: var(--bg2); border: 1px solid var(--border2); box-shadow: 0 24px 80px rgba(0,0,0,0.45); }
 .login-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
 .login-copy { color: var(--text3); margin-bottom: 20px; font-size: 13px; line-height: 1.6; }
 .login-hint { margin-top: 18px; font-size: 12px; color: var(--text3); font-family: var(--mono); }
 .actor-dev { background: #001a2e; color: var(--cyan); }
+.login-icon { width: 350px; height: 350px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.login-icon img { width: 100%; height: 100%; object-fit: contain; }
 
 /* EMPTY */
 .empty { text-align: center; padding: 48px; color: var(--text3); font-size: 13px; }
@@ -253,9 +260,9 @@ tr:hover td { background: var(--bg3); }
 <script>
 // ─────────────────────────── STATE ───────────────────────────
 const LOGIN_USERS = {
-  QA: { user: 'QA', pass: 'QA@123', role: 'qa' },
-  DEV: { user: 'DEV', pass: 'DEV@123', role: 'dev' },
-  ADMIN: { user: 'ADMIN', pass: 'ADMIN@123', role: 'admin' }
+  QA: { user: 'QA', pass: 'QA@nyneos', role: 'qa' },
+  DEV: { user: 'DEV', pass: 'DEV@nyneos', role: 'dev' },
+  ADMIN: { user: 'ADMIN', pass: 'ADMIN@nyneos', role: 'admin' }
 };
 
 // Socket.IO connection
@@ -348,11 +355,14 @@ function save() {
 }
 
 function now() {
-  return new Date().toISOString().slice(0,10);
+  const d = new Date();
+  const istDate = new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
+  return istDate.toISOString().slice(0,10);
 }
 function nowFull() {
   const d = new Date();
-  return d.toISOString().slice(0,16).replace('T',' ');
+  const istDate = new Date(d.getTime() + (5.5 * 60 * 60 * 1000));
+  return istDate.toISOString().slice(0,16).replace('T',' ');
 }
 
 function loginUser() {
@@ -400,12 +410,15 @@ function toast(msg, type='info') {
 
 // ─────────────────────────── CONFIRM ───────────────────────────
 let _confirmCb = null;
-function openConfirm(title, msg, cb) {
+function openConfirm(title, msg, cb, btnText = 'Delete permanently', btnClass = 'btn-danger') {
   document.getElementById('confirm-title').textContent = title;
   document.getElementById('confirm-msg').textContent = msg;
   _confirmCb = cb;
+  const confirmBtn = document.getElementById('confirm-ok');
+  confirmBtn.textContent = btnText;
+  confirmBtn.className = `btn ${btnClass}`;
   document.getElementById('confirm-overlay').classList.add('open');
-  document.getElementById('confirm-ok').onclick = () => { closeConfirm(); cb(); };
+  confirmBtn.onclick = () => { closeConfirm(); cb(); };
 }
 function closeConfirm() { document.getElementById('confirm-overlay').classList.remove('open'); }
 
@@ -426,9 +439,9 @@ function render() {
 
 function buildLoading() {
   return `
-  <div class="login-screen">
+  <div style="display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at top, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at bottom right, rgba(34,197,94,0.08), transparent 30%), var(--bg);">
     <div class="login-card">
-      <div class="login-title">QA Enterprise Tracker</div>
+      <div class="login-title">BUG OS </div>
       <div class="login-copy">Loading shared state from server...</div>
     </div>
   </div>`;
@@ -437,8 +450,9 @@ function buildLoading() {
 function buildLogin() {
   return `
   <div class="login-screen">
+    <div class="login-icon"><img src="login-icon.png" alt="Login" /></div>
     <div class="login-card">
-      <div class="login-title">QA Enterprise Tracker</div>
+      <div class="login-title">BUG OS</div>
       <div class="login-copy">Sign in as QA, Developer, or Admin to continue.</div>
       <div class="field">
         <label>Username</label>
@@ -449,7 +463,6 @@ function buildLogin() {
         <input id="login-pass" type="password" placeholder="Enter password" autocomplete="current-password">
       </div>
       <button class="btn btn-primary" onclick="loginUser()">Sign In</button>
-      <div class="login-hint">QA: QA / QA@123 · DEV: DEV / DEV@123 · ADMIN: ADMIN / ADMIN@123</div>
     </div>
   </div>`;
 }
@@ -461,12 +474,14 @@ function buildApp() {
   return `
   <div class="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-mark">QA · TRACKER</div>
-      <div class="logo-name">Test Help</div>
+      <div class="logo-icon"><img src="sidebar%20icon.png" alt="BUG OS" /></div>
+      <div class="logo-text">
+        <div class="logo-mark">QA · TRACKER</div>
+        <div class="logo-name">BUG OS</div>
+      </div>
     </div>
     <div class="sidebar-user">
-      <div class="user-role-badge ${S.role==='qa'?'role-qa':S.role==='dev'?'role-dev':'role-admin'}">${S.role==='qa'?'◈ QA Panel':S.role==='dev'?'⚡ Developer Panel':'🔍 Admin Viewer'}</div>
-      <div class="user-name">Signed in as ${S.auth.user || 'Guest'}</div>
+      <div class="user-role-badge ${S.role==='qa'?'role-qa':S.role==='dev'?'role-dev':'role-admin'}">${S.role==='qa'?'◈ QA Panel':S.role==='dev'?'⚡ Developer Panel':'🔍 Admin Panel'}</div>
     </div>
     <nav class="nav">
       ${navItem('dashboard',   '▦', 'Dashboard', 0)}
@@ -474,6 +489,7 @@ function buildApp() {
       ${navItem('bugs',        '⚑', 'Bug Reports', openBugs)}
       ${S.role === 'qa' ? navItem('retest', '↺', 'Retest Queue', retestPending) : ''}
       ${navItem('escalations', '⬆', 'Backend Escalations', escalatedCount)}
+      ${navItem('automation',  '⚙', 'Automation', 0)}
       ${navItem('modules',     '⊞', 'Modules', 0)}
       ${navItem('audit',       '≡', 'Audit Log', 0)}
       ${navItem('report',      '◈', 'Reports', 0)}
@@ -500,7 +516,7 @@ function navItem(id, icon, label, badge) {
 }
 
 function buildTopbar() {
-  const titles = {dashboard:'Dashboard',testcases:'Test Cases',bugs:'Bug Reports',retest:'Retest Queue',escalations:'Backend Escalations',modules:'Modules',audit:'Audit Log',report:'Reports'};
+  const titles = {dashboard:'Dashboard',testcases:'Test Cases',bugs:'Bug Reports',retest:'Retest Queue',escalations:'Backend Escalations',automation:'Automation',modules:'Modules',audit:'Audit Log',report:'Reports'};
   let actions = '';
   if (S.view === 'testcases' && S.role === 'qa') {
     actions = `<button class="btn btn-ghost btn-sm" onclick="openImportCSV()">↑ Import CSV</button><button class="btn btn-primary" onclick="openAddTC()">+ Add Test Case</button>`;
@@ -511,9 +527,11 @@ function buildTopbar() {
   return `<div class="topbar">
     <div class="topbar-left">
       <div class="page-title">${titles[S.view]||'Dashboard'}</div>
-      <div class="page-sub">${nowFull()}</div>
     </div>
-    <div class="topbar-actions">${actions}</div>
+    <div class="topbar-right">
+      <div class="page-sub">${nowFull()}</div>
+      <div class="topbar-actions">${actions}</div>
+    </div>
   </div>`;
 }
 
@@ -523,6 +541,7 @@ function buildView() {
   if (S.view === 'bugs')        return buildBugs();
   if (S.view === 'retest')      return buildRetest();
   if (S.view === 'escalations') return buildEscalations();
+  if (S.view === 'automation')  return buildAutomation();
   if (S.view === 'modules')     return buildModules();
   if (S.view === 'audit')       return buildAudit();
   if (S.view === 'report')      return buildReport();
@@ -816,6 +835,16 @@ function buildRetest() {
       <thead><tr><th>Bug ID</th><th>Test Case</th><th>Module</th><th>Severity</th><th>Timeline</th><th>Dev Notes</th><th>Retest Result</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`}
+  </div>`;
+}
+
+// ─────────────────────────── AUTOMATION ───────────────────────────
+function buildAutomation() {
+  return `
+  <div class="empty" style="padding: 120px 48px;">
+    <div class="empty-icon" style="font-size: 64px; opacity: 0.6; margin-bottom: 16px;">⚙</div>
+    <div style="font-size: 24px; font-weight: 600; color: var(--text); margin-bottom: 12px;">Coming Soon</div>
+    <div style="font-size: 14px; color: var(--text2); max-width: 400px; margin: 0 auto; line-height: 1.6;">Automation features are currently under development. Check back soon for updates on automated testing capabilities.</div>
   </div>`;
 }
 
@@ -1182,7 +1211,9 @@ function retestPass(bugId) {
       audit(`Bug ${bugId} retest PASSED — test case ${b.tcId} restored to Pass`, 'qa');
       save();
       toast(`Retest passed! Bug ${bugId} verified. Test case ${b.tcId} is now PASS.`, 'success');
-    });
+    },
+    'Confirm',
+    'btn-success');
 }
 
 function retestFail(bugId) {
