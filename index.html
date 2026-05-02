@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Enterprise Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c0f;
+  --bg2: #111418;
+  --bg3: #181c22;
+  --bg4: #1e242c;
+  --border: #252c36;
+  --border2: #2e3844;
+  --text: #e2e8f0;
+  --text2: #8a9ab0;
+  --text3: #5a6a7e;
+  --accent: #3b82f6;
+  --accent2: #1d4ed8;
+  --green: #22c55e;
+  --green-bg: #052e16;
+  --green-border: #166534;
+  --red: #ef4444;
+  --red-bg: #2a0a0a;
+  --red-border: #7f1d1d;
+  --yellow: #f59e0b;
+  --yellow-bg: #1c1400;
+  --yellow-border: #78350f;
+  --orange: #f97316;
+  --orange-bg: #1a0c00;
+  --orange-border: #7c2d12;
+  --purple: #a855f7;
+  --purple-bg: #1a0a2e;
+  --purple-border: #6b21a8;
+  --cyan: #06b6d4;
+  --font: 'IBM Plex Sans', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+  --radius: 6px;
+  --radius2: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.sidebar-logo { padding: 20px 16px 16px; border-bottom: 1px solid var(--border); }
+.logo-mark { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+.logo-name { font-size: 16px; font-weight: 600; color: var(--text); margin-top: 2px; }
+.sidebar-user { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.user-role-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; font-family: var(--mono); letter-spacing: 0.05em; }
+.role-qa { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+.role-dev { background: #001a2e; color: var(--cyan); border: 1px solid #0c4a6e; }
+.role-admin { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
+.user-name { font-size: 13px; color: var(--text); margin-top: 4px; font-weight: 500; }
+.nav { padding: 12px 8px; flex: 1; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius); cursor: pointer; color: var(--text2); font-size: 13px; font-weight: 400; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: var(--bg4); color: var(--text); border-color: var(--border2); }
+.nav-icon { width: 16px; text-align: center; font-size: 13px; }
+.nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 600; font-family: var(--mono); padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
+.sidebar-switch { padding: 12px 8px 16px; border-top: 1px solid var(--border); }
+.switch-label { font-size: 11px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; padding: 0 8px; }
+.role-btn { width: 100%; padding: 8px 10px; border-radius: var(--radius); background: var(--bg3); border: 1px solid var(--border); color: var(--text2); cursor: pointer; font-family: var(--font); font-size: 12px; text-align: left; transition: all 0.15s; }
+.role-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* MAIN */
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.topbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.page-title { font-size: 16px; font-weight: 600; }
+.page-sub { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+.content { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* BUTTONS */
+.btn { padding: 7px 16px; border-radius: var(--radius); font-family: var(--font); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent2); }
+.btn-primary:hover { background: var(--accent2); }
+.btn-ghost { background: transparent; color: var(--text2); border-color: var(--border); }
+.btn-ghost:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+.btn-danger { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.btn-danger:hover { background: #3f0e0e; }
+.btn-success { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.btn-success:hover { background: #072a18; }
+.btn-warning { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+
+/* LOGIN */
+.login-screen { display: flex; align-items: center; justify-content: center; width: 100%; padding: 40px; }
+.login-card { width: min(420px, calc(100% - 40px)); background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 28px; box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+.login-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+.login-copy { font-size: 13px; color: var(--text3); margin-bottom: 22px; }
+.login-card .field { margin-bottom: 16px; }
+.login-card button { width: 100%; justify-content: center; }
+.login-hint { margin-top: 16px; font-size: 12px; color: var(--text3); line-height: 1.5; }
+
+/* CARDS / SECTIONS */
+.section { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); margin-bottom: 16px; overflow: hidden; }
+.section-hdr { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.section-title { font-size: 14px; font-weight: 600; }
+.section-meta { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+
+/* STATS */
+.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius2); padding: 16px; }
+.stat-val { font-size: 28px; font-weight: 600; font-family: var(--mono); line-height: 1; }
+.stat-lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 6px; }
+.stat-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+/* TABLE */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 900px; }
+th { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; padding: 10px 16px; text-align: left; border-bottom: 1px solid var(--border); background: var(--bg3); white-space: nowrap; }
+td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 13px; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg3); }
+.td-id { font-family: var(--mono); font-size: 11px; color: var(--text3); white-space: nowrap; }
+.td-title { font-weight: 500; max-width: 200px; }
+.td-truncate { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text2); font-size: 12px; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; font-family: var(--mono); white-space: nowrap; border: 1px solid; }
+.b-pass { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.b-fail { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.b-hold { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+.b-retest { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+.b-blocked { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+.b-open { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.b-fixed { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+.b-verified { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.b-retest-fail { background: var(--orange-bg); color: var(--orange); border-color: var(--orange-border); }
+.b-escalated { background: #1a0a2e; color: #c084fc; border-color: #6b21a8; }
+.b-high { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.b-medium { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+.b-low { background: #0a1a0a; color: #4ade80; border-color: #166534; }
+
+/* DATE STAMPS */
+.date-col { font-family: var(--mono); font-size: 11px; color: var(--text3); white-space: nowrap; }
+.date-entry { display: flex; flex-direction: column; gap: 2px; }
+.date-entry span { display: flex; align-items: center; gap: 4px; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius2); width: 780px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+.modal-hdr { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg2); z-index: 1; }
+.modal-title { font-size: 16px; font-weight: 600; }
+.modal-body { padding: 24px; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+.close-btn { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 18px; padding: 2px 6px; border-radius: 4px; }
+.close-btn:hover { background: var(--bg4); color: var(--text); }
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.form-full { grid-column: 1 / -1; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 12px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
+.field input, .field select, .field textarea { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-family: var(--font); font-size: 13px; padding: 8px 12px; outline: none; transition: border-color 0.15s; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+.field textarea { min-height: 80px; resize: vertical; }
+.field input::placeholder, .field textarea::placeholder { color: var(--text3); }
+.field select option { background: var(--bg3); }
+.required { color: var(--red); margin-left: 2px; }
+
+/* FILTERS */
+.filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.filter-select { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); font-family: var(--font); font-size: 12px; padding: 5px 10px; cursor: pointer; outline: none; }
+.filter-select:focus { border-color: var(--border2); }
+
+/* AUDIT LOG */
+.audit-row { display: flex; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--border); font-size: 12px; }
+.audit-row:last-child { border-bottom: none; }
+.audit-time { font-family: var(--mono); color: var(--text3); min-width: 130px; }
+.audit-event { color: var(--text2); flex: 1; }
+.audit-actor { font-family: var(--mono); font-size: 11px; padding: 1px 6px; border-radius: 3px; }
+.actor-qa { background: var(--purple-bg); color: var(--purple); }
+.actor-admin { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
+
+/* LOGIN */
+.login-screen { display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at top, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at bottom right, rgba(34,197,94,0.08), transparent 30%), var(--bg); }
+.login-card { width: min(420px, 100%); padding: 32px; border-radius: var(--radius2); background: var(--bg2); border: 1px solid var(--border2); box-shadow: 0 24px 80px rgba(0,0,0,0.45); }
+.login-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+.login-copy { color: var(--text3); margin-bottom: 20px; font-size: 13px; line-height: 1.6; }
+.login-hint { margin-top: 18px; font-size: 12px; color: var(--text3); font-family: var(--mono); }
+.actor-dev { background: #001a2e; color: var(--cyan); }
+
+/* EMPTY */
+.empty { text-align: center; padding: 48px; color: var(--text3); font-size: 13px; }
+.empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.4; }
+
+/* DETAIL PANEL */
+.detail-section { margin-bottom: 20px; }
+.detail-section h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.detail-item { }
+.detail-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.detail-value { font-size: 13px; color: var(--text); }
+.timeline { }
+.tl-item { display: flex; gap: 12px; padding: 8px 0; border-left: 2px solid var(--border); margin-left: 8px; padding-left: 16px; position: relative; }
+.tl-item::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--border2); position: absolute; left: -5px; top: 12px; }
+.tl-item.tl-green::before { background: var(--green); }
+.tl-item.tl-red::before { background: var(--red); }
+.tl-item.tl-yellow::before { background: var(--yellow); }
+.tl-item.tl-blue::before { background: var(--accent); }
+.tl-date { font-family: var(--mono); font-size: 11px; color: var(--text3); min-width: 120px; }
+.tl-text { font-size: 12px; color: var(--text2); }
+.tl-actor { font-size: 11px; }
+
+/* CONFIRM DIALOG */
+.confirm-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; }
+.confirm-overlay.open { display: flex; }
+.confirm-box { background: var(--bg2); border: 1px solid var(--red-border); border-radius: var(--radius2); padding: 24px; width: 400px; }
+.confirm-title { font-size: 16px; font-weight: 600; color: var(--red); margin-bottom: 8px; }
+.confirm-msg { font-size: 13px; color: var(--text2); margin-bottom: 20px; line-height: 1.6; }
+.confirm-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+/* TOAST */
+.toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 3000; display: flex; flex-direction: column; gap: 8px; }
+.toast { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; display: flex; align-items: center; gap: 8px; min-width: 280px; animation: slideIn 0.2s ease; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.toast-success { border-left: 3px solid var(--green); }
+.toast-error { border-left: 3px solid var(--red); }
+.toast-info { border-left: 3px solid var(--accent); }
+@keyframes slideIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* TABS */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); padding: 0 20px; }
+.tab { padding: 10px 14px; font-size: 13px; cursor: pointer; color: var(--text3); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.scrollable { overflow-x: auto; }
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div class="toast-container" id="toasts"></div>
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirm-title">Confirm Delete</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok">Delete permanently</button>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+// ─────────────────────────── STATE ───────────────────────────
+const LOGIN_USERS = {
+  QA: { user: 'QA', pass: 'QA@123', role: 'qa' },
+  DEV: { user: 'DEV', pass: 'DEV@123', role: 'dev' },
+  ADMIN: { user: 'ADMIN', pass: 'ADMIN@123', role: 'admin' }
+};
+
+// Socket.IO connection
+const socket = io();
+
+let initialDataReceived = false;
+let S = {
+  auth: { loggedIn: false, user: null },
+  role: null,
+  view: 'dashboard',
+  modules: [],
+  testCases: [],
+  bugs: [],
+  auditLog: [],
+  tcCounter: 0,
+  bugCounter: 0
+};
+
+// Socket.IO event handlers
+socket.on('initialData', (serverData) => {
+  S = {
+    auth: S.auth,
+    role: S.role,
+    view: S.view,
+    modules: serverData.modules || [],
+    testCases: serverData.testCases || [],
+    bugs: serverData.bugs || [],
+    auditLog: serverData.auditLog || [],
+    tcCounter: typeof serverData.tcCounter === 'number' ? serverData.tcCounter : 0,
+    bugCounter: typeof serverData.bugCounter === 'number' ? serverData.bugCounter : 0
+  };
+  initialDataReceived = true;
+  render();
+});
+
+socket.on('dataUpdate', (update) => {
+  if (update.type === 'testCase') {
+    if (update.data.deleted) {
+      S.testCases = S.testCases.filter(tc => tc.id !== update.data.id);
+    } else {
+      const index = S.testCases.findIndex(tc => tc.id === update.data.id);
+      if (index !== -1) {
+        S.testCases[index] = { ...S.testCases[index], ...update.data };
+      } else {
+        S.testCases.push(update.data);
+      }
+    }
+  } else if (update.type === 'bug') {
+    if (update.data.deleted) {
+      S.bugs = S.bugs.filter(bug => bug.id !== update.data.id);
+    } else {
+      const index = S.bugs.findIndex(bug => bug.id === update.data.id);
+      if (index !== -1) {
+        S.bugs[index] = { ...S.bugs[index], ...update.data };
+      } else {
+        S.bugs.push(update.data);
+      }
+    }
+  } else if (update.type === 'audit') {
+    S.auditLog.unshift(update.data);
+    if (S.auditLog.length > 200) {
+      S.auditLog = S.auditLog.slice(0, 200);
+    }
+  } else if (update.type === 'counters') {
+    S.tcCounter = update.data.tcCounter;
+    S.bugCounter = update.data.bugCounter;
+  } else if (update.type === 'module') {
+    if (update.data.deleted) {
+      S.modules = S.modules.filter(m => m !== update.data.name);
+    } else if (update.data.name && !S.modules.includes(update.data.name)) {
+      S.modules.push(update.data.name);
+    }
+  }
+  render();
+});
+
+socket.on('error', (err) => {
+  console.error('Server error:', err);
+  toast((err && err.message) || 'Server connection error', 'error');
+});
+
+socket.on('disconnect', () => {
+  console.warn('Disconnected from server');
+  initialDataReceived = false;
+  render();
+});
+
+function save() {
+  render();
+}
+
+function now() {
+  return new Date().toISOString().slice(0,10);
+}
+function nowFull() {
+  const d = new Date();
+  return d.toISOString().slice(0,16).replace('T',' ');
+}
+
+function loginUser() {
+  const username = document.getElementById('login-user').value.trim();
+  const password = document.getElementById('login-pass').value.trim();
+  const auth = Object.values(LOGIN_USERS).find(u => u.user === username && u.pass === password);
+  if (!auth) {
+    toast('Invalid username or password', 'error');
+    return;
+  }
+  S.auth = { loggedIn: true, user: auth.user };
+  S.role = auth.role;
+  S.view = 'dashboard';
+  save();
+  toast(`Welcome ${auth.user}`, 'success');
+}
+
+function logout() {
+  S.auth = { loggedIn: false, user: null };
+  S.role = null;
+  S.view = 'dashboard';
+  save();
+  toast('Logged out successfully', 'info');
+}
+
+function audit(event, actor) {
+  const auditEntry = { time: nowFull(), event, actor: actor || S.role };
+  S.auditLog.unshift(auditEntry);
+  if (S.auditLog.length > 200) S.auditLog = S.auditLog.slice(0, 200);
+
+  // Send audit update to server
+  socket.emit('updateData', { type: 'audit', data: auditEntry });
+}
+
+// ─────────────────────────── TOAST ───────────────────────────
+function toast(msg, type='info') {
+  const c = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  const icons = {success:'✓', error:'✕', info:'ℹ'};
+  el.innerHTML = `<span style="color:${type==='success'?'var(--green)':type==='error'?'var(--red)':'var(--accent)'}">${icons[type]}</span> ${msg}`;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ─────────────────────────── CONFIRM ───────────────────────────
+let _confirmCb = null;
+function openConfirm(title, msg, cb) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  _confirmCb = cb;
+  document.getElementById('confirm-overlay').classList.add('open');
+  document.getElementById('confirm-ok').onclick = () => { closeConfirm(); cb(); };
+}
+function closeConfirm() { document.getElementById('confirm-overlay').classList.remove('open'); }
+
+// ─────────────────────────── RENDER ───────────────────────────
+function render() {
+  const app = document.getElementById('app');
+  if (!initialDataReceived) {
+    app.innerHTML = buildLoading();
+    return;
+  }
+  if (!S.auth.loggedIn) {
+    app.innerHTML = buildLogin();
+    return;
+  }
+  app.innerHTML = buildApp();
+  attachHandlers();
+}
+
+function buildLoading() {
+  return `
+  <div class="login-screen">
+    <div class="login-card">
+      <div class="login-title">QA Enterprise Tracker</div>
+      <div class="login-copy">Loading shared state from server...</div>
+    </div>
+  </div>`;
+}
+
+function buildLogin() {
+  return `
+  <div class="login-screen">
+    <div class="login-card">
+      <div class="login-title">QA Enterprise Tracker</div>
+      <div class="login-copy">Sign in as QA, Developer, or Admin to continue.</div>
+      <div class="field">
+        <label>Username</label>
+        <input id="login-user" placeholder="QA, DEV or ADMIN" autocomplete="username">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="login-pass" type="password" placeholder="Enter password" autocomplete="current-password">
+      </div>
+      <button class="btn btn-primary" onclick="loginUser()">Sign In</button>
+      <div class="login-hint">QA: QA / QA@123 · DEV: DEV / DEV@123 · ADMIN: ADMIN / ADMIN@123</div>
+    </div>
+  </div>`;
+}
+
+function buildApp() {
+  const openBugs       = S.bugs.filter(b => b.status === 'Open' || b.status === 'Retest Failed').length;
+  const escalatedCount = S.bugs.filter(b => b.status === 'Escalated').length;
+  const retestPending  = S.bugs.filter(b => b.status === 'Fixed').length;
+  return `
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">QA · TRACKER</div>
+      <div class="logo-name">Test Help</div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-role-badge ${S.role==='qa'?'role-qa':S.role==='dev'?'role-dev':'role-admin'}">${S.role==='qa'?'◈ QA Panel':S.role==='dev'?'⚡ Developer Panel':'🔍 Admin Viewer'}</div>
+      <div class="user-name">Signed in as ${S.auth.user || 'Guest'}</div>
+    </div>
+    <nav class="nav">
+      ${navItem('dashboard',   '▦', 'Dashboard', 0)}
+      ${navItem('testcases',   '✓', 'Test Cases', 0)}
+      ${navItem('bugs',        '⚑', 'Bug Reports', openBugs)}
+      ${S.role === 'qa' ? navItem('retest', '↺', 'Retest Queue', retestPending) : ''}
+      ${navItem('escalations', '⬆', 'Backend Escalations', escalatedCount)}
+      ${navItem('modules',     '⊞', 'Modules', 0)}
+      ${navItem('audit',       '≡', 'Audit Log', 0)}
+      ${navItem('report',      '◈', 'Reports', 0)}
+    </nav>
+    <div class="sidebar-switch">
+      <div class="switch-label">Session</div>
+      <button class="role-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="main">
+    ${buildTopbar()}
+    <div class="content" id="content">
+      ${buildView()}
+    </div>
+  </div>
+  `;
+}
+
+function navItem(id, icon, label, badge) {
+  return `<div class="nav-item ${S.view===id?'active':''}" onclick="nav('${id}')">
+    <span class="nav-icon">${icon}</span> ${label}
+    ${badge > 0 ? `<span class="nav-badge">${badge}</span>` : ''}
+  </div>`;
+}
+
+function buildTopbar() {
+  const titles = {dashboard:'Dashboard',testcases:'Test Cases',bugs:'Bug Reports',retest:'Retest Queue',escalations:'Backend Escalations',modules:'Modules',audit:'Audit Log',report:'Reports'};
+  let actions = '';
+  if (S.view === 'testcases' && S.role === 'qa') {
+    actions = `<button class="btn btn-ghost btn-sm" onclick="openImportCSV()">↑ Import CSV</button><button class="btn btn-primary" onclick="openAddTC()">+ Add Test Case</button>`;
+  }
+  if (S.view === 'modules' && S.role === 'qa') {
+    actions = `<button class="btn btn-primary" onclick="openAddModule()">+ Add Module</button>`;
+  }
+  return `<div class="topbar">
+    <div class="topbar-left">
+      <div class="page-title">${titles[S.view]||'Dashboard'}</div>
+      <div class="page-sub">${nowFull()}</div>
+    </div>
+    <div class="topbar-actions">${actions}</div>
+  </div>`;
+}
+
+function buildView() {
+  if (S.view === 'dashboard')   return buildDashboard();
+  if (S.view === 'testcases')   return buildTestCases();
+  if (S.view === 'bugs')        return buildBugs();
+  if (S.view === 'retest')      return buildRetest();
+  if (S.view === 'escalations') return buildEscalations();
+  if (S.view === 'modules')     return buildModules();
+  if (S.view === 'audit')       return buildAudit();
+  if (S.view === 'report')      return buildReport();
+  return '';
+}
+
+// ─────────────────────────── BACKEND ESCALATIONS ───────────────────────────
+function buildEscalations() {
+  const bugs = S.bugs.filter(b => b.status === 'Escalated');
+  const isDev = S.role === 'dev';
+  const rows = bugs.map(b => {
+    let actions = `<button class="btn btn-ghost btn-sm" onclick="viewBug('${b.id}')">View Details</button>`;
+    if (isDev) actions += ` <button class="btn btn-success btn-sm" data-id="${b.id}" onclick="markFixed(this.dataset.id)">Mark Fixed</button>`;
+    return `<tr>
+      <td class="td-id">${b.id}</td>
+      <td><div class="td-title">${b.testCase}</div><div style="font-size:11px;color:var(--text3)">${b.tcId}</div></td>
+      <td>${b.module}</td>
+      <td>${b.screen||'—'}</td>
+      <td>${sevBadge(b.severity)}</td>
+      <td class="date-col">
+        <div class="date-entry">
+          <span><span style="color:var(--red)">✕</span> Failed: ${b.failedAt||'—'}</span>
+          <span><span style="color:#c084fc">⬆</span> Escalated: ${b.escalatedAt||now()}</span>
+        </div>
+      </td>
+      <td style="font-size:12px;color:var(--text2);max-width:200px;">${b.escalationReason||b.devNotes||'—'}</td>
+      <td><div style="display:flex;gap:4px;">${actions}</div></td>
+    </tr>`;
+  }).join('');
+  return `
+  <div class="section" style="border-color:#6b21a8;">
+    <div class="section-hdr" style="background:#0d0618;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="section-title" style="color:#c084fc;">⬆ Backend Escalations — ${bugs.length} pending</div>
+        <div style="font-size:12px;color:var(--text3);">${isDev?'Mark as Fixed once backend resolves':'Read-only · Escalated by Frontend Dev'}</div>
+      </div>
+    </div>
+    ${bugs.length===0
+      ? `<div class="empty"><div class="empty-icon">⬆</div>No escalations. All bugs are frontend-resolvable!</div>`
+      : `<div class="tbl-wrap scrollable"><table>
+          <thead><tr><th>Bug ID</th><th>Test Case</th><th>Module</th><th>Screen</th><th>Severity</th><th>Timeline</th><th>Escalation Reason</th><th>Actions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>`}
+  </div>`;
+}
+
+// ─────────────────────────── DASHBOARD ───────────────────────────
+function buildDashboard() {
+  const total = S.testCases.length;
+  const pass = S.testCases.filter(t=>t.status==='Pass').length;
+  const fail = S.testCases.filter(t=>t.status==='Fail').length;
+  const openBugs = S.bugs.filter(b=>b.status==='Open').length;
+  const fixedBugs = S.bugs.filter(b=>b.status==='Verified').length;
+  const pct = total ? Math.round(pass/total*100) : 0;
+
+  const modSummary = S.modules.map(mod => {
+    const tcs = S.testCases.filter(t=>t.module===mod);
+    const p = tcs.filter(t=>t.status==='Pass').length;
+    const f = tcs.filter(t=>t.status==='Fail').length;
+    const ob = S.bugs.filter(b=>b.module===mod&&b.status==='Open').length;
+    const pp = tcs.length ? Math.round(p/tcs.length*100) : 0;
+    return `<tr>
+      <td class="td-title">${mod}</td>
+      <td>${tcs.length}</td>
+      <td style="color:var(--green)">${p}</td>
+      <td style="color:var(--red)">${f}</td>
+      <td style="color:${ob>0?'var(--red)':'var(--green)'}">${ob}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;min-width:80px;">
+            <div style="width:${pp}%;height:100%;background:${pp>70?'var(--green)':pp>40?'var(--yellow)':'var(--red)'};border-radius:3px;"></div>
+          </div>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--text3)">${pp}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const recentBugs = [...S.bugs].slice(0,5).map(b => `<tr>
+    <td class="td-id">${b.id}</td>
+    <td class="td-title">${b.testCase}</td>
+    <td>${b.module}</td>
+    <td>${sevBadge(b.severity)}</td>
+    <td>${statusBadge(b.status)}</td>
+    <td class="date-col">${b.failedAt||'—'}</td>
+  </tr>`).join('');
+
+  return `
+  <div class="stats-row">
+    <div class="stat"><div class="stat-val">${total}</div><div class="stat-lbl">Total Tests</div><div class="stat-sub">${S.modules.length} modules</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--green)">${pass}</div><div class="stat-lbl">Passed</div><div class="stat-sub">${pct}% pass rate</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--red)">${fail}</div><div class="stat-lbl">Failed</div><div class="stat-sub">In bug queue</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--yellow)">${openBugs}</div><div class="stat-lbl">Open Bugs</div><div class="stat-sub">Needs fix</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--green)">${fixedBugs}</div><div class="stat-lbl">Verified</div><div class="stat-sub">All clear</div></div>
+  </div>
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">Module Health</div></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Module</th><th>Tests</th><th>Pass</th><th>Fail</th><th>Open Bugs</th><th>Pass Rate</th></tr></thead><tbody>${modSummary||'<tr><td colspan="6" class="empty">No modules yet</td></tr>'}</tbody></table></div>
+  </div>
+  <div class="section">
+    <div class="section-hdr"><div class="section-title">Recent Bug Reports</div><button class="btn btn-ghost btn-sm" onclick="nav('bugs')">View all →</button></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Bug ID</th><th>Test Case</th><th>Module</th><th>Severity</th><th>Status</th><th>Failed On</th></tr></thead><tbody>${recentBugs||'<tr><td colspan="6" class="empty">No bugs yet</td></tr>'}</tbody></table></div>
+  </div>`;
+}
+
+// ─────────────────────────── TEST CASES ───────────────────────────
+function buildTestCases() {
+  const modF  = (document.getElementById('tcModF') ||{value:''}).value;
+  const stF   = (document.getElementById('tcStF')  ||{value:''}).value;
+  const sevF  = (document.getElementById('tcSevF') ||{value:''}).value;
+  const dlMod = (document.getElementById('tcDlMod')||{value:''}).value;
+  const dlSt  = (document.getElementById('tcDlSt') ||{value:''}).value;
+
+  let data = [...S.testCases];
+  if (modF) data = data.filter(t => t.module === modF);
+  if (stF)  data = data.filter(t => t.status === stF);
+  if (sevF) data = data.filter(t => t.severity === sevF);
+
+  const modOpts   = S.modules.map(m => `<option${modF===m?' selected':''}>${m}</option>`).join('');
+  const dlModOpts = S.modules.map(m => `<option value="${m}"${dlMod===m?' selected':''}>${m}</option>`).join('');
+
+  const rows = data.map(tc => {
+    const isQA = S.role === 'qa';
+    return `<tr>
+      <td class="td-id">${tc.id}</td>
+      <td><div class="td-title">${tc.testCase}</div><div style="font-size:11px;color:var(--text3);margin-top:2px;">${tc.screen||''}</div></td>
+      <td class="td-truncate">${tc.scenario||''}</td>
+      <td>${tc.module}</td>
+      <td>${statusBadge(tc.status)}</td>
+      <td>${sevBadge(tc.severity)}</td>
+      <td class="date-col">${tc.updatedAt}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="viewTC('${tc.id}')">View</button>
+          ${isQA ? `<button class="btn btn-ghost btn-sm" style="color:var(--yellow);border-color:var(--yellow-border);" data-id="${tc.id}" onclick="openEditTC(this.dataset.id)">Edit</button>` : ''}
+          ${isQA ? `<button class="btn btn-danger btn-sm" data-id="${tc.id}" onclick="deleteTC(this.dataset.id)">Delete</button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">All Test Cases <span class="section-meta">${data.length} / ${S.testCases.length}</span></div>
+      <div class="filters">
+        <select class="filter-select" id="tcModF" onchange="render()">
+          <option value="">All Modules</option>${modOpts}
+        </select>
+        <select class="filter-select" id="tcStF" onchange="render()">
+          <option value="">All Status</option>
+          <option${stF==='Pass' ?' selected':''}>Pass</option>
+          <option${stF==='Fail' ?' selected':''}>Fail</option>
+          <option${stF==='Hold' ?' selected':''}>Hold</option>
+        </select>
+        <select class="filter-select" id="tcSevF" onchange="render()">
+          <option value="">All Severity</option>
+          <option${sevF==='High'  ?' selected':''}>High</option>
+          <option${sevF==='Medium'?' selected':''}>Medium</option>
+          <option${sevF==='Low'   ?' selected':''}>Low</option>
+        </select>
+      </div>
+    </div>
+    <div style="padding:10px 20px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:11px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;">↓ Download:</span>
+      <select class="filter-select" id="tcDlMod" onchange="render()">
+        <option value="">All Modules</option>${dlModOpts}
+      </select>
+      <select class="filter-select" id="tcDlSt" onchange="render()">
+        <option value="">All Status</option>
+        <option${dlSt==='Pass'?' selected':''}>Pass</option>
+        <option${dlSt==='Fail'?' selected':''}>Fail</option>
+        <option${dlSt==='Hold'?' selected':''}>Hold</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="downloadTestCasesCSV()">Download CSV</button>
+    </div>
+    <div class="tbl-wrap scrollable"><table>
+      <thead><tr><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Status</th><th>Severity</th><th>Updated</th><th>Actions</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="8" class="empty"><div class="empty-icon">✓</div>No test cases match filters.</td></tr>'}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ─────────────────────────── BUGS ───────────────────────────
+function buildBugs() {
+  const bugModF = (document.getElementById('bugModF')||{value:''}).value;
+  const bugStF  = (document.getElementById('bugStF') ||{value:''}).value;
+  const bugSevF = (document.getElementById('bugSevF')||{value:''}).value;
+
+  let data = [...S.bugs];
+  if (bugModF) data = data.filter(b => b.module   === bugModF);
+  if (bugStF)  data = data.filter(b => b.status   === bugStF);
+  if (bugSevF) data = data.filter(b => b.severity === bugSevF);
+
+  const modOpts = S.modules.map(m => `<option value="${m}"${bugModF===m?' selected':''}>${m}</option>`).join('');
+
+  const rows = data.map(b => {
+    const isQA  = S.role === 'qa';
+    const isDev = S.role === 'dev';
+    let actions = `<button class="btn btn-ghost btn-sm" onclick="viewBug('${b.id}')">View</button>`;
+    if (isDev && (b.status === 'Open' || b.status === 'Retest Failed')) {
+      actions += ` <button class="btn btn-success btn-sm" data-id="${b.id}" onclick="markFixed(this.dataset.id)">Mark Fixed</button>`;
+      actions += ` <button class="btn btn-sm" style="background:#1a0a2e;color:#c084fc;border:1px solid #6b21a8;" data-id="${b.id}" onclick="escalateBug(this.dataset.id)">⬆ Escalate</button>`;
+    }
+    if (isDev && b.status === 'Escalated') {
+      actions += ` <button class="btn btn-success btn-sm" data-id="${b.id}" onclick="markFixed(this.dataset.id)">Mark Fixed</button>`;
+    }
+    if (isQA) actions += ` <button class="btn btn-danger btn-sm" data-id="${b.id}" onclick="deleteBug(this.dataset.id)">Delete</button>`;
+    return `<tr>
+      <td class="td-id">${b.id}</td>
+      <td><div class="td-title">${b.testCase}</div><div style="font-size:11px;color:var(--text3)">${b.tcId}</div></td>
+      <td>${b.module}</td>
+      <td>${b.screen||'—'}</td>
+      <td>${sevBadge(b.severity)}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td class="date-col">
+        <div class="date-entry">
+          <span><span style="color:var(--red)">✕</span> ${b.failedAt||'—'}</span>
+          ${b.fixedAt  ? `<span><span style="color:var(--yellow)">⚙</span> ${b.fixedAt}</span>`  : ''}
+          ${b.retestAt ? `<span><span style="color:var(--green)">↺</span> ${b.retestAt}</span>` : ''}
+          ${b.escalatedAt ? `<span><span style="color:#c084fc">⬆</span> ${b.escalatedAt}</span>` : ''}
+        </div>
+      </td>
+      <td><div style="display:flex;gap:4px;flex-wrap:wrap;">${actions}</div></td>
+    </tr>`;
+  }).join('');
+
+  const openCount = S.bugs.filter(b => b.status==='Open'||b.status==='Retest Failed'||b.status==='Escalated').length;
+  return `
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">Bug Reports <span class="section-meta">${data.length} shown · ${openCount} active</span></div>
+      <div class="filters">
+        <select class="filter-select" id="bugModF" onchange="render()">
+          <option value="">All Modules</option>${modOpts}
+        </select>
+        <select class="filter-select" id="bugStF" onchange="render()">
+          <option value="">All Status</option>
+          <option${bugStF==='Open'         ?' selected':''}>Open</option>
+          <option${bugStF==='Escalated'    ?' selected':''}>Escalated</option>
+          <option${bugStF==='Fixed'        ?' selected':''}>Fixed</option>
+          <option${bugStF==='Verified'     ?' selected':''}>Verified</option>
+          <option${bugStF==='Retest Failed'?' selected':''}>Retest Failed</option>
+        </select>
+        <select class="filter-select" id="bugSevF" onchange="render()">
+          <option value="">All Severity</option>
+          <option${bugSevF==='High'  ?' selected':''}>High</option>
+          <option${bugSevF==='Medium'?' selected':''}>Medium</option>
+          <option${bugSevF==='Low'   ?' selected':''}>Low</option>
+        </select>
+      </div>
+    </div>
+    <div class="tbl-wrap scrollable"><table>
+      <thead><tr><th>Bug ID</th><th>Test Case</th><th>Module</th><th>Screen</th><th>Severity</th><th>Status</th><th>Timeline</th><th>Actions</th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="8" class="empty"><div class="empty-icon">⚑</div>No bugs match filters.</td></tr>'}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ─────────────────────────── RETEST QUEUE ───────────────────────────
+function buildRetest() {
+  const bugs = S.bugs.filter(b => b.status === 'Fixed');
+  const rows = bugs.map(b => `<tr>
+    <td class="td-id">${b.id}</td>
+    <td><div class="td-title">${b.testCase}</div><div style="font-size:11px;color:var(--text3)">${b.tcId}</div></td>
+    <td>${b.module}</td>
+    <td>${sevBadge(b.severity)}</td>
+    <td class="date-col">
+      <div class="date-entry">
+        <span><span style="color:var(--red)">✕</span> Failed: ${b.failedAt||'—'}</span>
+        <span><span style="color:var(--yellow)">⚙</span> Fixed: ${b.fixedAt||'—'}</span>
+      </div>
+    </td>
+    <td>${b.devNotes ? `<span style="font-size:12px;color:var(--text2)">${b.devNotes}</span>` : '<span style="color:var(--text3);font-size:12px">—</span>'}</td>
+    <td>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-success btn-sm" onclick="retestPass('${b.id}')">✓ Pass</button>
+        <button class="btn btn-danger btn-sm" onclick="retestFail('${b.id}')">✕ Fail</button>
+      </div>
+    </td>
+  </tr>`).join('');
+
+  return `
+  <div class="section" style="border-color:var(--yellow-border)">
+    <div class="section-hdr" style="background:var(--yellow-bg)">
+      <div class="section-title" style="color:var(--yellow)">↺ Retest Queue — ${bugs.length} pending</div>
+      <div style="font-size:12px;color:var(--yellow);font-family:var(--mono)">Dev has marked these as fixed — verify and pass/fail</div>
+    </div>
+    ${bugs.length===0?`<div class="empty"><div class="empty-icon">↺</div>No bugs awaiting retest. All clear!</div>`:`
+    <div class="tbl-wrap scrollable"><table>
+      <thead><tr><th>Bug ID</th><th>Test Case</th><th>Module</th><th>Severity</th><th>Timeline</th><th>Dev Notes</th><th>Retest Result</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`}
+  </div>`;
+}
+
+// ─────────────────────────── MODULES ───────────────────────────
+function buildModules() {
+  const cards = S.modules.map(mod => {
+    const tcs = S.testCases.filter(t=>t.module===mod);
+    const pass = tcs.filter(t=>t.status==='Pass').length;
+    const fail = tcs.filter(t=>t.status==='Fail').length;
+    const bugs = S.bugs.filter(b=>b.module===mod);
+    const openB = bugs.filter(b=>b.status==='Open').length;
+    const pct = tcs.length ? Math.round(pass/tcs.length*100) : 0;
+    const canDelete = S.role === 'qa';
+    return `<div class="section" style="margin-bottom:12px;">
+      <div class="section-hdr">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="section-title">${mod}</div>
+          <span style="font-size:11px;color:var(--text3);font-family:var(--mono)">${tcs.length} tests · ${bugs.length} bugs</span>
+        </div>
+        ${canDelete?`<button class="btn btn-danger btn-sm" onclick="deleteModule('${mod}')">Delete Module</button>`:''}
+      </div>
+      <div style="padding:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Tests</div><div style="font-size:20px;font-weight:600;font-family:var(--mono);margin-top:4px;">${tcs.length}</div></div>
+        <div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Pass</div><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--green);margin-top:4px;">${pass}</div></div>
+        <div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Fail</div><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--red);margin-top:4px;">${fail}</div></div>
+        <div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Open Bugs</div><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:${openB>0?'var(--red)':'var(--green)'};margin-top:4px;">${openB}</div></div>
+      </div>
+      <div style="padding:0 16px 16px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;height:6px;background:var(--bg4);border-radius:3px;">
+            <div style="width:${pct}%;height:100%;background:${pct>70?'var(--green)':pct>40?'var(--yellow)':'var(--red)'};border-radius:3px;transition:width .3s;"></div>
+          </div>
+          <span style="font-family:var(--mono);font-size:12px;color:var(--text3)">${pct}% pass rate</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return cards || `<div class="empty"><div class="empty-icon">⊞</div>No modules yet. ${S.role==='qa'?'Add your first module.':'Contact QA to add modules.'}</div>`;
+}
+
+// ─────────────────────────── AUDIT ───────────────────────────
+function buildAudit() {
+  const rows = S.auditLog.slice(0,100).map(a => `
+    <div class="audit-row">
+      <div class="audit-time">${a.time}</div>
+      <div class="audit-event">${a.event}</div>
+      <span class="audit-actor ${a.actor==='qa'?'actor-qa':a.actor==='dev'?'actor-dev':'actor-admin'}">${a.actor.toUpperCase()}</span>
+    </div>`).join('');
+  return `<div class="section">
+    <div class="section-hdr"><div class="section-title">Audit Log</div><div class="section-meta">${S.auditLog.length} events</div></div>
+    ${rows||'<div class="empty">No events yet.</div>'}
+  </div>`;
+}
+
+// ─────────────────────────── REPORT ───────────────────────────
+function buildReport() {
+  const total = S.testCases.length;
+  const pass = S.testCases.filter(t=>t.status==='Pass').length;
+  const fail = S.testCases.filter(t=>t.status==='Fail').length;
+  const totalBugs = S.bugs.length;
+  const openBugs = S.bugs.filter(b=>b.status==='Open').length;
+  const fixedBugs = S.bugs.filter(b=>b.status==='Verified').length;
+  const retestFails = S.bugs.filter(b=>b.status==='Retest Failed').length;
+  const pct = total ? Math.round(pass/total*100) : 0;
+
+  const modRows = S.modules.map(mod => {
+    const tcs = S.testCases.filter(t=>t.module===mod);
+    const p = tcs.filter(t=>t.status==='Pass').length;
+    const f = tcs.filter(t=>t.status==='Fail').length;
+    const bugs = S.bugs.filter(b=>b.module===mod);
+    const highBugs = bugs.filter(b=>b.severity==='High').length;
+    return `<tr>
+      <td style="font-weight:500">${mod}</td>
+      <td style="font-family:var(--mono)">${tcs.length}</td>
+      <td style="color:var(--green);font-family:var(--mono)">${p}</td>
+      <td style="color:var(--red);font-family:var(--mono)">${f}</td>
+      <td style="font-family:var(--mono)">${bugs.length}</td>
+      <td style="color:${bugs.filter(b=>b.status==='Open').length>0?'var(--red)':'var(--green)'};font-family:var(--mono)">${bugs.filter(b=>b.status==='Open').length}</td>
+      <td style="color:${highBugs>0?'var(--red)':'var(--text3)'};font-family:var(--mono)">${highBugs}</td>
+    </tr>`;
+  }).join('');
+
+  return `
+  <div class="stats-row">
+    <div class="stat"><div class="stat-val">${pct}%</div><div class="stat-lbl">Pass Rate</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--green)">${pass}/${total}</div><div class="stat-lbl">Tests Passed</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--red)">${openBugs}</div><div class="stat-lbl">Open Bugs</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--green)">${fixedBugs}</div><div class="stat-lbl">Verified Fixed</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--orange)">${retestFails}</div><div class="stat-lbl">Retest Failed</div></div>
+  </div>
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">Module Breakdown</div>
+      ${S.role !== 'admin' ? `<button class="btn btn-ghost btn-sm" onclick="exportCSV()">Export CSV</button>` : ''}
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Module</th><th>Total Tests</th><th>Pass</th><th>Fail</th><th>Total Bugs</th><th>Open Bugs</th><th>High Severity</th></tr></thead>
+      <tbody>${modRows}</tbody>
+    </table></div>
+  </div>`;
+}
+
+// ─────────────────────────── BADGES ───────────────────────────
+function statusBadge(s) {
+  const m = {Pass:'b-pass',Fail:'b-fail',Hold:'b-hold',Retest:'b-retest',Blocked:'b-blocked',Open:'b-open',Fixed:'b-fixed',Verified:'b-verified','Retest Failed':'b-retest-fail',Escalated:'b-escalated'};
+  return `<span class="badge ${m[s]||'b-blocked'}">${s}</span>`;
+}
+function sevBadge(s) {
+  const m = {High:'b-high',Medium:'b-medium',Low:'b-low'};
+  return `<span class="badge ${m[s]||'b-medium'}">${s}</span>`;
+}
+
+// ─────────────────────────── MODALS ───────────────────────────
+function openAddTC() {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  const mods = S.modules.map(m=>`<option>${m}</option>`).join('');
+  showModal('Add Test Case', `
+  <div class="form-grid">
+    <div class="field">
+      <label>Test Case ID <span class="required">*</span></label>
+      <input id="f-id" placeholder="TC-006" value="TC-00${S.tcCounter}">
+    </div>
+    <div class="field">
+      <label>Module <span class="required">*</span></label>
+      <select id="f-mod">${mods}</select>
+    </div>
+    <div class="field form-full">
+      <label>Test Case Title <span class="required">*</span></label>
+      <input id="f-tc" placeholder="What is being tested?">
+    </div>
+    <div class="field form-full">
+      <label>Scenario</label>
+      <input id="f-scenario" placeholder="Test scenario description">
+    </div>
+    <div class="field">
+      <label>Screen Name</label>
+      <input id="f-screen" placeholder="e.g. Login Page">
+    </div>
+    <div class="field">
+      <label>Severity <span class="required">*</span></label>
+      <select id="f-sev"><option>High</option><option selected>Medium</option><option>Low</option></select>
+    </div>
+    <div class="field form-full">
+      <label>Test Steps <span class="required">*</span></label>
+      <textarea id="f-steps" placeholder="1. Go to...&#10;2. Click...&#10;3. Observe..."></textarea>
+    </div>
+    <div class="field form-full">
+      <label>Expected Results <span class="required">*</span></label>
+      <textarea id="f-expected" placeholder="What should happen?"></textarea>
+    </div>
+    <div class="field form-full">
+      <label>Actual Results <span class="required">*</span></label>
+      <textarea id="f-actual" placeholder="What actually happened?"></textarea>
+    </div>
+    <div class="field">
+      <label>Status <span class="required">*</span></label>
+      <select id="f-status"><option>Pass</option><option>Fail</option><option>Hold</option></select>
+    </div>
+    <div class="field">
+      <label>Evidence (URL/filename)</label>
+      <input id="f-evidence" placeholder="screenshot.png or https://...">
+    </div>
+    <div class="field form-full">
+      <label>Notes</label>
+      <textarea id="f-notes" placeholder="Additional notes..."></textarea>
+    </div>
+  </div>`,
+  () => submitTC());
+}
+
+function submitTC() {
+  const id = document.getElementById('f-id').value.trim();
+  const tc = document.getElementById('f-tc').value.trim();
+  const mod = document.getElementById('f-mod').value;
+  const actual = document.getElementById('f-actual').value.trim();
+  const expected = document.getElementById('f-expected').value.trim();
+  const status = document.getElementById('f-status').value;
+  const steps = document.getElementById('f-steps').value.trim();
+
+  if (!id || !tc || !mod || !actual || !expected || !steps) {
+    toast('Please fill all required fields', 'error'); return;
+  }
+  if (S.testCases.find(t=>t.id===id)) {
+    toast('Test Case ID already exists', 'error'); return;
+  }
+
+  const newTC = {
+    id, testCase:tc, scenario:document.getElementById('f-scenario').value.trim(),
+    module:mod, screen:document.getElementById('f-screen').value.trim(),
+    steps, expected, actual, status,
+    severity:document.getElementById('f-sev').value,
+    evidence:document.getElementById('f-evidence').value.trim(),
+    notes:document.getElementById('f-notes').value.trim(),
+    createdAt:now(), createdBy:'qa', updatedAt:now(), history:[]
+  };
+
+  S.testCases.push(newTC);
+  S.tcCounter++;
+
+  audit(`Test case ${id} "${tc}" added to module ${mod} with status ${status}`, 'qa');
+
+  // Send test case update to server
+  socket.emit('updateData', { type: 'testCase', data: newTC });
+  socket.emit('updateData', { type: 'counters', data: { tcCounter: S.tcCounter, bugCounter: S.bugCounter } });
+
+  if (status === 'Fail' || status === 'Hold') {
+    autoCreateBug(newTC);
+  }
+
+  closeModal();
+  save();
+  toast(`Test case ${id} added successfully`, 'success');
+}
+
+function autoCreateBug(tc) {
+  const bugId = `BUG-${String(S.bugCounter++).padStart(3,'0')}`;
+  const bug = {
+    id: bugId, tcId: tc.id, testCase: tc.testCase, module: tc.module,
+    screen: tc.screen, severity: tc.severity, status: 'Open',
+    failedAt: now(), fixedAt: null, retestAt: null, devNotes: '',
+    retestResult: null, retestCount: 0,
+    history: [{ date: now(), event: `Bug auto-created from failed test case ${tc.id}`, actor: 'qa' }]
+  };
+  S.bugs.push(bug);
+
+  // Send bug update to server
+  socket.emit('updateData', { type: 'bug', data: bug });
+  socket.emit('updateData', { type: 'counters', data: { tcCounter: S.tcCounter, bugCounter: S.bugCounter } });
+
+  audit(`Bug ${bugId} auto-created from failed test case ${tc.id} "${tc.testCase}"`, 'qa');
+  toast(`Bug ${bugId} auto-created from failed test ${tc.id}`, 'info');
+}
+
+function viewTC(id) {
+  const tc = S.testCases.find(t=>t.id===id);
+  if (!tc) return;
+  const linkedBug = S.bugs.find(b=>b.tcId===id);
+  showModal(`Test Case: ${tc.id}`, `
+  <div class="detail-section">
+    <h4>Test Case Details</h4>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">ID</div><div class="detail-value" style="font-family:var(--mono)">${tc.id}</div></div>
+      <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${statusBadge(tc.status)}</div></div>
+      <div class="detail-item"><div class="detail-label">Module</div><div class="detail-value">${tc.module}</div></div>
+      <div class="detail-item"><div class="detail-label">Screen</div><div class="detail-value">${tc.screen||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Severity</div><div class="detail-value">${sevBadge(tc.severity)}</div></div>
+      <div class="detail-item"><div class="detail-label">Created</div><div class="detail-value" style="font-family:var(--mono);font-size:12px">${tc.createdAt}</div></div>
+    </div>
+  </div>
+  <div class="detail-section">
+    <h4>Test Information</h4>
+    <div style="margin-bottom:10px;"><div class="detail-label" style="margin-bottom:4px">Scenario</div><div style="font-size:13px;color:var(--text2)">${tc.scenario||'—'}</div></div>
+    <div style="margin-bottom:10px;"><div class="detail-label" style="margin-bottom:4px">Test Steps</div><pre style="font-size:12px;color:var(--text2);white-space:pre-wrap;font-family:var(--font)">${tc.steps}</pre></div>
+    <div class="detail-grid">
+      <div><div class="detail-label" style="margin-bottom:4px">Expected Results</div><div style="font-size:13px;color:var(--green)">${tc.expected}</div></div>
+      <div><div class="detail-label" style="margin-bottom:4px">Actual Results</div><div style="font-size:13px;color:${tc.status==='Fail'?'var(--red)':'var(--text2)'}">${tc.actual}</div></div>
+    </div>
+    ${tc.evidence?`<div style="margin-top:10px;"><div class="detail-label" style="margin-bottom:4px">Evidence</div><div style="font-size:12px;color:var(--accent)">${tc.evidence}</div></div>`:''}
+    ${tc.notes?`<div style="margin-top:10px;"><div class="detail-label" style="margin-bottom:4px">Notes</div><div style="font-size:13px;color:var(--text2)">${tc.notes}</div></div>`:''}
+  </div>
+  ${linkedBug?`<div class="detail-section"><h4>Linked Bug</h4><div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:var(--radius);"><span style="font-family:var(--mono);color:var(--red)">${linkedBug.id}</span><span style="font-size:13px">${linkedBug.testCase}</span>${statusBadge(linkedBug.status)}</div></div>`:''}
+  `, null, true);
+}
+
+function viewBug(id) {
+  const b = S.bugs.find(x=>x.id===id);
+  if (!b) return;
+  const history = b.history.map(h => {
+    const cls = h.event.includes('created')||h.event.includes('Fail')?'tl-red':h.event.includes('fixed')||h.event.includes('Verified')?'tl-green':h.event.includes('Fixed')?'tl-yellow':'tl-blue';
+    return `<div class="tl-item ${cls}">
+      <div class="tl-date">${h.date}</div>
+      <div class="tl-text">${h.event} <span class="audit-actor ${h.actor==='qa'?'actor-qa':'actor-dev'}">${h.actor.toUpperCase()}</span></div>
+    </div>`;
+  }).join('');
+
+  showModal(`Bug Report: ${b.id}`, `
+  <div class="detail-section">
+    <h4>Bug Details</h4>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Bug ID</div><div class="detail-value" style="font-family:var(--mono);color:var(--red)">${b.id}</div></div>
+      <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${statusBadge(b.status)}</div></div>
+      <div class="detail-item"><div class="detail-label">Module</div><div class="detail-value">${b.module}</div></div>
+      <div class="detail-item"><div class="detail-label">Screen</div><div class="detail-value">${b.screen||'—'}</div></div>
+      <div class="detail-item"><div class="detail-label">Severity</div><div class="detail-value">${sevBadge(b.severity)}</div></div>
+      <div class="detail-item"><div class="detail-label">Linked Test Case</div><div class="detail-value" style="font-family:var(--mono)">${b.tcId}</div></div>
+    </div>
+  </div>
+  <div class="detail-section">
+    <h4>Audit Timeline</h4>
+    <div class="timeline">${history||'<div style="color:var(--text3);font-size:13px">No history yet</div>'}</div>
+  </div>
+  <div class="detail-section">
+    <h4>Date Tracking</h4>
+    <div class="detail-grid">
+      <div><div class="detail-label">Failed On</div><div style="color:var(--red);font-family:var(--mono);font-size:13px">${b.failedAt||'—'}</div></div>
+      <div><div class="detail-label">Fixed On</div><div style="color:var(--yellow);font-family:var(--mono);font-size:13px">${b.fixedAt||'Not fixed yet'}</div></div>
+      <div><div class="detail-label">Retest On</div><div style="color:var(--green);font-family:var(--mono);font-size:13px">${b.retestAt||'Not retested yet'}</div></div>
+      <div><div class="detail-label">Retest Count</div><div style="font-family:var(--mono);font-size:13px">${b.retestCount}</div></div>
+    </div>
+    ${b.devNotes?`<div style="margin-top:10px;"><div class="detail-label" style="margin-bottom:4px">Dev Notes</div><div style="font-size:13px;color:var(--text2)">${b.devNotes}</div></div>`:''}
+  </div>
+  `, null, true);
+}
+
+// ─────────────────────────── ACTIONS ───────────────────────────
+function markFixed(bugId) {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  showModal('Mark Bug as Fixed', `
+  <div style="margin-bottom:16px;padding:12px;background:var(--yellow-bg);border:1px solid var(--yellow-border);border-radius:var(--radius);">
+    <div style="font-size:12px;color:var(--yellow);font-family:var(--mono);margin-bottom:4px">BUG: ${bugId}</div>
+    <div style="font-size:14px;font-weight:500">${S.bugs.find(b=>b.id===bugId)?.testCase}</div>
+  </div>
+  <div class="field">
+    <label>Dev Fix Notes <span class="required">*</span></label>
+    <textarea id="dev-notes" placeholder="Describe what was fixed and how..."></textarea>
+  </div>
+  `, () => {
+    const notes = document.getElementById('dev-notes').value.trim();
+    if (!notes) { toast('Please add fix notes', 'error'); return; }
+    const b = S.bugs.find(x=>x.id===bugId);
+    if (!b) return;
+    b.status = 'Fixed';
+    b.fixedAt = now();
+    b.devNotes = notes;
+    b.history.push({ date: now(), event: `Marked as Fixed by Dev. Notes: ${notes}`, actor: 'dev' });
+
+    // Send bug update to server
+    socket.emit('updateData', { type: 'bug', data: b });
+
+    audit(`Bug ${bugId} marked as Fixed by Developer`, 'dev');
+    closeModal();
+    save();
+    toast(`Bug ${bugId} marked as fixed — awaiting QA retest`, 'success');
+  });
+}
+
+function retestPass(bugId) {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  const b = S.bugs.find(x=>x.id===bugId);
+  if (!b) return;
+  const tc = S.testCases.find(t=>t.id===b.tcId);
+  openConfirm('Confirm Retest Pass',
+    `Mark bug ${bugId} as PASSED?\n\nTest case "${b.testCase}" will be updated to PASS status and returned to Test Cases.`,
+    () => {
+      b.status = 'Verified';
+      b.retestAt = now();
+      b.retestCount++;
+      b.retestResult = 'Pass';
+      b.history.push({ date: now(), event: 'Retest PASSED by QA — bug verified and closed', actor: 'qa' });
+      if (tc) {
+        tc.status = 'Pass';
+        tc.updatedAt = now();
+        tc.history = tc.history || [];
+        tc.history.push({ date: now(), event: `Retest passed — test case restored to PASS status` });
+
+        // Send updates to server
+        socket.emit('updateData', { type: 'testCase', data: tc });
+      }
+
+      // Send bug update to server
+      socket.emit('updateData', { type: 'bug', data: b });
+
+      audit(`Bug ${bugId} retest PASSED — test case ${b.tcId} restored to Pass`, 'qa');
+      save();
+      toast(`Retest passed! Bug ${bugId} verified. Test case ${b.tcId} is now PASS.`, 'success');
+    });
+}
+
+function retestFail(bugId) {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  const b = S.bugs.find(x=>x.id===bugId);
+  if (!b) return;
+  b.status = 'Retest Failed';
+  b.retestAt = now();
+  b.retestCount++;
+  b.retestResult = 'Fail';
+  b.fixedAt = null;
+  b.history.push({ date: now(), event: `Retest FAILED by QA — bug re-opened (Retest #${b.retestCount})`, actor: 'qa' });
+  const tc = S.testCases.find(t=>t.id===b.tcId);
+  if (tc) {
+    tc.status = 'Fail';
+    tc.updatedAt = now();
+
+    // Send test case update to server
+    socket.emit('updateData', { type: 'testCase', data: tc });
+  }
+
+  // Send bug update to server
+  socket.emit('updateData', { type: 'bug', data: b });
+
+  audit(`Bug ${bugId} retest FAILED — returned to bug queue as "Retest Failed"`, 'qa');
+  save();
+  toast(`Retest failed. Bug ${bugId} returned to queue.`, 'error');
+}
+
+function deleteTC(id) {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  const tc = S.testCases.find(t => t.id === id);
+  if (!tc) return;
+  openConfirm('Permanently Delete Test Case',
+    `Delete "${tc.testCase}" (${id})?\n\nThis will also remove any linked bugs and CANNOT be undone. The record will be completely removed from the system.`,
+    () => {
+      const deletedBugIds = S.bugs.filter(b => b.tcId === id).map(b => b.id);
+      S.bugs = S.bugs.filter(b => b.tcId !== id);
+      S.testCases = S.testCases.filter(t => t.id !== id);
+      audit(`Test case ${id} "${tc.testCase}" permanently deleted by QA along with linked bugs`, 'qa');
+      socket.emit('updateData', { type: 'testCase', data: { id, deleted: true } });
+      deletedBugIds.forEach(bugId => {
+        socket.emit('updateData', { type: 'bug', data: { id: bugId, deleted: true } });
+      });
+      save();
+      toast(`Test case ${id} permanently deleted`, 'success');
+    });
+}
+
+function deleteBug(id) {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  const b = S.bugs.find(x=>x.id===id);
+  if (!b) return;
+  openConfirm('Permanently Delete Bug Report',
+    `Delete bug "${id}" (${b.testCase})?\n\nThis action is PERMANENT and cannot be undone. The bug record will be completely removed from the system.`,
+    () => {
+      S.bugs = S.bugs.filter(x => x.id !== id);
+      audit(`Bug ${id} "${b.testCase}" permanently deleted by QA`, 'qa');
+      socket.emit('updateData', { type: 'bug', data: { id, deleted: true } });
+      save();
+      toast(`Bug ${id} permanently deleted`, 'success');
+    });
+}
+
+function deleteModule(name) {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  openConfirm('Delete Module',
+    `Delete module "${name}"?\n\nAll test cases and bugs in this module will also be permanently deleted. This CANNOT be undone.`,
+    () => {
+      const deletedTCs = S.testCases.filter(t => t.module === name).map(t => t.id);
+      const deletedBugIds = S.bugs.filter(b => b.module === name).map(b => b.id);
+      S.testCases = S.testCases.filter(t => t.module !== name);
+      S.bugs = S.bugs.filter(b => b.module !== name);
+      S.modules = S.modules.filter(m => m !== name);
+      audit(`Module "${name}" and ${deletedTCs.length} test cases permanently deleted by QA`, 'qa');
+      deletedTCs.forEach(tcId => {
+        socket.emit('updateData', { type: 'testCase', data: { id: tcId, deleted: true } });
+      });
+      deletedBugIds.forEach(bugId => {
+        socket.emit('updateData', { type: 'bug', data: { id: bugId, deleted: true } });
+      });
+      socket.emit('updateData', { type: 'module', data: { name, deleted: true } });
+      save();
+      toast(`Module "${name}" permanently deleted`, 'success');
+    });
+}
+
+function openAddModule() {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  showModal('Add Module', `
+  <div class="field">
+    <label>Module Name <span class="required">*</span></label>
+    <input id="f-modname" placeholder="e.g. User Management, Payment, Reports">
+  </div>`, () => {
+    const name = document.getElementById('f-modname').value.trim();
+    if (!name) { toast('Module name required', 'error'); return; }
+    if (S.modules.includes(name)) { toast('Module already exists', 'error'); return; }
+    S.modules.push(name);
+    audit(`Module "${name}" added by QA`, 'qa');
+    socket.emit('updateData', { type: 'module', data: { name } });
+    closeModal();
+    save();
+    toast(`Module "${name}" added`, 'success');
+  });
+}
+
+function exportCSV() {
+  let csv = 'Module,Total Tests,Pass,Fail,Total Bugs,Open Bugs,High Severity\n';
+  S.modules.forEach(mod => {
+    const tcs = S.testCases.filter(t=>t.module===mod);
+    const bugs = S.bugs.filter(b=>b.module===mod);
+    csv += `${mod},${tcs.length},${tcs.filter(t=>t.status==='Pass').length},${tcs.filter(t=>t.status==='Fail').length},${bugs.length},${bugs.filter(b=>b.status==='Open').length},${bugs.filter(b=>b.severity==='High').length}\n`;
+  });
+  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = `qa-report-${now()}.csv`; a.click();
+  audit('Report exported as CSV', S.role);
+  toast('Report exported', 'success');
+}
+
+// ─────────────────────────── EDIT TEST CASE ───────────────────────────
+function openEditTC(id) {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  const tc = S.testCases.find(t => t.id === id);
+  if (!tc) return;
+  const mods = S.modules.map(m => `<option${m===tc.module?' selected':''}>${m}</option>`).join('');
+  showModal(`Edit Test Case: ${tc.id}`, `
+  <div style="padding:8px 14px;background:var(--bg3);border-radius:var(--radius);margin-bottom:16px;font-size:12px;color:var(--text3);">
+    Editing <span style="font-family:var(--mono);color:var(--accent)">${tc.id}</span> — ID cannot be changed.
+  </div>
+  <div class="form-grid">
+    <div class="field">
+      <label>Test Case ID</label>
+      <input value="${tc.id}" disabled style="opacity:.45;cursor:not-allowed;">
+    </div>
+    <div class="field">
+      <label>Module <span class="required">*</span></label>
+      <select id="e-mod">${mods}</select>
+    </div>
+    <div class="field form-full">
+      <label>Test Case Title <span class="required">*</span></label>
+      <input id="e-tc" value="${tc.testCase.replace(/"/g,'&quot;').replace(/</g,'&lt;')}">
+    </div>
+    <div class="field form-full">
+      <label>Scenario</label>
+      <input id="e-scenario" value="${(tc.scenario||'').replace(/"/g,'&quot;').replace(/</g,'&lt;')}">
+    </div>
+    <div class="field">
+      <label>Screen Name</label>
+      <input id="e-screen" value="${(tc.screen||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="field">
+      <label>Severity <span class="required">*</span></label>
+      <select id="e-sev">
+        <option${tc.severity==='High'  ?' selected':''}>High</option>
+        <option${tc.severity==='Medium'?' selected':''}>Medium</option>
+        <option${tc.severity==='Low'   ?' selected':''}>Low</option>
+      </select>
+    </div>
+    <div class="field form-full">
+      <label>Test Steps <span class="required">*</span></label>
+      <textarea id="e-steps">${(tc.steps||'').replace(/</g,'&lt;')}</textarea>
+    </div>
+    <div class="field form-full">
+      <label>Expected Results <span class="required">*</span></label>
+      <textarea id="e-expected">${(tc.expected||'').replace(/</g,'&lt;')}</textarea>
+    </div>
+    <div class="field form-full">
+      <label>Actual Results <span class="required">*</span></label>
+      <textarea id="e-actual">${(tc.actual||'').replace(/</g,'&lt;')}</textarea>
+    </div>
+    <div class="field">
+      <label>Status <span class="required">*</span></label>
+      <select id="e-status">
+        <option${tc.status==='Pass'?' selected':''}>Pass</option>
+        <option${tc.status==='Fail'?' selected':''}>Fail</option>
+        <option${tc.status==='Hold'?' selected':''}>Hold</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Evidence (URL/filename)</label>
+      <input id="e-evidence" value="${(tc.evidence||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="field form-full">
+      <label>Notes</label>
+      <textarea id="e-notes">${(tc.notes||'').replace(/</g,'&lt;')}</textarea>
+    </div>
+  </div>
+  <input type="hidden" id="e-tcid" value="${tc.id}">
+  `, () => submitEditTC());
+}
+
+function submitEditTC() {
+  const id       = (document.getElementById('e-tcid')||{value:''}).value;
+  const title    = (document.getElementById('e-tc')||{value:''}).value.trim();
+  const mod      = (document.getElementById('e-mod')||{value:''}).value;
+  const steps    = (document.getElementById('e-steps')||{value:''}).value.trim();
+  const expected = (document.getElementById('e-expected')||{value:''}).value.trim();
+  const actual   = (document.getElementById('e-actual')||{value:''}).value.trim();
+  const status   = (document.getElementById('e-status')||{value:''}).value;
+
+  if (!title || !mod || !steps || !expected || !actual) {
+    toast('Please fill all required fields', 'error'); return;
+  }
+  const tc = S.testCases.find(t => t.id === id);
+  if (!tc) { toast('Test case not found', 'error'); return; }
+
+  const oldStatus = tc.status;
+  tc.testCase  = title;
+  tc.module    = mod;
+  tc.scenario  = (document.getElementById('e-scenario')||{value:''}).value.trim();
+  tc.screen    = (document.getElementById('e-screen')||{value:''}).value.trim();
+  tc.severity  = (document.getElementById('e-sev')||{value:'Medium'}).value;
+  tc.steps     = steps;
+  tc.expected  = expected;
+  tc.actual    = actual;
+  tc.status    = status;
+  tc.evidence  = (document.getElementById('e-evidence')||{value:''}).value.trim();
+  tc.notes     = (document.getElementById('e-notes')||{value:''}).value.trim();
+  tc.updatedAt = now();
+  tc.history   = tc.history || [];
+  tc.history.push({ date: now(), event: `Edited by QA. Status: ${oldStatus} → ${status}` });
+
+  // Send test case update to server
+  socket.emit('updateData', { type: 'testCase', data: tc });
+
+  // If newly failing/hold and no active bug, auto-create
+  const wasActive = oldStatus === 'Fail' || oldStatus === 'Hold';
+  const isActive  = status    === 'Fail' || status    === 'Hold';
+  if (isActive && !wasActive) {
+    autoCreateBug(tc);
+  }
+  // If changed to Pass, close any open linked bug
+  if (!isActive && wasActive) {
+    const linked = S.bugs.find(b => b.tcId === id && (b.status === 'Open' || b.status === 'Retest Failed'));
+    if (linked) {
+      linked.status = 'Verified';
+      linked.history.push({ date: now(), event: `Bug auto-closed — test case changed to ${status}`, actor: 'qa' });
+
+      // Send bug update to server
+      socket.emit('updateData', { type: 'bug', data: linked });
+
+      audit(`Bug ${linked.id} auto-closed (TC ${id} changed to ${status})`, 'qa');
+    }
+  }
+
+  audit(`Test case ${id} edited by QA — status ${oldStatus} → ${status}`, 'qa');
+  closeModal();
+  save();
+  toast(`Test case ${id} updated`, 'success');
+}
+
+// ─────────────────────────── ESCALATE BUG ───────────────────────────
+function escalateBug(bugId) {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  const b = S.bugs.find(x => x.id === bugId);
+  if (!b) return;
+  showModal('Escalate Bug to Backend Team', `
+  <div style="padding:12px 16px;background:#0d0618;border:1px solid #6b21a8;border-radius:var(--radius);margin-bottom:16px;">
+    <div style="font-size:11px;color:#c084fc;font-family:var(--mono);margin-bottom:4px">ESCALATING: ${bugId}</div>
+    <div style="font-size:14px;font-weight:500">${b.testCase}</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:4px">${b.module} · ${b.screen||'—'} · ${b.severity}</div>
+  </div>
+  <div style="padding:10px 14px;background:var(--yellow-bg);border:1px solid var(--yellow-border);border-radius:var(--radius);margin-bottom:16px;font-size:12px;color:var(--yellow);">
+    ⚠ Use only when the bug cannot be fixed from the frontend. The backend queue will be updated.
+  </div>
+  <div class="field">
+    <label>Escalation Reason <span class="required">*</span></label>
+    <textarea id="esc-reason" placeholder="Describe why this needs backend intervention (e.g. API error, database issue, server-side logic)..."></textarea>
+  </div>
+  <div class="field">
+    <label>Affected Backend Area</label>
+    <input id="esc-area" placeholder="e.g. Payment API, Auth service, Database query...">
+  </div>
+  `, () => {
+    const reason = (document.getElementById('esc-reason')||{value:''}).value.trim();
+    const area   = (document.getElementById('esc-area')||{value:''}).value.trim();
+    if (!reason) { toast('Please describe the escalation reason', 'error'); return; }
+    b.status = 'Escalated';
+    b.escalatedAt = now();
+    b.escalationReason = area ? `${reason} [Area: ${area}]` : reason;
+    b.history.push({ date: now(), event: `Escalated to Backend. Reason: ${b.escalationReason}`, actor: 'dev' });
+
+    // Send bug update to server
+    socket.emit('updateData', { type: 'bug', data: b });
+
+    audit(`Bug ${bugId} escalated to backend by DEV`, 'dev');
+    closeModal(); save();
+    toast(`Bug ${bugId} escalated to backend team`, 'info');
+  });
+}
+
+// ─────────────────────────── DOWNLOAD TEST CASES CSV ───────────────────────────
+function downloadTestCasesCSV() {
+  const dlMod = (document.getElementById('tcDlMod')||{value:''}).value;
+  const dlSt  = (document.getElementById('tcDlSt') ||{value:''}).value;
+  let data = [...S.testCases];
+  if (dlMod) data = data.filter(t => t.module === dlMod);
+  if (dlSt)  data = data.filter(t => t.status === dlSt);
+  if (!data.length) { toast('No test cases match selected filters', 'error'); return; }
+  const esc = v => `"${(v||'').replace(/"/g,'""')}"`;
+  let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Expected Results,Actual Results,Status,Severity,Evidence,Notes,Created,Updated\n';
+  data.forEach(tc => {
+    csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.notes)},${tc.createdAt},${tc.updatedAt}\n`;
+  });
+  const fname = `test-cases${dlMod?'-'+dlMod:''}${dlSt?'-'+dlSt:''}-${now()}.csv`;
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = fname; a.click();
+  toast(`Downloaded ${data.length} test cases`, 'success');
+}
+
+// ─────────────────────────── IMPORT CSV ───────────────────────────
+let _importRows = [];
+
+function openImportCSV() {
+  if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+  _importRows = [];
+  showModal('Import Test Cases from Excel / CSV', `
+  <div style="padding:12px 16px;background:var(--bg3);border-radius:var(--radius);margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.9;">
+    <div style="font-weight:600;color:var(--text);margin-bottom:6px;">How to import from Excel:</div>
+    <div style="color:var(--text3);margin-bottom:8px;">1. Open your Excel file &nbsp;→&nbsp; File &nbsp;→&nbsp; Save As &nbsp;→&nbsp; CSV (Comma delimited)</div>
+    <div style="font-weight:500;color:var(--text);margin-bottom:4px;">Expected column headers (first row):</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--bg4);padding:8px;border-radius:4px;line-height:2;">
+      Test Case ID &nbsp;·&nbsp; Test Case &nbsp;·&nbsp; Scenario &nbsp;·&nbsp; Module &nbsp;·&nbsp; Screen Name &nbsp;·&nbsp; Test Steps &nbsp;·&nbsp; Expected Results &nbsp;·&nbsp; Actual Results &nbsp;·&nbsp; Status &nbsp;·&nbsp; Severity &nbsp;·&nbsp; Evidence &nbsp;·&nbsp; Notes
+    </div>
+    <div style="margin-top:8px;color:var(--text3);">
+      Status must be: <span style="color:var(--green)">Pass</span> / <span style="color:var(--red)">Fail</span> / <span style="color:var(--yellow)">Hold</span> &nbsp;&nbsp; 
+      Severity must be: <span style="color:var(--red)">High</span> / <span style="color:var(--yellow)">Medium</span> / <span style="color:var(--green)">Low</span>
+    </div>
+  </div>
+  <div id="imp-dropzone"
+       style="border:2px dashed var(--border2);border-radius:var(--radius2);padding:36px;text-align:center;cursor:pointer;transition:all .2s;"
+       onclick="document.getElementById('imp-file').click()"
+       ondragover="event.preventDefault();document.getElementById('imp-dropzone').style.borderColor='var(--accent)';document.getElementById('imp-dropzone').style.background='rgba(59,130,246,.06)'"
+       ondragleave="document.getElementById('imp-dropzone').style.borderColor='';document.getElementById('imp-dropzone').style.background=''"
+       ondrop="handleImpDrop(event)">
+    <input type="file" id="imp-file" accept=".csv,.txt" style="display:none" onchange="handleImpFile(this)">
+    <div style="font-size:36px;opacity:.35;margin-bottom:10px;">📄</div>
+    <div style="font-size:14px;color:var(--text);font-weight:500">Click to choose a CSV file</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:6px">or drag and drop your .csv file here</div>
+  </div>
+  <div id="imp-status" style="margin-top:14px;font-size:12px;color:var(--text3);text-align:center;"></div>
+  <div id="imp-preview" style="margin-top:14px;"></div>
+  `, () => doImport());
+}
+
+function handleImpDrop(e) {
+  e.preventDefault();
+  const dz = document.getElementById('imp-dropzone');
+  if (dz) { dz.style.borderColor = ''; dz.style.background = ''; }
+  const f = e.dataTransfer && e.dataTransfer.files[0];
+  if (f) parseImpFile(f);
+  else toast('No file detected', 'error');
+}
+
+function handleImpFile(inp) {
+  const f = inp && inp.files && inp.files[0];
+  if (f) parseImpFile(f);
+}
+
+function parseImpFile(file) {
+  const status = document.getElementById('imp-status');
+  const preview = document.getElementById('imp-preview');
+  if (status) status.textContent = `Reading "${file.name}"...`;
+  if (preview) preview.innerHTML = '';
+  _importRows = [];
+
+  // Only accept text files
+  if (!file.name.match(/\.(csv|txt)$/i)) {
+    if (status) status.innerHTML = `<span style="color:var(--red)">❌ Only .csv files are supported. Please save your Excel file as CSV first.</span>`;
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onerror = () => {
+    if (status) status.innerHTML = `<span style="color:var(--red)">❌ Failed to read file.</span>`;
+  };
+  reader.onload = e => {
+    try {
+      const raw = e.target.result;
+      // Normalize line endings
+      const lines = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+      // Remove completely empty lines
+      const nonEmpty = lines.filter(l => l.trim().length > 0);
+
+      if (nonEmpty.length < 2) {
+        if (status) status.innerHTML = `<span style="color:var(--red)">❌ File appears empty or has no data rows.</span>`;
+        return;
+      }
+
+      // Parse headers — be very flexible
+      const rawHeaders = parseImpLine(nonEmpty[0]);
+      const headers = rawHeaders.map(h => h.toLowerCase().trim()
+        .replace(/[^a-z0-9 ]/g, ' ')  // strip special chars
+        .replace(/\s+/g, ' ')          // collapse spaces
+        .trim()
+      );
+
+      if (status) status.textContent = `Parsed ${nonEmpty.length - 1} data rows. Mapping columns...`;
+
+      // Column finder — tries multiple aliases
+      const col = (aliases) => {
+        for (const alias of aliases) {
+          const idx = headers.findIndex(h => h === alias || h.includes(alias));
+          if (idx >= 0) return idx;
+        }
+        return -1;
+      };
+
+      const colMap = {
+        id:       col(['test case id','tc id','id','testcaseid']),
+        testCase: col(['test case','testcase','title','test name','name']),
+        scenario: col(['scenario','description','desc']),
+        module:   col(['module','module name','modulename']),
+        screen:   col(['screen name','screen','screenname','page']),
+        steps:    col(['test step','test steps','steps','step','teststep','teststeps']),
+        expected: col(['expected result','expected results','expected','expected output']),
+        actual:   col(['actual result','actual results','actual','actual output']),
+        status:   col(['status','result']),
+        severity: col(['severity','priority','sev']),
+        evidence: col(['evidence','attachment','proof']),
+        notes:    col(['notes','note','comment','remarks']),
+      };
+
+      const rows = [];
+      const warnings = [];
+
+      for (let i = 1; i < nonEmpty.length; i++) {
+        const cols = parseImpLine(nonEmpty[i]);
+        if (cols.every(c => !c.trim())) continue; // skip blank rows
+
+        const get = (key, fallback = '') => {
+          const idx = colMap[key];
+          return idx >= 0 ? (cols[idx] || '').trim() : fallback;
+        };
+
+        // Normalise Status
+        let rawSt = get('status', 'Pass');
+        let status = 'Pass';
+        if (/^fail/i.test(rawSt))  status = 'Fail';
+        else if (/^hold/i.test(rawSt) || /^block/i.test(rawSt)) status = 'Hold';
+        else if (/^pass/i.test(rawSt)) status = 'Pass';
+        else { warnings.push(`Row ${i+1}: status "${rawSt}" not recognised, defaulted to Pass`); }
+
+        // Normalise Severity
+        let rawSev = get('severity', 'Medium');
+        let severity = 'Medium';
+        if (/^high/i.test(rawSev) || rawSev === '1') severity = 'High';
+        else if (/^low/i.test(rawSev) || rawSev === '3') severity = 'Low';
+        else if (/^med/i.test(rawSev) || rawSev === '2') severity = 'Medium';
+
+        // Module — create if new
+        let modVal = get('module', '').trim() || (S.modules[0] || 'General');
+        if (!S.modules.includes(modVal)) {
+          S.modules.push(modVal);
+        }
+
+        // Generate ID if missing
+        let rowId = get('id', '').trim();
+        if (!rowId) {
+          rowId = `TC-${String(S.tcCounter + rows.length).padStart(3, '0')}`;
+        }
+
+        rows.push({
+          id:       rowId,
+          testCase: get('testCase') || `Imported TC ${i}`,
+          scenario: get('scenario'),
+          module:   modVal,
+          screen:   get('screen'),
+          steps:    get('steps'),
+          expected: get('expected'),
+          actual:   get('actual'),
+          status,   severity,
+          evidence: get('evidence'),
+          notes:    get('notes'),
+          _rowNum:  i + 1,
+        });
+      }
+
+      _importRows = rows;
+      renderImpPreview(rows, warnings, file.name);
+
+    } catch(err) {
+      console.error('Import parse error:', err);
+      if (status) status.innerHTML = `<span style="color:var(--red)">❌ Parse error: ${err.message}</span>`;
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+// Robust CSV line parser — handles quoted fields, commas inside quotes, escaped quotes
+function parseImpLine(line) {
+  const res = [];
+  let cur = '';
+  let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQ && line[i + 1] === '"') { cur += '"'; i++; } // escaped quote ""
+      else inQ = !inQ;
+    } else if (ch === ',' && !inQ) {
+      res.push(cur.trim()); cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  res.push(cur.trim());
+  return res;
+}
+
+function renderImpPreview(rows, warnings, filename) {
+  const status  = document.getElementById('imp-status');
+  const preview = document.getElementById('imp-preview');
+  if (!preview) return;
+
+  const dupes = rows.filter(r => S.testCases.find(t => t.id === r.id));
+  const newRows = rows.filter(r => !S.testCases.find(t => t.id === r.id));
+
+  if (status) status.innerHTML = `
+    <span style="color:var(--green)">✓ "${filename}" parsed — ${rows.length} rows found</span>
+    ${dupes.length ? `<span style="color:var(--yellow);margin-left:12px">⚠ ${dupes.length} duplicate ID(s) will be skipped</span>` : ''}
+  `;
+
+  preview.innerHTML = `
+    <div style="padding:14px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);">
+      <div style="display:flex;gap:16px;margin-bottom:12px;">
+        <div style="font-size:12px;"><span style="color:var(--text3)">Total rows:</span> <strong>${rows.length}</strong></div>
+        <div style="font-size:12px;"><span style="color:var(--text3)">Will import:</span> <strong style="color:var(--green)">${newRows.length}</strong></div>
+        ${dupes.length ? `<div style="font-size:12px;"><span style="color:var(--text3)">Skipped (dup):</span> <strong style="color:var(--yellow)">${dupes.length}</strong></div>` : ''}
+        <div style="font-size:12px;"><span style="color:var(--text3)">Auto-bugs:</span> <strong style="color:var(--red)">${newRows.filter(r=>r.status==='Fail'||r.status==='Hold').length}</strong></div>
+      </div>
+      ${warnings.length ? `<div style="font-size:11px;color:var(--yellow);margin-bottom:10px;padding:6px 10px;background:var(--yellow-bg);border-radius:4px;">${warnings.slice(0,3).join('<br>')}</div>` : ''}
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Preview (first 8 rows)</div>
+      <div style="max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);">
+        <table style="width:100%;border-collapse:collapse;min-width:600px;">
+          <thead>
+            <tr style="background:var(--bg4);">
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">ID</th>
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">Test Case</th>
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">Module</th>
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">Severity</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.slice(0, 8).map(r => {
+              const isDupe = S.testCases.find(t => t.id === r.id);
+              return `<tr style="${isDupe?'opacity:.45;':''}" title="${isDupe?'Will be skipped — duplicate ID':''}">
+                <td style="padding:6px 10px;font-family:var(--mono);font-size:11px;color:${isDupe?'var(--yellow)':'var(--text3)'};border-bottom:1px solid var(--border);">${r.id}${isDupe?' (dup)':''}</td>
+                <td style="padding:6px 10px;font-size:12px;color:var(--text);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid var(--border);">${r.testCase}</td>
+                <td style="padding:6px 10px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);">${r.module}</td>
+                <td style="padding:6px 10px;border-bottom:1px solid var(--border);">${statusBadge(r.status)}</td>
+                <td style="padding:6px 10px;border-bottom:1px solid var(--border);">${sevBadge(r.severity)}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+        ${rows.length > 8 ? `<div style="padding:8px 10px;font-size:12px;color:var(--text3);background:var(--bg3);">...and ${rows.length - 8} more rows</div>` : ''}
+      </div>
+      ${newRows.length === 0 ? `<div style="margin-top:10px;padding:8px 12px;background:var(--yellow-bg);border:1px solid var(--yellow-border);border-radius:var(--radius);font-size:12px;color:var(--yellow);">All rows are duplicates — nothing new to import.</div>` : ''}
+    </div>`;
+}
+
+function doImport() {
+  if (!_importRows.length) {
+    toast('No data loaded — please select a CSV file first', 'error'); return;
+  }
+  let added = 0, skipped = 0, bugs = 0;
+  _importRows.forEach(r => {
+    if (S.testCases.find(t => t.id === r.id)) { skipped++; return; }
+    const { _rowNum, ...tcData } = r; // strip internal field
+    const newTC = {
+      ...tcData,
+      createdAt: now(), createdBy: S.auth && S.auth.user ? S.auth.user : 'QA',
+      updatedAt: now(), history: []
+    };
+    S.testCases.push(newTC);
+    S.tcCounter++;
+    if (r.status === 'Fail' || r.status === 'Hold') { autoCreateBug(newTC); bugs++; }
+    added++;
+
+    // Send test case update to server
+    socket.emit('updateData', { type: 'testCase', data: newTC });
+  });
+
+  // Send counter update to server
+  socket.emit('updateData', { type: 'counters', data: { tcCounter: S.tcCounter, bugCounter: S.bugCounter } });
+
+  audit(`Imported ${added} test cases from CSV (${skipped} duplicates skipped, ${bugs} bugs auto-created)`, S.role || 'qa');
+  _importRows = [];
+  closeModal();
+  save();
+  toast(`✓ Imported ${added} test cases${skipped ? `, ${skipped} skipped` : ''}${bugs ? `, ${bugs} bugs created` : ''}`, 'success');
+}
+
+// ─────────────────────────── MODAL ENGINE ───────────────────────────
+let _submitCb = null;
+function showModal(title, body, submitCb, viewOnly=false) {
+  _submitCb = submitCb;
+  const existing = document.getElementById('app-modal');
+  if (existing) existing.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay open';
+  overlay.id = 'app-modal';
+  overlay.innerHTML = `<div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">${title}</div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">${body}</div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">${viewOnly?'Close':'Cancel'}</button>
+      ${!viewOnly?`<button class="btn btn-primary" onclick="modalSubmit()">Save</button>`:''}
+    </div>
+  </div>`;
+  overlay.addEventListener('click', e => { if (e.target===overlay) closeModal(); });
+  document.body.appendChild(overlay);
+}
+
+function modalSubmit() { if (_submitCb) _submitCb(); }
+function closeModal() {
+  const m = document.getElementById('app-modal');
+  if (m) m.remove();
+}
+
+function attachHandlers() {}
+
+function nav(v) { S.view = v; save(); }
+
+// ─── INIT ───
+render();
+</script>
+</body>
+</html>
