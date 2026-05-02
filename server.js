@@ -4,6 +4,8 @@ const socketIo = require('socket.io');
 const mongoose = require('mongoose');
 const path = require('path');
 
+let mongodbConnected = false;
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -24,11 +26,12 @@ mongoose.connect(MONGODB_URI, {
 })
 .then(() => {
   console.log("✅ MongoDB connected");
+  mongodbConnected = true;     // ✅ ADD THIS
 })
 .catch((err) => {
   console.error("❌ MongoDB connection failed:", err.message);
+  mongodbConnected = false;    // ✅ ADD THIS
 });
-
 
 // Define MongoDB Schemas
 const testCaseSchema = new mongoose.Schema({
@@ -91,128 +94,6 @@ const AuditLog = mongoose.model('AuditLog', auditLogSchema);
 const Module = mongoose.model('Module', moduleSchema);
 const Counter = mongoose.model('Counter', counterSchema);
 
-// Fallback in-memory data store for when MongoDB is not available
-const fallbackDataStore = {
-  modules: ['Login', 'Checkout', 'Dashboard', 'Reports'],
-  testCases: [
-    {
-      id: 'TC001',
-      testCase: 'User Login',
-      scenario: 'Valid user login',
-      module: 'Login',
-      screen: 'Login Page',
-      steps: '1. Navigate to login page\n2. Enter valid username\n3. Enter valid password\n4. Click login button',
-      expected: 'User should be logged in successfully',
-      actual: 'User logged in successfully',
-      status: 'Pass',
-      severity: 'High',
-      evidence: '',
-      notes: 'Test passed',
-      createdAt: new Date().toISOString(),
-      createdBy: 'System',
-      updatedAt: new Date().toISOString(),
-      history: []
-    },
-    {
-      id: 'TC002',
-      testCase: 'Invalid Login',
-      scenario: 'Invalid credentials',
-      module: 'Login',
-      screen: 'Login Page',
-      steps: '1. Navigate to login page\n2. Enter invalid username\n3. Enter invalid password\n4. Click login button',
-      expected: 'Error message should be displayed',
-      actual: 'Error message displayed',
-      status: 'Pass',
-      severity: 'High',
-      evidence: '',
-      notes: 'Test passed',
-      createdAt: new Date().toISOString(),
-      createdBy: 'System',
-      updatedAt: new Date().toISOString(),
-      history: []
-    },
-    {
-      id: 'TC003',
-      testCase: 'Checkout Process',
-      scenario: 'Complete purchase',
-      module: 'Checkout',
-      screen: 'Checkout Page',
-      steps: '1. Add items to cart\n2. Proceed to checkout\n3. Enter payment details\n4. Complete purchase',
-      expected: 'Order should be placed successfully',
-      actual: 'Order placed successfully',
-      status: 'Pass',
-      severity: 'High',
-      evidence: '',
-      notes: 'Test passed',
-      createdAt: new Date().toISOString(),
-      createdBy: 'System',
-      updatedAt: new Date().toISOString(),
-      history: []
-    }
-  ],
-  bugs: [
-    {
-      id: 'BUG001',
-      tcId: 'TC001',
-      testCase: 'User Login',
-      module: 'Login',
-      screen: 'Login Page',
-      severity: 'Medium',
-      status: 'Open',
-      failedAt: new Date().toISOString(),
-      fixedAt: '',
-      retestAt: '',
-      devNotes: '',
-      retestResult: '',
-      retestCount: 0,
-      escalatedAt: '',
-      escalationReason: '',
-      history: []
-    },
-    {
-      id: 'BUG002',
-      tcId: 'TC002',
-      testCase: 'Invalid Login',
-      module: 'Login',
-      screen: 'Login Page',
-      severity: 'Low',
-      status: 'Fixed',
-      failedAt: new Date().toISOString(),
-      fixedAt: new Date().toISOString(),
-      retestAt: '',
-      devNotes: 'Fixed validation logic',
-      retestResult: '',
-      retestCount: 0,
-      escalatedAt: '',
-      escalationReason: '',
-      history: []
-    }
-  ],
-  auditLog: [],
-  tcCounter: 6,
-  bugCounter: 3,
-  connectedUsers: 0
-};
-
-// Initialize counters if they don't exist
-async function initializeCounters() {
-  try {
-    const tcCounter = await Counter.findOne({ name: 'tcCounter' });
-    if (!tcCounter) {
-      await Counter.create({ name: 'tcCounter', value: 6 });
-    }
-
-    const bugCounter = await Counter.findOne({ name: 'bugCounter' });
-    if (!bugCounter) {
-      await Counter.create({ name: 'bugCounter', value: 3 });
-    }
-  } catch (error) {
-    console.error('Error initializing counters:', error);
-  }
-}
-
-initializeCounters();
-
 // Serve static files from current directory
 app.use(express.static(path.join(__dirname)));
 
@@ -274,42 +155,28 @@ async function sendInitialData(socket) {
     ]);
 
     const moduleNames = modules.map(m => m.name);
-    const defaultModules = ['Login', 'Checkout', 'Dashboard', 'Reports'];
+    
 
     const dataStore = {
-      modules: moduleNames.length ? moduleNames : defaultModules,
+      modules: moduleNames,
       testCases: testCases.map(tc => tc.toObject()),
       bugs: bugs.map(bug => bug.toObject()),
       auditLog: auditLogs.map(log => log.toObject()).reverse(),
-      tcCounter: tcCounter ? tcCounter.value : 6,
-      bugCounter: bugCounter ? bugCounter.value : 3,
+      tcCounter: tcCounter ? tcCounter.value : 1,
+      bugCounter: bugCounter ? bugCounter.value : 1,
       connectedUsers: 0
     };
 
     socket.emit('initialData', dataStore);
   } catch (error) {
     console.error('Error sending initial data:', error);
-    // Fallback to in-memory data on any error
-    socket.emit('initialData', { ...fallbackDataStore });
+    socket.emit('error', { message: 'Failed to load data. Please try again.' });
+    socket.disconnect(true);
   }
 }
 
 async function handleTestCaseUpdate(data) {
   try {
-    if (!mongodbConnected) {
-      const index = fallbackDataStore.testCases.findIndex(tc => tc.id === data.id);
-      if (data.deleted) {
-        if (index !== -1) fallbackDataStore.testCases.splice(index, 1);
-        return;
-      }
-      if (index !== -1) {
-        fallbackDataStore.testCases[index] = { ...fallbackDataStore.testCases[index], ...data };
-      } else {
-        fallbackDataStore.testCases.push(data);
-      }
-      return;
-    }
-
     if (data.deleted) {
       await TestCase.deleteOne({ id: data.id });
       return;
@@ -327,20 +194,6 @@ async function handleTestCaseUpdate(data) {
 
 async function handleBugUpdate(data) {
   try {
-    if (!mongodbConnected) {
-      const index = fallbackDataStore.bugs.findIndex(bug => bug.id === data.id);
-      if (data.deleted) {
-        if (index !== -1) fallbackDataStore.bugs.splice(index, 1);
-        return;
-      }
-      if (index !== -1) {
-        fallbackDataStore.bugs[index] = { ...fallbackDataStore.bugs[index], ...data };
-      } else {
-        fallbackDataStore.bugs.push(data);
-      }
-      return;
-    }
-
     if (data.deleted) {
       await Bug.deleteOne({ id: data.id });
       return;
@@ -358,15 +211,6 @@ async function handleBugUpdate(data) {
 
 async function handleAuditUpdate(data) {
   try {
-    if (!mongodbConnected) {
-      // Update fallback data store
-      fallbackDataStore.auditLog.unshift(data);
-      if (fallbackDataStore.auditLog.length > 200) {
-        fallbackDataStore.auditLog = fallbackDataStore.auditLog.slice(0, 200);
-      }
-      return;
-    }
-
     const auditLog = new AuditLog(data);
     await auditLog.save();
 
@@ -385,16 +229,6 @@ async function handleAuditUpdate(data) {
 
 async function handleCounterUpdate(data) {
   try {
-    if (!mongodbConnected) {
-      if (data.tcCounter !== undefined) {
-        fallbackDataStore.tcCounter = data.tcCounter;
-      }
-      if (data.bugCounter !== undefined) {
-        fallbackDataStore.bugCounter = data.bugCounter;
-      }
-      return;
-    }
-
     if (data.tcCounter !== undefined) {
       await Counter.findOneAndUpdate(
         { name: 'tcCounter' },
@@ -416,17 +250,6 @@ async function handleCounterUpdate(data) {
 
 async function handleModuleUpdate(data) {
   try {
-    if (!mongodbConnected) {
-      if (data.deleted) {
-        fallbackDataStore.modules = fallbackDataStore.modules.filter(m => m !== data.name);
-        return;
-      }
-      if (data.name && !fallbackDataStore.modules.includes(data.name)) {
-        fallbackDataStore.modules.push(data.name);
-      }
-      return;
-    }
-
     if (data.deleted) {
       await Module.deleteOne({ name: data.name });
       return;
@@ -443,54 +266,6 @@ async function handleModuleUpdate(data) {
     console.error('Error updating module:', error);
   }
 }
-
-// Initialize default data if database is empty
-async function initializeDefaultData() {
-  try {
-    const testCaseCount = await TestCase.countDocuments();
-    if (testCaseCount === 0) {
-      console.log('📝 Initializing default test cases...');
-      const defaultTestCases = [
-        { id:'TC-001', testCase:'Login with valid credentials', scenario:'Verify login with correct email & password', module:'Login', screen:'Login Page', steps:'1. Open login page\n2. Enter valid email\n3. Enter valid password\n4. Click Login', expected:'User is redirected to dashboard', actual:'User redirected to dashboard', status:'Pass', severity:'Medium', evidence:'', notes:'', createdAt:'2024-04-20', createdBy:'qa', updatedAt:'2024-04-20', history:[] },
-        { id:'TC-002', testCase:'Login with invalid password', scenario:'Verify error shown on wrong password', module:'Login', screen:'Login Page', steps:'1. Open login page\n2. Enter valid email\n3. Enter wrong password\n4. Click Login', expected:'Error message shown', actual:'Error message shown', status:'Pass', severity:'High', evidence:'', notes:'', createdAt:'2024-04-20', createdBy:'qa', updatedAt:'2024-04-20', history:[] },
-        { id:'TC-003', testCase:'Checkout with valid card', scenario:'Complete purchase with valid card details', module:'Checkout', screen:'Payment Screen', steps:'1. Add item to cart\n2. Go to checkout\n3. Enter card details\n4. Click Pay', expected:'Order confirmation shown', actual:'Page crashes on Safari', status:'Fail', severity:'High', evidence:'', notes:'Reproducible on Safari 17', createdAt:'2024-04-21', createdBy:'qa', updatedAt:'2024-04-22', history:[] },
-        { id:'TC-004', testCase:'Apply discount coupon', scenario:'Verify coupon reduces total price', module:'Checkout', screen:'Cart Screen', steps:'1. Add item\n2. Enter coupon SAVE20\n3. Click Apply', expected:'20% discount applied', actual:'Discount applied correctly', status:'Pass', severity:'Low', evidence:'', notes:'', createdAt:'2024-04-21', createdBy:'qa', updatedAt:'2024-04-21', history:[] },
-        { id:'TC-005', testCase:'Export report as CSV', scenario:'Dashboard export CSV button', module:'Reports', screen:'Reports Page', steps:'1. Go to Reports\n2. Select date range\n3. Click Export CSV', expected:'CSV file downloaded', actual:'Button unresponsive', status:'Fail', severity:'Medium', evidence:'', notes:'Button click handler missing', createdAt:'2024-04-22', createdBy:'qa', updatedAt:'2024-04-22', history:[] },
-      ];
-
-      await TestCase.insertMany(defaultTestCases);
-      console.log('✅ Default test cases initialized');
-    }
-
-    const bugCount = await Bug.countDocuments();
-    if (bugCount === 0) {
-      console.log('🐛 Initializing default bugs...');
-      const defaultBugs = [
-        { id:'BUG-001', tcId:'TC-003', testCase:'Checkout with valid card', module:'Checkout', screen:'Payment Screen', severity:'High', status:'Open', failedAt:'2024-04-22', fixedAt:null, retestAt:null, devNotes:'', retestResult:null, retestCount:0, history:[{date:'2024-04-22',event:'Bug created from failed test TC-003',actor:'qa'}] },
-        { id:'BUG-002', tcId:'TC-005', testCase:'Export report as CSV', module:'Reports', screen:'Reports Page', severity:'Medium', status:'Open', failedAt:'2024-04-22', fixedAt:null, retestAt:null, devNotes:'', retestResult:null, retestCount:0, history:[{date:'2024-04-22',event:'Bug created from failed test TC-005',actor:'qa'}] },
-      ];
-
-      await Bug.insertMany(defaultBugs);
-      console.log('✅ Default bugs initialized');
-    }
-
-    const auditCount = await AuditLog.countDocuments();
-    if (auditCount === 0) {
-      console.log('📋 Initializing default audit logs...');
-      const defaultAuditLogs = [
-        { time: '2024-04-22 10:05', event: 'Test TC-003 marked as FAIL → Bug BUG-001 auto-created', actor: 'qa' },
-        { time: '2024-04-22 11:30', event: 'Test TC-005 marked as FAIL → Bug BUG-002 auto-created', actor: 'qa' },
-      ];
-
-      await AuditLog.insertMany(defaultAuditLogs);
-      console.log('✅ Default audit logs initialized');
-    }
-  } catch (error) {
-    console.error('Error initializing default data:', error);
-  }
-}
-
-initializeDefaultData();
 
 
 
