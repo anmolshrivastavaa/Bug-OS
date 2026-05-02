@@ -14,28 +14,21 @@ const io = socketIo(server, {
 });
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/qa_tracker';
-let mongodbConnected = false;
-
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  console.error("❌ MONGODB_URI is not set");
+  process.exit(1);
+}
 mongoose.connect(MONGODB_URI, {
-  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+  serverSelectionTimeoutMS: 5000
 })
 .then(() => {
-  console.log('✅ Connected to MongoDB');
-  mongodbConnected = true;
+  console.log("✅ MongoDB connected");
 })
-.catch(err => {
-  console.error('❌ MongoDB connection failed:', err.message);
-  console.log('');
-  console.log('📋 To fix this:');
-  console.log('1. Install MongoDB: https://www.mongodb.com/try/download/community');
-  console.log('2. Start MongoDB: mongod');
-  console.log('3. Or use MongoDB Atlas: https://www.mongodb.com/atlas');
-  console.log('4. Set MONGODB_URI environment variable');
-  console.log('');
-  console.log('⚠️  Server will run with limited functionality (no data persistence)');
-  console.log('🔄 Real-time sync will work, but data won\'t be saved');
+.catch((err) => {
+  console.error("❌ MongoDB connection failed:", err.message);
 });
+
 
 // Define MongoDB Schemas
 const testCaseSchema = new mongoose.Schema({
