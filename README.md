@@ -1,184 +1,106 @@
-# QA Enterprise Tracker - Real-Time Cloud App with MongoDB
+﻿# Bug OS
 
-A modern, real-time QA test case and bug tracking application with MongoDB backend and cloud deployment capabilities.
+`bugOS` is a QA and bug tracking platform with a compact real-time architecture for test and defect management.
 
-## Features
+## Overview
 
-- **Real-Time Collaboration**: Live updates across all connected users using Socket.IO
-- **MongoDB Backend**: Persistent data storage with MongoDB
-- **Role-Based Access**: QA, Developer, and Admin roles with appropriate permissions
-- **Test Case Management**: Create, edit, import/export test cases with full history tracking
-- **Bug Tracking**: Automated bug creation from failed tests, escalation workflow
-- **Audit Logging**: Complete audit trail of all system activities
-- **Cloud Ready**: Deployable to any cloud platform (Heroku, AWS, Azure, etc.)
-
-## Prerequisites
-
-### MongoDB Setup
-
-You need MongoDB running locally or a cloud MongoDB instance:
-
-#### Option 1: Local MongoDB (Development)
-1. **Install MongoDB Community Edition:**
-   - Download from: https://www.mongodb.com/try/download/community
-   - Follow installation instructions for your OS
-
-2. **Start MongoDB:**
-   ```bash
-   # Windows (PowerShell as Administrator)
-   mongod
-
-   # Or install as service and start:
-   net start MongoDB
-   ```
-
-3. **Default connection:** `mongodb://localhost:27017/qa_tracker`
-
-#### Option 2: MongoDB Atlas (Cloud - Recommended for Production)
-1. Create account at: https://www.mongodb.com/atlas
-2. Create a free cluster
-3. Get connection string: `mongodb+srv://username:password@cluster.mongodb.net/qa_tracker`
-4. Set environment variable: `MONGODB_URI=your_connection_string`
-
-#### Option 3: Docker (Quick Setup)
-```bash
-docker run -d -p 27017:27017 --name mongodb mongo:latest
-```
-
-## Quick Start
-
-### Local Development
-
-1. **Install Dependencies**
-   ```bash
-   npm install
-   ```
-
-2. **Start MongoDB** (if using local)
-   ```bash
-   mongod
-   ```
-
-3. **Start the Server**
-   ```bash
-   npm start
-   ```
-
-4. **Open in Browser**
-   ```
-   http://localhost:3000
-   ```
-
-### Production Deployment
-
-#### Environment Variables
-Set these environment variables for production:
-
-```bash
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/qa_tracker
-PORT=3000
-```
-
-#### Heroku (Recommended for Quick Setup)
-1. Create a Heroku account and install Heroku CLI
-2. Initialize Git repo if not already done:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   ```
-3. Create Heroku app:
-   ```bash
-   heroku create your-app-name
-   ```
-4. Set MongoDB URI:
-   ```bash
-   heroku config:set MONGODB_URI="your_mongodb_connection_string"
-   ```
-5. Deploy:
-   ```bash
-   git push heroku main
-   ```
-6. Access your app at: `https://your-app-name.herokuapp.com`
-
-#### Other Cloud Platforms
-
-**AWS EC2 + MongoDB Atlas:**
-- Deploy EC2 instance
-- Install Node.js
-- Set MONGODB_URI environment variable
-- Run: `npm start`
-
-**Azure App Service:**
-- Create Web App in Azure Portal
-- Set Application Settings: `MONGODB_URI`
-- Deploy via Git or ZIP upload
-
-**Google Cloud Run:**
-```bash
-gcloud run deploy --source . --platform managed --region us-central1 --allow-unauthenticated --set-env-vars MONGODB_URI="your_connection_string"
-```
-
-## Usage
-
-### Login Credentials
-- **QA**: QA / QA@123
-- **DEV**: DEV / DEV@123
-- **ADMIN**: ADMIN / ADMIN@123
-
-### Key Workflows
-
-1. **QA Testing**: Create test cases, mark as Pass/Fail, auto-generate bugs
-2. **Bug Fixing**: Dev marks bugs as fixed, QA retests and verifies
-3. **Escalation**: Dev can escalate frontend bugs to backend team
-4. **Reporting**: Export data as CSV, view audit logs
-
-## Database Schema
-
-### Collections
-- **testcases**: Test case data with history
-- **bugs**: Bug reports with timeline and notes
-- **auditlogs**: System activity logs
-- **counters**: Auto-increment counters for IDs
-
-### Sample Data
-The application automatically initializes with sample test cases and bugs on first run.
+This project is implemented as a single-page application backed by a Node.js/Express server and MongoDB persistence. It tracks test cases, bugs, backend escalations, audit history, and Java automation scripts.
 
 ## Architecture
 
-- **Frontend**: Vanilla JavaScript with modern CSS
-- **Backend**: Node.js + Express + Socket.IO + MongoDB
-- **Database**: MongoDB with Mongoose ODM
-- **Real-Time**: WebSocket connections for live updates
-- **Deployment**: Single-command cloud deployment
+- Frontend: `index.html` with vanilla JavaScript, CSS, client-side state management, and Socket.IO synchronization.
+- Backend: `server.js` runs Express for HTTP serving, Socket.IO for real-time updates, MongoDB persistence, and a Java automation endpoint.
+- Database: MongoDB with Mongoose models for test cases, bugs, modules, audit logs, counters, and automation scripts.
+- Automation: Test case data is injected into generated Java source, compiled using `javac`, and executed with `java` to determine pass/fail outcomes.
 
-## API Endpoints
+## Core Features
 
-- `GET /` - Serve the main application
-- WebSocket events for real-time data sync
+- Live sync across connected clients using Socket.IO
+- Persistent test case and bug tracking in MongoDB
+- Module-based test organization with duplicate test case IDs allowed across modules
+- Bug lifecycle workflow including `Open`, `Escalated`, `Fixed`, `Verified`, and `Retest Failed`
+- Backend escalation board for issues that need deeper investigation
+- Retest queue for QA verification after developer fixes
+- Audit log capture of user actions with a 200-entry retention window
+- Role-aware UI for QA, Developer, and Admin personas
+- Automation script storage tied to specific test case + module pairs
 
-## Development
+## Role Capabilities
 
-### Adding New Features
-1. Update MongoDB schemas in `server.js`
-2. Add Socket.IO event handlers
-3. Update frontend JavaScript
-4. Test with multiple browser tabs
+### QA
 
-### Database Migrations
-- Schema changes are handled automatically by Mongoose
-- Default data is seeded on first run
-- No manual migrations needed
+- Create, edit, and delete test cases
+- Manage modules and organize test coverage
+- Save and run automation scripts for linked test cases
+- Verify fixed bugs through the retest queue
+- Remove outdated bug records when appropriate
 
-## Contributing
+### Developer
 
-1. Fork the repository
-2. Create feature branch
-3. Make changes
-4. Test locally with MongoDB
-5. Submit pull request
+- Review open and retest-failed bug reports
+- Mark bugs as fixed once changes are ready
+- Escalate issues to backend status for deeper investigation
+- Work from the escalation board and add developer notes
 
-## License
+### Admin
 
-MIT License - feel free to use for your QA tracking needs!</content>
-<parameter name="filePath">c:\Users\Anmol Shrivastava\Downloads\bugOS\README.md
+- Monitor system state and audit history
+- Oversee overall QA activity and bug trends
+- Act as a supervision role with visibility across the app
+- Note: current admin capabilities are primarily visibility-focused, not separate CRUD restrictions
+
+## QA Workflow
+
+1. QA creates and updates test cases by module.
+2. Failed or held tests create or update bug records.
+3. Developers review bugs and either fix them or escalate them for backend work.
+4. Fixed bugs enter the retest queue for QA verification.
+5. QA verifies the fix by marking the bug pass or fail.
+6. Escalated bugs are tracked separately until resolved.
+7. All actions generate audit log entries for review.
+
+## Tech Stack
+
+- Node.js
+- Express
+- Socket.IO
+- MongoDB
+- Mongoose
+- HTML/CSS
+- Vanilla JavaScript
+- Java runtime for automation execution
+
+## Repository Structure
+
+- `index.html` — frontend UI, role handling, data views, and live sync client logic
+- `server.js` — backend server, Socket.IO handlers, MongoDB models, and automation endpoint
+- `package.json` — dependencies and application start script
+- `start-mongo.bat` — Windows helper for local MongoDB startup
+
+## Implementation Notes
+
+- Authentication is frontend-only and hardcoded in `index.html`.
+- Test cases are keyed by `id + module` so the same numeric ID can exist in different modules.
+- Audit logs are limited to the newest 200 entries.
+- Java automation depends on `PASS` or `FAIL` being printed by the script.
+- Bug IDs are auto-generated as `BUG-001`, `BUG-002`, etc.
+
+> Note: login is implemented in frontend code only and is intended for demo/testing.
+
+## What This App Is About
+
+`bugOS` is designed to support QA and development teams by tracking test cases, logging defects, and keeping everyone in sync. The app is useful for:
+
+- capturing and updating test case information
+- logging bug reports linked to failed tests
+- escalating issues to backend teams
+- reviewing audit history of changes
+- running simple Java automation scripts against test case data
+
+## Architecture
+
+- Frontend: `index.html` with vanilla JavaScript, CSS, and Socket.IO client
+- Backend: `server.js` with `Express`, `Socket.IO`, and `Mongoose`
+- Database: MongoDB collections for test cases, bugs, modules, counters, audit logs, and automation scripts
+
+
