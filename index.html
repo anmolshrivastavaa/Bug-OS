@@ -41,6 +41,35 @@
   --radius: 6px;
   --radius2: 10px;
 }
+[data-theme='light'] {
+  --bg: #f8fafc;
+  --bg2: #ffffff;
+  --bg3: #f1f5f9;
+  --bg4: #e2e8f0;
+  --border: #d1d5db;
+  --border2: #cbd5e1;
+  --text: #0f172a;
+  --text2: #475569;
+  --text3: #64748b;
+  --accent: #2563eb;
+  --accent2: #1d4ed8;
+  --green: #16a34a;
+  --green-bg: #ecfdf5;
+  --green-border: #a7f3d0;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: #fecaca;
+  --yellow: #ea580c;
+  --yellow-bg: #ffedd5;
+  --yellow-border: #fed7aa;
+  --orange: #f97316;
+  --orange-bg: #fff7ed;
+  --orange-border: #fed7aa;
+  --purple: #7c3aed;
+  --purple-bg: #ede9fe;
+  --purple-border: #ddd6fe;
+  --cyan: #0891b2;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
 .app { display: flex; height: 100vh; overflow: hidden; }
@@ -48,7 +77,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 /* SIDEBAR */
 .sidebar { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
 .sidebar-logo { display: flex; align-items: center; gap: 12px; padding: 20px 16px 16px; border-bottom: 1px solid var(--border); }
-.logo-icon { width: 42px; height: 42px; flex-shrink: 0; border-radius: 14px; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.logo-icon { width: 42px; height: 42px; flex-shrink: 0; border-radius: 14px; background: #000; display: flex; align-items: center; justify-content: center; }
 .logo-icon img { width: 100%; height: 100%; object-fit: contain; }
 .logo-text { min-width: 0; }
 .logo-mark { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
@@ -68,8 +97,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 .sidebar-switch { padding: 12px 8px 16px; border-top: 1px solid var(--border); }
 .switch-label { font-size: 11px; color: var(--text3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; padding: 0 8px; }
 .role-btn { width: 100%; padding: 8px 10px; border-radius: var(--radius); background: var(--bg3); border: 1px solid var(--border); color: var(--text2); cursor: pointer; font-family: var(--font); font-size: 12px; text-align: left; transition: all 0.15s; }
-.role-btn:hover { border-color: var(--border2); color: var(--text); }
-
+  .role-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent2); }
 /* MAIN */
 .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .topbar { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
@@ -92,6 +120,9 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 .btn-success:hover { background: #072a18; }
 .btn-warning { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
 .btn-sm { padding: 4px 10px; font-size: 12px; }
+.theme-btn { padding: 6px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg3); color: var(--text2); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .theme-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent2); }
+.theme-btn.active { background: var(--accent); color: #fff; border-color: transparent; }
 
 /* LOGIN */
 .login-screen { display: flex; align-items: center; justify-content: center; width: 100%; padding: 40px; }
@@ -137,10 +168,10 @@ tr:hover td { background: var(--bg3); }
 .b-fixed { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
 .b-verified { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
 .b-retest-fail { background: var(--orange-bg); color: var(--orange); border-color: var(--orange-border); }
-.b-escalated { background: #1a0a2e; color: #c084fc; border-color: #6b21a8; }
-.b-high { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
-.b-medium { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
-.b-low { background: #0a1a0a; color: #4ade80; border-color: #166534; }
+.b-escalated { background: var(--purple-bg); color: var(--purple); border-color: var(--purple-border); }
+  .b-high { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+  .b-medium { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow-border); }
+  .b-low { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
 
 /* DATE STAMPS */
 .date-col { font-family: var(--mono); font-size: 11px; color: var(--text3); white-space: normal; }
@@ -163,6 +194,7 @@ tr:hover td { background: var(--bg3); }
 .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
 .form-full { grid-column: 1 / -1; }
 .field { display: flex; flex-direction: column; gap: 5px; }
+.form-grid + .field { margin-top: 18px; }
 .field label { font-size: 12px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; }
 .field input, .field select, .field textarea { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); color: var(--text); font-family: var(--font); font-size: 13px; padding: 8px 12px; outline: none; transition: border-color 0.15s; }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
@@ -175,6 +207,10 @@ tr:hover td { background: var(--bg3); }
 .filters { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .filter-select { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text2); font-family: var(--font); font-size: 12px; padding: 5px 10px; cursor: pointer; outline: none; }
 .filter-select:focus { border-color: var(--border2); }
+
+.automation-notice { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); color: #f59e0b; padding: 10px 14px; border-radius: var(--radius); font-size: 12px; margin-top: 12px; }
+.automation-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.automation-output { font-family: var(--mono); font-size: 12px; color: var(--text3); margin-top: 10px; white-space: pre-wrap; width: 100%; min-height: 36px; }
 
 /* AUDIT LOG */
 .audit-row { display: flex; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--border); font-size: 12px; }
@@ -260,6 +296,7 @@ tr:hover td { background: var(--bg3); }
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 // ─────────────────────────── STATE ───────────────────────────
 const LOGIN_USERS = {
@@ -271,7 +308,27 @@ const LOGIN_USERS = {
 // Socket.IO connection
 const socket = io();
 
+/** Business key fields for test cases: same TC number must be allowed across different modules. */
+function normalizeTcRowId(v) {
+  return v === undefined || v === null ? '' : String(v).trim();
+}
+function normalizeTcModule(v) {
+  return v === undefined || v === null ? '' : String(v).trim();
+}
+function normalizeStatus(v) {
+  return v === undefined || v === null ? '' : String(v).trim().toLowerCase();
+}
+function testcaseKeysMatch(tc, data) {
+  return normalizeTcRowId(tc.id) === normalizeTcRowId(data.id)
+    && normalizeTcModule(tc.module) === normalizeTcModule(data.module);
+}
+function bugRefsTestCaseKeys(bug, tcId, module) {
+  return normalizeTcRowId(bug.tcId) === normalizeTcRowId(tcId)
+    && normalizeTcModule(bug.module) === normalizeTcModule(module);
+}
+
 let initialDataReceived = false;
+let currentTheme = localStorage.getItem('theme') || 'dark';
 let S = {
   auth: { loggedIn: false, user: null },
   role: null,
@@ -281,8 +338,21 @@ let S = {
   bugs: [],
   auditLog: [],
   tcCounter: 0,
-  bugCounter: 0
+  bugCounter: 0,
+  automationScripts: [],
+  selectedAutomationModule: '',
+  selectedAutomationTc: ''
 };
+function applyTheme() {
+  document.documentElement.dataset.theme = currentTheme;
+  localStorage.setItem('theme', currentTheme);
+}
+function toggleTheme() {
+  currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  applyTheme();
+  render();
+}
+applyTheme();
 
 // Socket.IO event handlers
 socket.on('initialData', (serverData) => {
@@ -291,11 +361,16 @@ socket.on('initialData', (serverData) => {
     role: S.role,
     view: S.view,
     modules: serverData.modules || [],
-    testCases: serverData.testCases || [],
+    testCases: (serverData.testCases || []).map(tc => ({
+      ...tc,
+      id: normalizeTcRowId(tc.id),
+      module: normalizeTcModule(tc.module)
+    })),
     bugs: serverData.bugs || [],
     auditLog: serverData.auditLog || [],
     tcCounter: typeof serverData.tcCounter === 'number' ? serverData.tcCounter : 0,
-    bugCounter: typeof serverData.bugCounter === 'number' ? serverData.bugCounter : 0
+    bugCounter: typeof serverData.bugCounter === 'number' ? serverData.bugCounter : 0,
+    automationScripts: serverData.automationScripts || []
   };
   initialDataReceived = true;
   render();
@@ -304,18 +379,26 @@ socket.on('initialData', (serverData) => {
 socket.on('dataUpdate', (update) => {
   if (update.type === 'testCase') {
     if (update.data.deleted) {
-      if (update.data.module) {
-        S.testCases = S.testCases.filter(tc => !(tc.id === update.data.id && tc.module === update.data.module));
-      } else {
-        // Backward compatibility for old payloads that only sent ID
-        S.testCases = S.testCases.filter(tc => tc.id !== update.data.id);
+      const delId = normalizeTcRowId(update.data.id);
+      const delMod = normalizeTcModule(update.data.module);
+      if (delId && delMod) {
+        S.testCases = S.testCases.filter(tc =>
+          !(normalizeTcRowId(tc.id) === delId && normalizeTcModule(tc.module) === delMod)
+        );
       }
+      // Never delete-by-id-only: different modules reuse the same TC numbers on purpose.
     } else {
-      const index = S.testCases.findIndex(tc => tc.id === update.data.id && tc.module === update.data.module);
-      if (index !== -1) {
-        S.testCases[index] = { ...S.testCases[index], ...update.data };
-      } else {
-        S.testCases.push(update.data);
+      const { _id, __v, ...payload } = update.data || {};
+      const pid = normalizeTcRowId(payload.id);
+      const pm = normalizeTcModule(payload.module);
+      if (pid && pm) {
+        const normalizedPayload = { ...payload, id: pid, module: pm };
+        const index = S.testCases.findIndex(tc => testcaseKeysMatch(tc, normalizedPayload));
+        if (index !== -1) {
+          S.testCases[index] = { ...S.testCases[index], ...normalizedPayload };
+        } else {
+          S.testCases.push(normalizedPayload);
+        }
       }
     }
   } else if (update.type === 'bug') {
@@ -343,6 +426,17 @@ socket.on('dataUpdate', (update) => {
     } else if (update.data.name && !S.modules.includes(update.data.name)) {
       S.modules.push(update.data.name);
     }
+  } else if (update.type === 'automationScript') {
+    if (update.data.deleted) {
+      S.automationScripts = S.automationScripts.filter(s => !(s.testCaseId === update.data.testCaseId && s.module === update.data.module));
+    } else {
+      const index = S.automationScripts.findIndex(s => s.testCaseId === update.data.testCaseId && s.module === update.data.module);
+      if (index !== -1) {
+        S.automationScripts[index] = { ...S.automationScripts[index], ...update.data };
+      } else {
+        S.automationScripts.push(update.data);
+      }
+    }
   }
   render();
 });
@@ -350,6 +444,17 @@ socket.on('dataUpdate', (update) => {
 socket.on('error', (err) => {
   console.error('Server error:', err);
   toast((err && err.message) || 'Server connection error', 'error');
+});
+
+let _persistErrNotifiedAt = 0;
+socket.on('persistError', (err) => {
+  console.error('Persist error:', err);
+  const msg = err && err.message ? err.message : 'Could not save to database';
+  const now = Date.now();
+  if (now - _persistErrNotifiedAt > 3000) {
+    _persistErrNotifiedAt = now;
+    toast(msg, 'error');
+  }
 });
 
 socket.on('disconnect', () => {
@@ -501,9 +606,9 @@ function buildLogin() {
 }
 
 function buildApp() {
-  const openBugs       = S.bugs.filter(b => b.status === 'Open' || b.status === 'Retest Failed').length;
-  const escalatedCount = S.bugs.filter(b => b.status === 'Escalated').length;
-  const retestPending  = S.bugs.filter(b => b.status === 'Fixed').length;
+  const openBugs       = S.bugs.filter(b => normalizeStatus(b.status) === 'open').length;
+  const escalatedCount = S.bugs.filter(b => normalizeStatus(b.status) === 'escalated').length;
+  const retestPending  = S.bugs.filter(b => normalizeStatus(b.status) === 'fixed').length;
   return `
   <div class="sidebar">
     <div class="sidebar-logo">
@@ -552,18 +657,21 @@ function buildTopbar() {
   const titles = {dashboard:'Dashboard',testcases:'Test Cases',bugs:'Bug Reports',retest:'Retest Queue',escalations:'Backend Escalations',automation:'Automation',modules:'Modules',audit:'Audit Log',report:'Reports'};
   let actions = '';
   if (S.view === 'testcases' && S.role === 'qa') {
-    actions = `<button class="btn btn-ghost btn-sm" onclick="openImportCSV()">↑ Import / Upload</button><button class="btn btn-primary" onclick="openAddTC()">+ Add Test Case</button>`;
+    actions = `<button class="btn btn-ghost btn-sm" onclick="openImportCSV()">↑ Import Test Cases</button><button class="btn btn-ghost btn-sm" onclick="openAddTC()">+ Add Test Case</button>`;
   }
   if (S.view === 'modules' && S.role === 'qa') {
-    actions = `<button class="btn btn-primary" onclick="openAddModule()">+ Add Module</button>`;
+    actions = `<button class="btn btn-ghost btn-sm" onclick="openAddModule()">+ Add Module</button>`;
   }
   return `<div class="topbar">
     <div class="topbar-left">
       <div class="page-title">${titles[S.view]||'Dashboard'}</div>
     </div>
     <div class="topbar-right">
+      <div class="topbar-actions">
+        ${actions}
+        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">${currentTheme==='dark' ? '🔆' : '⏾'}</button>
+      </div>
       <div class="page-sub">${nowFull()}</div>
-      <div class="topbar-actions">${actions}</div>
     </div>
   </div>`;
 }
@@ -591,7 +699,7 @@ function buildEscalations() {
   if (escSevF) bugs = bugs.filter(b => b.severity === escSevF);
   if (escQ) {
     bugs = bugs.filter(b => {
-      const linkedTc = S.testCases.find(t => t.id === b.tcId && t.module === b.module);
+      const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
       return [
         b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity,
         b.escalationReason, b.devNotes, linkedTc?.scenario, linkedTc?.steps, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes
@@ -601,7 +709,7 @@ function buildEscalations() {
   const modOpts = S.modules.map(m => `<option value="${m}"${escModF===m?' selected':''}>${m}</option>`).join('');
   const isDev = S.role === 'dev';
   const rows = bugs.map(b => {
-    const linkedTc = S.testCases.find(t => t.id === b.tcId && t.module === b.module);
+    const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
     let actions = `<button class="btn btn-ghost btn-sm" onclick="viewBug('${b.id}')">View Details</button>`;
     if (isDev) actions += ` <button class="btn btn-success btn-sm" data-id="${b.id}" onclick="markFixed(this.dataset.id)">Mark Fixed</button>`;
     return `<tr>
@@ -682,7 +790,7 @@ function buildDashboard() {
   const fail = tData.filter(t=>t.status==='Fail').length;
   const hold = tData.filter(t=>t.status==='Hold').length;
   const openBugs = bData.filter(b=>b.status==='Open').length;
-  const fixedBugs = bData.filter(b=>b.status==='Verified').length;
+  const escalatedBugs = bData.filter(b=>b.status==='Escalated').length;
   const pct = total ? Math.round(pass/total*100) : 0;
   const modList = dashModF ? [dashModF] : S.modules;
   const modOpts = S.modules.map(m => `<option value="${m}"${dashModF===m?' selected':''}>${m}</option>`).join('');
@@ -738,8 +846,6 @@ function buildDashboard() {
           <option${dashBugStF==='Open'?' selected':''}>Open</option>
           <option${dashBugStF==='Escalated'?' selected':''}>Escalated</option>
           <option${dashBugStF==='Fixed'?' selected':''}>Fixed</option>
-          <option${dashBugStF==='Verified'?' selected':''}>Verified</option>
-          <option${dashBugStF==='Retest Failed'?' selected':''}>Retest Failed</option>
         </select>
         <input class="filter-select" id="dashQ" placeholder="Search dashboard..." value="${dashQ.replace(/"/g,'&quot;')}" oninput="liveFilter(this)">
       </div>
@@ -751,7 +857,7 @@ function buildDashboard() {
     <div class="stat"><div class="stat-val" style="color:var(--red)">${fail}</div><div class="stat-lbl">Failed</div><div class="stat-sub">In bug queue</div></div>
     <div class="stat"><div class="stat-val" style="color:var(--yellow)">${hold}</div><div class="stat-lbl">Hold/Pending</div><div class="stat-sub">In bug queue</div></div>
     <div class="stat"><div class="stat-val" style="color:var(--yellow)">${openBugs}</div><div class="stat-lbl">Open Bugs</div><div class="stat-sub">Needs fix</div></div>
-    <div class="stat"><div class="stat-val" style="color:var(--green)">${fixedBugs}</div><div class="stat-lbl">Verified</div><div class="stat-sub">All clear</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--orange)">${escalatedBugs}</div><div class="stat-lbl">Escalated</div><div class="stat-sub">Needs attention</div></div>
   </div>
   <div class="section">
     <div class="section-hdr"><div class="section-title">Module Health</div></div>
@@ -863,12 +969,13 @@ function buildBugs() {
   const bugQ    = (document.getElementById('bugQ')   ||{value:''}).value.trim().toLowerCase();
 
   let data = [...S.bugs];
+  data = data.filter(b => b.status !== 'Verified');
   if (bugModF) data = data.filter(b => b.module   === bugModF);
   if (bugStF)  data = data.filter(b => b.status   === bugStF);
   if (bugSevF) data = data.filter(b => b.severity === bugSevF);
   if (bugQ) {
     data = data.filter(b => {
-      const linkedTc = S.testCases.find(t => t.id === b.tcId && t.module === b.module);
+      const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
       return [
         b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity, b.devNotes, b.escalationReason,
         linkedTc?.scenario, linkedTc?.steps, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes, linkedTc?.evidence
@@ -881,11 +988,11 @@ function buildBugs() {
   const rows = data.map(b => {
     const isQA  = S.role === 'qa';
     const isDev = S.role === 'dev';
-    const linkedTc = S.testCases.find(t => t.id === b.tcId && t.module === b.module);
+    const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
     let actions = `<button class="btn btn-ghost btn-sm" onclick="viewBug('${b.id}')">View</button>`;
     if (isDev && (b.status === 'Open' || b.status === 'Retest Failed')) {
       actions += ` <button class="btn btn-success btn-sm" data-id="${b.id}" onclick="markFixed(this.dataset.id)">Mark Fixed</button>`;
-      actions += ` <button class="btn btn-sm" style="background:#1a0a2e;color:#c084fc;border:1px solid #6b21a8;" data-id="${b.id}" onclick="escalateBug(this.dataset.id)">⬆ Escalate</button>`;
+      actions += ` <button class="btn btn-sm" style="background:#1a0a2e;color:#c084fc;border:1px solid #6b21a8;" data-id="${b.id}" onclick="escalateBug(this.dataset.id)">Escalate</button>`;
     }
     if (isDev && b.status === 'Escalated') {
       actions += ` <button class="btn btn-success btn-sm" data-id="${b.id}" onclick="markFixed(this.dataset.id)">Mark Fixed</button>`;
@@ -923,8 +1030,6 @@ function buildBugs() {
           <option${bugStF==='Open'         ?' selected':''}>Open</option>
           <option${bugStF==='Escalated'    ?' selected':''}>Escalated</option>
           <option${bugStF==='Fixed'        ?' selected':''}>Fixed</option>
-          <option${bugStF==='Verified'     ?' selected':''}>Verified</option>
-          <option${bugStF==='Retest Failed'?' selected':''}>Retest Failed</option>
         </select>
         <select class="filter-select" id="bugSevF" onchange="render()">
           <option value="">All Severity</option>
@@ -947,12 +1052,12 @@ function buildRetest() {
   const rtModF = (document.getElementById('rtModF') || { value: '' }).value;
   const rtSevF = (document.getElementById('rtSevF') || { value: '' }).value;
   const rtQ = (document.getElementById('rtQ') || { value: '' }).value.trim().toLowerCase();
-  let bugs = S.bugs.filter(b => b.status === 'Fixed');
+  let bugs = S.bugs.filter(b => normalizeStatus(b.status) === 'fixed');
   if (rtModF) bugs = bugs.filter(b => b.module === rtModF);
   if (rtSevF) bugs = bugs.filter(b => b.severity === rtSevF);
   if (rtQ) {
     bugs = bugs.filter(b => {
-      const linkedTc = S.testCases.find(t => t.id === b.tcId && t.module === b.module);
+      const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
       return [
         b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity, b.devNotes,
         linkedTc?.scenario, linkedTc?.steps, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes, linkedTc?.evidence
@@ -961,7 +1066,7 @@ function buildRetest() {
   }
   const rtModOpts = S.modules.map(m => `<option value="${m}"${rtModF===m?' selected':''}>${m}</option>`).join('');
   const rows = bugs.map(b => {
-    const linkedTc = S.testCases.find(t => t.id === b.tcId && t.module === b.module);
+    const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
     return `<tr>
       <td class="td-id">${b.id}</td>
       <td class="td-id">${b.tcId}</td>
@@ -1016,12 +1121,139 @@ function buildRetest() {
 
 // ─────────────────────────── AUTOMATION ───────────────────────────
 function buildAutomation() {
+  const moduleOptions = S.modules.map(mod => `<option value="${mod}"${S.selectedAutomationModule === mod ? ' selected' : ''}>${mod}</option>`).join('');
+  const testCaseOptions = S.selectedAutomationModule ? S.testCases.filter(tc => tc.module === S.selectedAutomationModule).map(tc => {
+    const tcId = String(tc.id);
+    const shortDesc = tc.testCase.length > 50 ? tc.testCase.substring(0, 50) + '...' : tc.testCase;
+    return `<option value="${tcId}"${S.selectedAutomationTc === tcId ? ' selected' : ''}>${tcId}: ${shortDesc} (${tc.status})</option>`;
+  }).join('') : '';
   return `
-  <div class="empty" style="padding: 120px 48px;">
-    <div class="empty-icon" style="font-size: 64px; opacity: 0.6; margin-bottom: 16px;">⚙</div>
-    <div style="font-size: 24px; font-weight: 600; color: var(--text); margin-bottom: 12px;">Coming Soon</div>
-    <div style="font-size: 14px; color: var(--text2); max-width: 400px; margin: 0 auto; line-height: 1.6;">Automation features are currently under development. Check back soon for updates on automated testing capabilities.</div>
+  <div class="section">
+    <div class="section-hdr">
+      <div>
+        <div class="section-title">Test Case Automation</div>
+        <div class="automation-notice">⚙ Coming Soon - Automation features are currently under development. Check back soon for updates on automated testing capabilities.</div>
+      </div>
+    </div>
+    <div style="padding: 20px;">
+      <div class="form-grid">
+        <div class="field">
+          <label>Select Module</label>
+          <select id="auto-module-select" onchange="updateTestCaseOptions()">
+            <option value="">Choose a module...</option>
+            ${moduleOptions}
+          </select>
+        </div>
+        <div class="field">
+          <label>Select Test Case</label>
+          <select id="auto-tc-select" onchange="loadTestCaseScript()">
+            <option value="">Choose a test case...</option>
+            ${testCaseOptions}
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Automation Script (Java)</label>
+        <textarea id="auto-script" rows="15" placeholder="Write your Java automation script here. Access test case data via variables like id, testCaseName, expected, actual, etc.
+// Example:
+// if (expected.equals(actual)) {
+//     System.out.println("PASS");
+// } else {
+//     System.out.println("FAIL");
+// }" ${S.role === 'qa' ? '' : 'readonly'}></textarea>
+      </div>
+      <div class="automation-actions">
+        <button class="btn btn-primary" onclick="runAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>Run Script</button>
+        <button class="btn btn-success" onclick="saveAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>Save Script</button>
+        <button class="btn btn-ghost" onclick="clearAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>Clear</button>
+      </div>
+      <div id="script-output" class="automation-output"></div>
+    </div>
   </div>`;
+}
+
+function updateTestCaseOptions() {
+  const moduleSelect = document.getElementById('auto-module-select');
+  S.selectedAutomationModule = moduleSelect.value;
+  S.selectedAutomationTc = ''; // Reset test case selection
+  render();
+}
+
+function loadTestCaseScript() {
+  const tcSelect = document.getElementById('auto-tc-select');
+  S.selectedAutomationTc = tcSelect.value;
+  const scriptArea = document.getElementById('auto-script');
+  if (!S.selectedAutomationModule || !S.selectedAutomationTc) {
+    scriptArea.value = '';
+    return;
+  }
+  const script = S.automationScripts.find(s => s.testCaseId === S.selectedAutomationTc && s.module === S.selectedAutomationModule);
+  scriptArea.value = script ? script.script : '';
+}
+
+function clearAutomationScript() {
+  document.getElementById('auto-script').value = '';
+  document.getElementById('script-output').textContent = '';
+}
+
+function saveAutomationScript() {
+  const script = document.getElementById('auto-script').value.trim();
+  if (!S.selectedAutomationModule || !S.selectedAutomationTc) {
+    toast('Please select module and test case first', 'error');
+    return;
+  }
+  if (!script) {
+    toast('Please enter a script', 'error');
+    return;
+  }
+  const scriptData = {
+    testCaseId: S.selectedAutomationTc,
+    module: S.selectedAutomationModule,
+    script,
+    updatedAt: now(),
+    updatedBy: S.auth.user
+  };
+  const existingIndex = S.automationScripts.findIndex(s => s.testCaseId === scriptData.testCaseId && s.module === scriptData.module);
+  if (existingIndex !== -1) {
+    S.automationScripts[existingIndex] = scriptData;
+  } else {
+    S.automationScripts.push(scriptData);
+  }
+  render();
+  socket.emit('updateData', { type: 'automationScript', data: scriptData });
+  toast('Script saved', 'success');
+}
+
+async function runAutomationScript() {
+  const script = document.getElementById('auto-script').value.trim();
+  const output = document.getElementById('script-output');
+
+  if (!S.selectedAutomationModule || !S.selectedAutomationTc) {
+    toast('Please select module and test case first', 'error');
+    return;
+  }
+
+  if (!script) {
+    toast('Please enter a script', 'error');
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/run-automation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ testCaseId: S.selectedAutomationTc, module: S.selectedAutomationModule, script })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || 'Execution failed');
+    }
+    output.textContent = `Result: ${result.result} | Output: ${result.output}`;
+    toast(`Test case updated to ${result.result}`, 'success');
+  } catch (error) {
+    output.textContent = `Error: ${error.message}`;
+    toast('Script execution failed', 'error');
+  }
 }
 
 // ─────────────────────────── MODULES ───────────────────────────
@@ -1083,8 +1315,7 @@ function buildReport() {
   const fail = S.testCases.filter(t=>t.status==='Fail').length;
   const totalBugs = S.bugs.length;
   const openBugs = S.bugs.filter(b=>b.status==='Open').length;
-  const fixedBugs = S.bugs.filter(b=>b.status==='Verified').length;
-  const retestFails = S.bugs.filter(b=>b.status==='Retest Failed').length;
+  const escalatedBugs = S.bugs.filter(b=>b.status==='Escalated').length;
   const pct = total ? Math.round(pass/total*100) : 0;
 
   const modRows = S.modules.map(mod => {
@@ -1109,13 +1340,12 @@ function buildReport() {
     <div class="stat"><div class="stat-val">${pct}%</div><div class="stat-lbl">Pass Rate</div></div>
     <div class="stat"><div class="stat-val" style="color:var(--green)">${pass}/${total}</div><div class="stat-lbl">Tests Passed</div></div>
     <div class="stat"><div class="stat-val" style="color:var(--red)">${openBugs}</div><div class="stat-lbl">Open Bugs</div></div>
-    <div class="stat"><div class="stat-val" style="color:var(--green)">${fixedBugs}</div><div class="stat-lbl">Verified Fixed</div></div>
-    <div class="stat"><div class="stat-val" style="color:var(--orange)">${retestFails}</div><div class="stat-lbl">Retest Failed</div></div>
+    <div class="stat"><div class="stat-val" style="color:var(--orange)">${escalatedBugs}</div><div class="stat-lbl">Escalated</div></div>
   </div>
   <div class="section">
     <div class="section-hdr">
       <div class="section-title">Module Breakdown</div>
-      ${S.role !== 'admin' ? `<button class="btn btn-ghost btn-sm" onclick="exportCSV()">Export CSV</button>` : ''}
+      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">Export CSV</button>
     </div>
     <div class="tbl-wrap"><table>
       <thead><tr><th>Module</th><th>Total Tests</th><th>Pass</th><th>Fail</th><th>Total Bugs</th><th>Open Bugs</th><th>High Severity</th></tr></thead>
@@ -1219,7 +1449,7 @@ function openAddTC() {
   <div class="form-grid">
     <div class="field">
       <label>Test Case ID <span class="required">*</span></label>
-      <input id="f-id" placeholder="Enter test case ID (manual)">
+      <input id="f-id" placeholder="Enter test case ID">
     </div>
     <div class="field">
       <label>Module <span class="required">*</span></label>
@@ -1271,9 +1501,9 @@ function openAddTC() {
 }
 
 function submitTC() {
-  const id = document.getElementById('f-id').value.trim();
+  const id = normalizeTcRowId(document.getElementById('f-id').value);
   const tc = document.getElementById('f-tc').value.trim();
-  const mod = document.getElementById('f-mod').value;
+  const mod = normalizeTcModule(document.getElementById('f-mod').value);
   const actual = document.getElementById('f-actual').value.trim();
   const expected = document.getElementById('f-expected').value.trim();
   const status = document.getElementById('f-status').value;
@@ -1282,7 +1512,7 @@ function submitTC() {
   if (!id || !tc || !mod || !actual || !expected || !steps) {
     toast('Please fill all required fields', 'error'); return;
   }
-  if (S.testCases.find(t => t.id === id && t.module === mod)) {
+  if (S.testCases.find(t => testcaseKeysMatch(t, { id, module: mod }))) {
     toast(`Test Case ID "${id}" already exists in module "${mod}"`, 'error'); return;
   }
 
@@ -1315,8 +1545,16 @@ function submitTC() {
   toast(`Test case ${id} added successfully`, 'success');
 }
 
+function generateUniqueBugId() {
+  let bugId;
+  do {
+    bugId = `BUG-${String(S.bugCounter++).padStart(3,'0')}`;
+  } while (S.bugs.some(b => b.id === bugId));
+  return bugId;
+}
+
 function autoCreateBug(tc) {
-  const bugId = `BUG-${String(S.bugCounter++).padStart(3,'0')}`;
+  const bugId = generateUniqueBugId();
   const bug = {
     id: bugId, tcId: tc.id, testCase: tc.testCase, module: tc.module,
     screen: tc.screen, severity: tc.severity, status: 'Open',
@@ -1335,9 +1573,9 @@ function autoCreateBug(tc) {
 }
 
 function viewTC(id, module) {
-  const tc = S.testCases.find(t => t.id === id && t.module === module);
+  const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module }));
   if (!tc) return;
-  const linkedBug = S.bugs.find(b => b.tcId === id && b.module === tc.module);
+  const linkedBug = S.bugs.find(b => bugRefsTestCaseKeys(b, id, tc.module));
   showModal(`Test Case: ${tc.id}`, `
   <div class="detail-section">
     <h4>Test Case Details</h4>
@@ -1441,7 +1679,7 @@ function retestPass(bugId) {
   if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
   const b = S.bugs.find(x=>x.id===bugId);
   if (!b) return;
-  const tc = S.testCases.find(t => t.id === b.tcId && t.module === b.module);
+  const tc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
   openConfirm('Confirm Retest Pass',
     `Mark bug ${bugId} as PASSED?\n\nTest case "${b.testCase}" will be updated to PASS status and returned to Test Cases.`,
     () => {
@@ -1475,13 +1713,13 @@ function retestFail(bugId) {
   if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
   const b = S.bugs.find(x=>x.id===bugId);
   if (!b) return;
-  b.status = 'Retest Failed';
+  b.status = 'Open';
   b.retestAt = now();
   b.retestCount++;
   b.retestResult = 'Fail';
   b.fixedAt = null;
   b.history.push({ date: now(), event: `Retest FAILED by QA — bug re-opened (Retest #${b.retestCount})`, actor: 'qa' });
-  const tc = S.testCases.find(t => t.id === b.tcId && t.module === b.module);
+  const tc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
   if (tc) {
     tc.status = 'Fail';
     tc.updatedAt = now();
@@ -1500,16 +1738,16 @@ function retestFail(bugId) {
 
 function deleteTC(id, module) {
   if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
-  const tc = S.testCases.find(t => t.id === id && t.module === module);
+  const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module }));
   if (!tc) return;
   openConfirm('Permanently Delete Test Case',
     `Delete "${tc.testCase}" (${id})?\n\nThis will also remove any linked bugs and CANNOT be undone. The record will be completely removed from the system.`,
     () => {
-      const deletedBugIds = S.bugs.filter(b => b.tcId === id && b.module === module).map(b => b.id);
-      S.bugs = S.bugs.filter(b => !(b.tcId === id && b.module === module));
-      S.testCases = S.testCases.filter(t => !(t.id === id && t.module === module));
+      const deletedBugIds = S.bugs.filter(b => bugRefsTestCaseKeys(b, id, module)).map(b => b.id);
+      S.bugs = S.bugs.filter(b => !bugRefsTestCaseKeys(b, id, module));
+      S.testCases = S.testCases.filter(t => !testcaseKeysMatch(t, { id, module }));
       audit(`Test case ${id} "${tc.testCase}" permanently deleted by QA along with linked bugs`, 'qa');
-      socket.emit('updateData', { type: 'testCase', data: { id, module, deleted: true } });
+      socket.emit('updateData', { type: 'testCase', data: { id: normalizeTcRowId(id), module: normalizeTcModule(module), deleted: true } });
       deletedBugIds.forEach(bugId => {
         socket.emit('updateData', { type: 'bug', data: { id: bugId, deleted: true } });
       });
@@ -1591,7 +1829,7 @@ function exportCSV() {
 // ─────────────────────────── EDIT TEST CASE ───────────────────────────
 function openEditTC(id, module) {
   if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
-  const tc = S.testCases.find(t => t.id === id && t.module === module);
+  const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module }));
   if (!tc) return;
   const evidenceInputValue = /^data:image\//i.test(tc.evidence || '') ? '' : (tc.evidence || '');
   const mods = S.modules.map(m => `<option${m===tc.module?' selected':''}>${m}</option>`).join('');
@@ -1668,10 +1906,10 @@ function openEditTC(id, module) {
 }
 
 function submitEditTC() {
-  const id       = (document.getElementById('e-tcid')||{value:''}).value;
-  const oldMod   = (document.getElementById('e-tcmodold')||{value:''}).value;
+  const id       = normalizeTcRowId((document.getElementById('e-tcid')||{value:''}).value);
+  const oldMod   = normalizeTcModule((document.getElementById('e-tcmodold')||{value:''}).value);
   const title    = (document.getElementById('e-tc')||{value:''}).value.trim();
-  const mod      = (document.getElementById('e-mod')||{value:''}).value;
+  const mod      = normalizeTcModule((document.getElementById('e-mod')||{value:''}).value);
   const steps    = (document.getElementById('e-steps')||{value:''}).value.trim();
   const expected = (document.getElementById('e-expected')||{value:''}).value.trim();
   const actual   = (document.getElementById('e-actual')||{value:''}).value.trim();
@@ -1680,9 +1918,9 @@ function submitEditTC() {
   if (!title || !mod || !steps || !expected || !actual) {
     toast('Please fill all required fields', 'error'); return;
   }
-  const tc = S.testCases.find(t => t.id === id && t.module === oldMod);
+  const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module: oldMod }));
   if (!tc) { toast('Test case not found', 'error'); return; }
-  if ((oldMod !== mod) && S.testCases.find(t => t !== tc && t.id === id && t.module === mod)) {
+  if ((oldMod !== mod) && S.testCases.find(t => t !== tc && testcaseKeysMatch(t, { id, module: mod }))) {
     toast(`Test Case ID "${id}" already exists in module "${mod}"`, 'error'); return;
   }
 
@@ -1710,7 +1948,7 @@ function submitEditTC() {
   // Keep linked bug module aligned when test case module changes
   if (prevModule !== mod) {
     S.bugs
-      .filter(b => b.tcId === id && b.module === prevModule)
+      .filter(b => bugRefsTestCaseKeys(b, id, prevModule))
       .forEach(b => {
         b.module = mod;
         b.history = b.history || [];
@@ -1727,7 +1965,8 @@ function submitEditTC() {
   }
   // If changed to Pass, close any open linked bug
   if (!isActive && wasActive) {
-    const linked = S.bugs.find(b => b.tcId === id && b.module === mod && (b.status === 'Open' || b.status === 'Retest Failed'));
+    const linked = S.bugs.find(b =>
+      bugRefsTestCaseKeys(b, id, tc.module) && (b.status === 'Open' || b.status === 'Retest Failed'));
     if (linked) {
       linked.status = 'Verified';
       linked.history.push({ date: now(), event: `Bug auto-closed — test case changed to ${status}`, actor: 'qa' });
@@ -1786,6 +2025,17 @@ function escalateBug(bugId) {
 }
 
 // ─────────────────────────── DOWNLOAD TEST CASES CSV ───────────────────────────
+function downloadImportTemplate() {
+  const headers = 'Test Case ID,Test Case,Scenario,Module Name,Screen Name,Test Step,Test Data,Expected Results,Actual Results,Status,Severity,Evidence,Notes';
+  const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page\n2. Enter credentials\n3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,';
+  const csv = headers + '\n' + example;
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'bugos-test-case-template.csv';
+  a.click();
+  toast('Template downloaded — fill it in and import', 'success');
+}
+
 function downloadTestCasesCSV() {
   const dlMod = (document.getElementById('tcDlMod')||{value:''}).value;
   const dlSt  = (document.getElementById('tcDlSt') ||{value:''}).value;
@@ -1820,19 +2070,19 @@ function openImportCSV() {
     <label>Import To Module <span class="required">*</span></label>
     <select id="imp-module" onchange="setImportModule(this.value)">${moduleOptions}</select>
     <div style="margin-top:6px;font-size:12px;color:var(--text3);">
-      All imported test cases in this file will be linked to the selected module.
+      Used when a row has no <strong>Module Name</strong> column value. Rows can reuse Test Case IDs in different modules (e.g. 1–50 in Module&nbsp;A and 1–30 in Module&nbsp;B) — uniqueness is enforced per&nbsp;module.
     </div>
   </div>
   <div style="padding:12px 16px;background:var(--bg3);border-radius:var(--radius);margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.9;">
-    <div style="font-weight:600;color:var(--text);margin-bottom:6px;">How to import from Excel / CSV:</div>
-    <div style="color:var(--text3);margin-bottom:8px;">1. Choose a CSV, XLSX, or XLS export from your Excel file.</div>
-    <div style="font-weight:500;color:var(--text);margin-bottom:4px;">Expected column headers (first row):</div>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--bg4);padding:8px;border-radius:4px;line-height:2;">
-      Test Case ID &nbsp;·&nbsp; Test Case &nbsp;·&nbsp; Scenario &nbsp;·&nbsp; Screen Name &nbsp;·&nbsp; Test Steps &nbsp;·&nbsp; Expected Results &nbsp;·&nbsp; Actual Results &nbsp;·&nbsp; Status &nbsp;·&nbsp; Severity &nbsp;·&nbsp; Evidence &nbsp;·&nbsp; Notes
+   <div style="font-weight:600;color:var(--text);margin-bottom:6px;">How to import:</div>
+    <div style="color:var(--text3);margin-bottom:10px;">Download the template, fill in your data, save as CSV or Excel, then upload below.</div>
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:12px;" onclick="downloadImportTemplate()">↓ Download Template</button>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--bg4);padding:8px;border-radius:4px;line-height:2;margin-bottom:8px;">
+      Test Case ID &nbsp;·&nbsp; Test Case &nbsp;·&nbsp; Scenario &nbsp;·&nbsp; Module Name &nbsp;·&nbsp; Screen Name &nbsp;·&nbsp; Test Step &nbsp;·&nbsp; Test Data &nbsp;·&nbsp; Expected Results &nbsp;·&nbsp; Actual Results &nbsp;·&nbsp; Status &nbsp;·&nbsp; Severity &nbsp;·&nbsp; Evidence &nbsp;·&nbsp; Notes
     </div>
-    <div style="margin-top:8px;color:var(--text3);">
-      Status must be: <span style="color:var(--green)">Pass</span> / <span style="color:var(--red)">Fail</span> / <span style="color:var(--yellow)">Hold</span> &nbsp;&nbsp; 
-      Severity must be: <span style="color:var(--red)">High</span> / <span style="color:var(--yellow)">Medium</span> / <span style="color:var(--green)">Low</span>
+    <div style="color:var(--text3);font-size:11px;">
+      Status: <span style="color:var(--green)">Pass</span> / <span style="color:var(--red)">Fail</span> / <span style="color:var(--yellow)">Hold</span> &nbsp;&nbsp; 
+      Severity: <span style="color:var(--red)">High</span> / <span style="color:var(--yellow)">Medium</span> / <span style="color:var(--green)">Low</span>
     </div>
   </div>
   <div id="imp-dropzone"
@@ -1841,10 +2091,10 @@ function openImportCSV() {
        ondragover="event.preventDefault();document.getElementById('imp-dropzone').style.borderColor='var(--accent)';document.getElementById('imp-dropzone').style.background='rgba(59,130,246,.06)'"
        ondragleave="document.getElementById('imp-dropzone').style.borderColor='';document.getElementById('imp-dropzone').style.background=''"
        ondrop="handleImpDrop(event)">
-    <input type="file" id="imp-file" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleImpFile(this)">
+    <input type="file" id="imp-file" accept=".csv,.txt,.xlsx,.xls,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none" onchange="handleImpFile(this)">
     <div style="font-size:36px;opacity:.35;margin-bottom:10px;">📄</div>
     <div style="font-size:14px;color:var(--text);font-weight:500">Click to choose a CSV or Excel file</div>
-    <div style="font-size:12px;color:var(--text3);margin-top:6px">or drag and drop your .csv, .xlsx, or .xls file here</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:6px">From Excel: Save As → CSV UTF‑8 (.csv) or keep as .xlsx</div>
   </div>
   <div id="imp-status" style="margin-top:14px;font-size:12px;color:var(--text3);text-align:center;"></div>
   <div id="imp-preview" style="margin-top:14px;"></div>
@@ -1883,9 +2133,9 @@ function parseImpFile(file) {
     return;
   }
 
-  // Accept CSV and Excel files
-  if (!file.name.match(/\.(csv|xlsx?|txt)$/i)) {
-    if (status) status.innerHTML = `<span style="color:var(--red)">❌ Only .csv, .xlsx, or .xls files are supported.</span>`;
+  // Accept CSV, TXT, Excel files
+  if (!file.name.match(/\.(csv|txt|xlsx|xls)$/i)) {
+    if (status) status.innerHTML = `<span style="color:var(--red)">❌ Use a .csv, .txt, .xlsx, or .xls file.</span>`;
     return;
   }
 
@@ -1895,7 +2145,14 @@ function parseImpFile(file) {
   };
   reader.onload = e => {
     try {
-      const raw = e.target.result;
+      let raw;
+      if (file.name.match(/\.xlsx?$/i)) {
+        const workbook = XLSX.read(e.target.result, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        raw = XLSX.utils.sheet_to_csv(sheet);
+      } else {
+        raw = e.target.result;
+      }
       // Normalize line endings
       const lines = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
       // Remove completely empty lines
@@ -1919,24 +2176,30 @@ function parseImpFile(file) {
       // Column finder — tries multiple aliases
       const col = (aliases) => {
         for (const alias of aliases) {
-          const idx = headers.findIndex(h => h === alias || h.includes(alias));
+          const idx = headers.findIndex(h => h === alias);
+          if (idx >= 0) return idx;
+        }
+        for (const alias of aliases) {
+          const idx = headers.findIndex(h => h.startsWith(alias));
           if (idx >= 0) return idx;
         }
         return -1;
       };
 
-      const colMap = {
-        id:       col(['test case id','tc id','id','testcaseid']),
-        testCase: col(['test case','testcase','title','test name','name']),
-        scenario: col(['scenario','description','desc']),
-        screen:   col(['screen name','screen','screenname','page']),
-        steps:    col(['test step','test steps','steps','step','teststep','teststeps']),
-        expected: col(['expected result','expected results','expected','expected output']),
-        actual:   col(['actual result','actual results','actual','actual output']),
-        status:   col(['status','result']),
-        severity: col(['severity','priority','sev']),
-        evidence: col(['evidence','attachment','proof']),
-        notes:    col(['notes','note','comment','remarks']),
+   const colMap = {
+        id:       col(['test case id','testcase id','tc id','tc_id','tcid','case id','tc no','tc number','id']),
+        testCase: col(['test case']),
+        scenario: col(['scenario']),
+        module:   col(['module name','module']),
+        screen:   col(['screen name','screen']),
+        steps:    col(['test step','test steps']),
+        testData: col(['test data']),
+        expected: col(['expected results','expected result']),
+        actual:   col(['actual results','actual result']),
+        status:   col(['status']),
+        severity: col(['severity']),
+        evidence: col(['evidence']),
+        notes:    col(['notes']),
       };
 
       const rows = [];
@@ -1966,11 +2229,12 @@ function parseImpFile(file) {
         else if (/^low/i.test(rawSev) || rawSev === '3') severity = 'Low';
         else if (/^med/i.test(rawSev) || rawSev === '2') severity = 'Medium';
 
-        // Module is selected by user in import flow
-        const modVal = _importTargetModule;
+        // Use module from CSV if available, otherwise fall back to dropdown selection (same TC# can repeat in other modules).
+        const csvModule = normalizeTcModule(get('module', ''));
+        const modVal = csvModule || normalizeTcModule(_importTargetModule);
 
         // Generate ID if missing
-        let rowId = get('id', '').trim();
+        let rowId = normalizeTcRowId(get('id', ''));
         if (!rowId) {
           warnings.push(`Row ${i+1}: missing Test Case ID — row skipped`);
           continue;
@@ -1980,9 +2244,10 @@ function parseImpFile(file) {
           id:       rowId,
           testCase: get('testCase') || `Imported TC ${i}`,
           scenario: get('scenario'),
-          module:   modVal,
+          module:   modVal || normalizeTcModule(_importTargetModule),
           screen:   get('screen'),
           steps:    get('steps'),
+          testData: get('testData'),
           expected: get('expected'),
           actual:   get('actual'),
           status,   severity,
@@ -1990,6 +2255,24 @@ function parseImpFile(file) {
           notes:    get('notes'),
           _rowNum:  i + 1,
         });
+      }
+
+      const newModules = Array.from(new Set(rows
+        .map(r => normalizeTcModule(r.module))
+        .filter(m => m && !S.modules.includes(m))));
+      if (newModules.length) {
+        warnings.push(`New module(s) detected: ${newModules.join(', ')}. They will be created automatically on import.`);
+      }
+
+      const seenSameFile = Object.create(null);
+      let intraFileDupRows = 0;
+      rows.forEach(row => {
+        const k = `${normalizeTcRowId(row.id)}\t${normalizeTcModule(row.module)}`;
+        if (seenSameFile[k]) intraFileDupRows++;
+        else seenSameFile[k] = true;
+      });
+      if (intraFileDupRows > 0) {
+        warnings.unshift(`${intraFileDupRows} row(s) repeat the same Test Case ID within the same module — extras will be skipped on import`);
       }
 
       _importRows = rows;
@@ -2000,7 +2283,11 @@ function parseImpFile(file) {
       if (status) status.innerHTML = `<span style="color:var(--red)">❌ Parse error: ${err.message}</span>`;
     }
   };
-  reader.readAsText(file, 'UTF-8');
+  if (file.name.match(/\.xlsx?$/i)) {
+    reader.readAsArrayBuffer(file);
+  } else {
+    reader.readAsText(file, 'UTF-8');
+  }
 }
 
 // Robust CSV line parser — handles quoted fields, commas inside quotes, escaped quotes
@@ -2028,13 +2315,17 @@ function renderImpPreview(rows, warnings, filename) {
   const preview = document.getElementById('imp-preview');
   if (!preview) return;
 
-  const dupes = rows.filter(r => S.testCases.find(t => t.id === r.id && t.module === r.module));
-  const newRows = rows.filter(r => !S.testCases.find(t => t.id === r.id && t.module === r.module));
+  const newRows = rows.filter((r, i) => {
+    const firstIdx = rows.findIndex(rr => testcaseKeysMatch(rr, r));
+    if (firstIdx !== i) return false;
+    return !S.testCases.find(t => testcaseKeysMatch(t, r));
+  });
+  const skipCount = rows.length - newRows.length;
 
   if (status) status.innerHTML = `
     <span style="color:var(--green)">✓ "${filename}" parsed — ${rows.length} rows found</span>
-    <span style="color:var(--accent);margin-left:12px">Module: ${_importTargetModule}</span>
-    ${dupes.length ? `<span style="color:var(--yellow);margin-left:12px">⚠ ${dupes.length} duplicate ID(s) will be skipped</span>` : ''}
+    <span style="color:var(--accent);margin-left:12px">Default module: ${_importTargetModule} — CSV <strong>Module Name</strong> overrides per row when present (same numbering in different modules is OK)</span>
+    ${skipCount ? `<span style="color:var(--yellow);margin-left:12px">⚠ ${skipCount} row(s) will be skipped — already saved for that module, or duplicated in this file</span>` : ''}
   `;
 
   preview.innerHTML = `
@@ -2042,7 +2333,7 @@ function renderImpPreview(rows, warnings, filename) {
       <div style="display:flex;gap:16px;margin-bottom:12px;">
         <div style="font-size:12px;"><span style="color:var(--text3)">Total rows:</span> <strong>${rows.length}</strong></div>
         <div style="font-size:12px;"><span style="color:var(--text3)">Will import:</span> <strong style="color:var(--green)">${newRows.length}</strong></div>
-        ${dupes.length ? `<div style="font-size:12px;"><span style="color:var(--text3)">Skipped (dup):</span> <strong style="color:var(--yellow)">${dupes.length}</strong></div>` : ''}
+        ${skipCount ? `<div style="font-size:12px;"><span style="color:var(--text3)">Will skip:</span> <strong style="color:var(--yellow)">${skipCount}</strong></div>` : ''}
         <div style="font-size:12px;"><span style="color:var(--text3)">Auto-bugs:</span> <strong style="color:var(--red)">${newRows.filter(r=>r.status==='Fail'||r.status==='Hold').length}</strong></div>
       </div>
       ${warnings.length ? `<div style="font-size:11px;color:var(--yellow);margin-bottom:10px;padding:6px 10px;background:var(--yellow-bg);border-radius:4px;">${warnings.slice(0,3).join('<br>')}</div>` : ''}
@@ -2059,10 +2350,14 @@ function renderImpPreview(rows, warnings, filename) {
             </tr>
           </thead>
           <tbody>
-            ${rows.slice(0, 8).map(r => {
-              const isDupe = S.testCases.find(t => t.id === r.id && t.module === r.module);
-              return `<tr style="${isDupe?'opacity:.45;':''}" title="${isDupe?'Will be skipped — duplicate ID':''}">
-                <td style="padding:6px 10px;font-family:var(--mono);font-size:11px;color:${isDupe?'var(--yellow)':'var(--text3)'};border-bottom:1px solid var(--border);">${r.id}${isDupe?' (dup)':''}</td>
+            ${rows.slice(0, 8).map((r, idx) => {
+              const isStoredDupe = S.testCases.find(t => testcaseKeysMatch(t, r));
+              const intraIdx = rows.findIndex(rr => testcaseKeysMatch(rr, r));
+              const isIntraDup = intraIdx !== idx;
+              const isDupe = isStoredDupe || isIntraDup;
+              let dupeLbl = ''; if (isStoredDupe) dupeLbl = 'stored'; else if (isIntraDup) dupeLbl = 'repeat in file';
+              return `<tr style="${isDupe?'opacity:.45;':''}" title="${isDupe?`Skipped — ${dupeLbl}`:''}">
+                <td style="padding:6px 10px;font-family:var(--mono);font-size:11px;color:${isDupe?'var(--yellow)':'var(--text3)'};border-bottom:1px solid var(--border);">${r.id}${isDupe?' (skip)':''}</td>
                 <td style="padding:6px 10px;font-size:12px;color:var(--text);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid var(--border);">${r.testCase}</td>
                 <td style="padding:6px 10px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);">${r.module}</td>
                 <td style="padding:6px 10px;border-bottom:1px solid var(--border);">${statusBadge(r.status)}</td>
@@ -2083,13 +2378,22 @@ function doImport() {
   }
   let added = 0, skipped = 0, bugs = 0;
   _importRows.forEach(r => {
-    if (S.testCases.find(t => t.id === r.id && t.module === r.module)) { skipped++; return; }
+    if (S.testCases.find(t => testcaseKeysMatch(t, r))) { skipped++; return; }
     const { _rowNum, ...tcData } = r; // strip internal field
     const newTC = {
       ...tcData,
+      id: normalizeTcRowId(tcData.id),
+      module: normalizeTcModule(tcData.module),
       createdAt: now(), createdBy: S.auth && S.auth.user ? S.auth.user : 'QA',
       updatedAt: now(), history: []
     };
+
+    // Persist new module names created during import.
+    if (newTC.module && !S.modules.includes(newTC.module)) {
+      S.modules.push(newTC.module);
+      socket.emit('updateData', { type: 'module', data: { name: newTC.module } });
+    }
+
     S.testCases.push(newTC);
     S.tcCounter++;
     if (r.status === 'Fail' || r.status === 'Hold') { autoCreateBug(newTC); bugs++; }
