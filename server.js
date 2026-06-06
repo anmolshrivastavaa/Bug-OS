@@ -30,9 +30,25 @@ mongoose.connect(MONGODB_URI, {
   serverSelectionTimeoutMS: 5000,
   autoIndex: true
 })
-.then(() => {
+.then(async () => {
   console.log("✅ MongoDB connected");
   mongodbConnected = true;     // ✅ ADD THIS
+  
+  try {
+    const userCount = await mongoose.model('User').countDocuments();
+    if (userCount === 0) {
+      await mongoose.model('User').create({
+        username: 'ADMIN',
+        password: 'ADMIN@nyneos',
+        initialPassword: 'ADMIN@nyneos',
+        role: 'admin',
+        createdAt: new Date().toISOString()
+      });
+      console.log("👤 Default ADMIN user created");
+    }
+  } catch (e) {
+    console.error("Error creating default admin user:", e);
+  }
 })
 .catch((err) => {
   console.error("❌ MongoDB connection failed:", err.message);
@@ -40,6 +56,14 @@ mongoose.connect(MONGODB_URI, {
 });
 
 // Define MongoDB Schemas
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  initialPassword: { type: String },
+  role: { type: String, required: true, enum: ['qa', 'dev', 'admin'] },
+  createdAt: { type: String, required: true }
+});
+
 const testCaseSchema = new mongoose.Schema({
   id: { type: String, required: true },
   testCase: { type: String, required: true },
@@ -113,6 +137,7 @@ const AuditLog = mongoose.model('AuditLog', auditLogSchema);
 const Module = mongoose.model('Module', moduleSchema);
 const Counter = mongoose.model('Counter', counterSchema);
 const AutomationScript = mongoose.model('AutomationScript', automationScriptSchema);
+const User = mongoose.model('User', userSchema);
 
 // Serve static files from current directory
 app.use(express.static(path.join(__dirname)));
@@ -164,6 +189,8 @@ io.on('connection', (socket) => {
         await handleModuleUpdate(update.data);
       } else if (update.type === 'automationScript') {
         await handleAutomationScriptUpdate(update.data);
+      } else if (update.type === 'user') {
+        await handleUserUpdate(update.data);
       } else {
         console.warn('Ignored unsupported update type:', update.type);
         return;
@@ -285,14 +312,15 @@ async function sendInitialData(socket) {
       return;
     }
 
-    const [testCases, bugs, auditLogs, tcCounter, bugCounter, modules, automationScripts] = await Promise.all([
+    const [testCases, bugs, auditLogs, tcCounter, bugCounter, modules, automationScripts, users] = await Promise.all([
       TestCase.find({}),
       Bug.find({}),
       AuditLog.find({}).sort({ time: -1 }).limit(200),
       Counter.findOne({ name: 'tcCounter' }),
       Counter.findOne({ name: 'bugCounter' }),
       Module.find({}).sort({ name: 1 }),
-      AutomationScript.find({})
+      AutomationScript.find({}),
+      User.find({})
     ]);
 
     const moduleNames = modules.map(m => m.name);
@@ -313,6 +341,7 @@ async function sendInitialData(socket) {
       tcCounter: tcCounter ? tcCounter.value : 1,
       bugCounter: bugCounter ? bugCounter.value : 1,
       automationScripts: automationScripts.map(script => script.toObject()),
+      users: users.map(u => u.toObject()),
       connectedUsers: 0
     };
 
@@ -496,6 +525,24 @@ async function handleAutomationScriptUpdate(data) {
     );
   } catch (error) {
     console.error('Error updating automation script:', error);
+  }
+}
+
+async function handleUserUpdate(data) {
+  try {
+    if (data.deleted) {
+      await User.deleteOne({ username: data.username });
+      return;
+    }
+
+    const { _id, __v, ...cleanData } = data;
+    await User.findOneAndUpdate(
+      { username: cleanData.username },
+      { $set: cleanData },
+      { upsert: true, new: true }
+    );
+  } catch (error) {
+    console.error('Error updating user:', error);
   }
 }
 
