@@ -83,8 +83,7 @@
       padding: 0;
     }
 
-    html,
-    body {
+    html, body {
       font-family: var(--font);
       background: var(--bg);
       color: var(--text);
@@ -220,15 +219,15 @@
     }
 
     .role-dev {
-      background: #001a2e;
-      color: var(--cyan);
-      border: 1px solid #0c4a6e;
-    }
-
-    [data-theme='light'] .role-dev {
       background: #e0f2fe;
       color: var(--cyan);
       border: 1px solid #bae6fd;
+    }
+
+    [data-theme='dark'] .role-dev {
+      background: #001a2e;
+      color: var(--cyan);
+      border: 1px solid #0c4a6e;
     }
 
     .role-admin {
@@ -550,25 +549,14 @@
     [data-theme='light'] .login-screen {
       background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.08) 0%, #f1f5f9 70%);
     }
-
     [data-theme='light'] .login-card {
       background: rgba(255, 255, 255, 0.9);
       border: 1px solid rgba(0, 0, 0, 0.05);
       box-shadow: 0 24px 64px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1);
     }
-
-    [data-theme='light'] .login-header-text {
-      color: #0f172a;
-    }
-
-    [data-theme='light'] .login-title {
-      color: #64748b;
-    }
-
-    [data-theme='light'] .login-card .field label {
-      color: #64748b;
-    }
-
+    [data-theme='light'] .login-header-text { color: #0f172a; }
+    [data-theme='light'] .login-title { color: #64748b; }
+    [data-theme='light'] .login-card .field label { color: #64748b; }
     [data-theme='light'] .login-card .field input {
       background: #f8fafc;
       border: 1px solid rgba(0, 0, 0, 0.1);
@@ -621,7 +609,7 @@
       font-size: 14px;
       box-shadow: 0 4px 12px rgba(237, 50, 36, 0.3);
     }
-
+    
     .login-card button:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(237, 50, 36, 0.4);
@@ -636,13 +624,11 @@
       align-items: center;
       gap: 16px;
     }
-
     .login-company img {
       width: 64px;
       height: 64px;
       object-fit: contain;
     }
-
     .company-tagline {
       font-size: 13px;
       font-weight: 700;
@@ -650,7 +636,6 @@
       letter-spacing: 0.2px;
       margin-bottom: 2px;
     }
-
     .company-pill {
       font-size: 10px;
       font-weight: 700;
@@ -668,12 +653,12 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       margin-bottom: 24px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
       overflow: hidden;
     }
 
-    [data-theme='light'] .section {
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+    [data-theme='dark'] .section {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
 
     .section-hdr {
@@ -683,11 +668,11 @@
       align-items: center;
       justify-content: space-between;
       position: relative;
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(0, 0, 0, 0.01);
     }
 
-    [data-theme='light'] .section-hdr {
-      background: rgba(0, 0, 0, 0.01);
+    [data-theme='dark'] .section-hdr {
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .section-title {
@@ -700,8 +685,8 @@
       font-size: 11px;
       color: var(--accent);
       font-family: var(--font);
-      background: color-mix(in srgb, var(--accent) 15%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
       padding: 4px 12px;
       border-radius: 24px;
       font-weight: 700;
@@ -711,7 +696,11 @@
       gap: 6px;
     }
 
-
+    [data-theme='dark'] .section-meta {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border-color: rgba(59, 130, 246, 0.3);
+    }
 
     /* STATS */
     .stats-row {
@@ -722,28 +711,28 @@
     }
 
     .stat {
-      background: linear-gradient(180deg, var(--bg3) 0%, var(--bg2) 100%);
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 20px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
       position: relative;
       overflow: hidden;
       transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    [data-theme='light'] .stat {
-      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    [data-theme='dark'] .stat {
+      background: linear-gradient(180deg, var(--bg3) 0%, var(--bg2) 100%);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     }
 
     .stat:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
     }
 
-    [data-theme='light'] .stat:hover {
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    [data-theme='dark'] .stat:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
 
     .stat-val {
@@ -789,12 +778,12 @@
       padding: 14px 16px;
       text-align: left;
       border-bottom: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(0, 0, 0, 0.01);
       white-space: normal;
     }
 
-    [data-theme='light'] th {
-      background: rgba(0, 0, 0, 0.01);
+    [data-theme='dark'] th {
+      background: rgba(255, 255, 255, 0.02);
     }
 
     td {
@@ -1041,34 +1030,33 @@
     }
 
     .field label {
-      font-size: 11px;
-      font-weight: 400;
-      color: var(--text3);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text2);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.06em;
     }
 
     .field input,
     .field select,
     .field .custom-select-trigger,
     .field textarea {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 4px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
       color: var(--text);
       font-family: var(--font);
-      font-size: 15px;
-      padding: 10px 12px;
+      font-size: 13px;
+      padding: 8px 12px;
       outline: none;
-      transition: all 0.2s ease;
+      transition: border-color 0.15s;
     }
 
     .field input:focus,
     .field select:focus,
     .field .custom-select.open .custom-select-trigger,
     .field textarea:focus {
-      border-color: var(--text);
-      box-shadow: none;
+      border-color: var(--accent);
     }
 
     .field textarea {
@@ -1259,7 +1247,41 @@
     }
 
     /* LOGIN */
+    .login-screen {
+      position: relative;
+      isolation: isolate;
+      display: flex;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      gap: 80px;
+      padding: 64px 64px 15vh 64px;
+      background: radial-gradient(circle at top, rgba(59, 130, 246, 0.15), transparent 40%), radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.08), transparent 30%), #0a0c0f;
+      overflow: hidden;
+    }
 
+    .login-screen::before {
+      content: '';
+      position: absolute;
+      inset: 26px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 8px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .login-screen::after {
+      content: '';
+      position: absolute;
+      inset: 26px;
+      border-radius: 8px;
+      background-image: linear-gradient(rgba(138, 154, 176, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(138, 154, 176, 0.04) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.55), transparent 82%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
     .login-card {
       width: min(420px, 100%);
@@ -1336,16 +1358,6 @@
       -webkit-box-shadow: 0 0 0px 1000px #181c22 inset !important;
       -webkit-text-fill-color: #e2e8f0 !important;
       transition: background-color 5000s ease-in-out 0s;
-    }
-
-    [data-theme='light'] .login-card .field input:-webkit-autofill,
-    [data-theme='light'] .login-card .field input:-webkit-autofill:hover,
-    [data-theme='light'] .login-card .field input:-webkit-autofill:focus,
-    [data-theme='light'] .login-card .field select:-webkit-autofill,
-    [data-theme='light'] .login-card .field select:-webkit-autofill:hover,
-    [data-theme='light'] .login-card .field select:-webkit-autofill:focus {
-      -webkit-box-shadow: 0 0 0px 1000px #f8fafc inset !important;
-      -webkit-text-fill-color: #0f172a !important;
     }
 
     .login-card .btn-ghost {
@@ -1438,110 +1450,43 @@
     }
 
     /* DETAIL PANEL */
-    .minimal-well {
-      border-left: 2px solid var(--border);
-      padding-left: 16px;
-      margin-top: 8px;
-      font-size: 14px;
-      color: var(--text2);
-      line-height: 1.6;
-      white-space: pre-wrap;
-      font-family: var(--font);
-    }
-
-    .linked-bug-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px;
-      border: 1px solid var(--border2);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background: transparent;
-    }
-
-    .linked-bug-card:hover {
-      border-color: var(--border);
-      background: var(--bg2);
-      transform: translateY(-1px);
-    }
-
-    .attachment-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      background: rgba(59, 130, 246, 0.08);
-      color: var(--accent);
-      border-radius: 20px;
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 600;
-      transition: background 0.2s;
-    }
-
-    .attachment-pill:hover {
-      background: rgba(59, 130, 246, 0.15);
-    }
-
-    .table-link-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 12px;
-      text-decoration: none;
-      font-size: 11px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .table-link-pill:hover {
-      background: var(--bg3);
-      border-color: var(--text3);
-    }
-
     .detail-section {
-      margin-bottom: 32px;
+      margin-bottom: 20px;
     }
 
     .detail-section h4 {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      margin-bottom: 24px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
     }
 
     .detail-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 28px;
+      gap: 10px;
     }
 
     .detail-item {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+      margin-bottom: 12px;
     }
 
     .detail-label {
-      font-size: 13px;
-      color: var(--text);
+      font-size: 11px;
+      color: var(--text3);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       font-weight: 700;
+      margin-bottom: 4px;
     }
 
     .detail-value {
       font-size: 12px;
-      color: var(--text2);
+      color: var(--text);
       font-weight: 400;
-      line-height: 1.6;
     }
 
     .timeline {}
@@ -1839,13 +1784,10 @@
     function refreshData() {
       const app = document.getElementById('app');
       if (app && !document.getElementById('refresh-overlay')) {
-        const isLight = currentTheme === 'light';
-        const bg = 'color-mix(in srgb, var(--text) 5%, var(--bg2))';
-        const imgSrc = isLight ? 'draft light.png' : 'draft.png';
         const overlay = document.createElement('div');
         overlay.id = 'refresh-overlay';
-        overlay.style.cssText = `position:fixed;top:0;left:0;width:100vw;height:100vh;background:${bg};backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:9999;`;
-        overlay.innerHTML = `<div class="loader-wrapper"><div class="loader-ring"></div><img src="${imgSrc}" class="loader-image" alt="Loading" /></div>`;
+        overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:9999;';
+        overlay.innerHTML = '<div class="loader-wrapper"><div class="loader-ring"></div><img src="draft.png" class="loader-image" alt="Loading" /></div>';
         app.appendChild(overlay);
       }
       window.isRefreshing = true;
@@ -2268,12 +2210,11 @@
     }
 
     function buildLoading() {
-      const isLight = currentTheme === 'light';
       return `
-  <div style="flex: 1; width: 100%; display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at top, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at bottom right, rgba(34,197,94,0.08), transparent 30%), var(--bg);">
+  <div style="flex: 1; width: 100%; display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at top, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at bottom right, rgba(34,197,94,0.08), transparent 30%), #0a0c0f;">
     <div class="loader-wrapper">
       <div class="loader-ring"></div>
-      <img src="${isLight ? 'draft light.png' : 'draft.png'}" class="loader-image" alt="Loading" />
+      <img src="draft.png" class="loader-image" alt="Loading" />
     </div>
   </div>`;
     }
@@ -2281,13 +2222,11 @@
     function buildLogin() {
       return `
   <div class="login-screen">
-    <div style="position: absolute; top: 24px; right: 24px; z-index: 10;">
-      <button onclick="toggleTheme()" title="Toggle Theme" style="background: transparent; border: none; cursor: pointer; color: var(--text); opacity: 0.5; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; padding: 8px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">
-        ${currentTheme === 'light' ?
-          '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>' :
-          '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'}
-      </button>
-    </div>
+    <button onclick="toggleTheme()" title="Toggle Theme" style="position: absolute; top: 24px; right: 24px; z-index: 10; background: transparent; border: none; cursor: pointer; color: var(--text); opacity: 0.5; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; padding: 8px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">
+      ${currentTheme === 'light' ? 
+        '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>' : 
+        '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'}
+    </button>
     <div class="login-icon"><img src="${currentTheme === 'light' ? 'login-icon light.png' : 'login-icon.png'}" alt="Login" /></div>
     <div class="login-card">
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
@@ -2385,10 +2324,7 @@
         ${actions}
       </div>
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -2426,7 +2362,7 @@
       }
 
       const rows = filteredUsers.map(u => {
-        let avatarBg = u.role === 'admin' ? 'color-mix(in srgb, var(--red) 10%, transparent)' : u.role === 'qa' ? 'color-mix(in srgb, var(--purple) 10%, transparent)' : 'color-mix(in srgb, var(--accent) 10%, transparent)';
+        let avatarBg = u.role === 'admin' ? 'rgba(239, 68, 68, 0.1)' : u.role === 'qa' ? 'rgba(168, 85, 247, 0.1)' : 'rgba(59, 130, 246, 0.1)';
         let avatarColor = u.role === 'admin' ? 'var(--red)' : u.role === 'qa' ? 'var(--purple)' : 'var(--accent)';
         let avatarText = u.username.substring(0, 2).toUpperCase();
 
@@ -2455,10 +2391,7 @@
     <div style="display:flex; align-items:center; gap:16px;">
       <button class="btn btn-ghost" style="padding:6px 12px; font-size:12px; border-radius:6px; display:inline-flex; align-items:center; gap:6px;" onclick="openAddUser()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Create User</button>
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -2637,10 +2570,7 @@
     <div style="font-size:28px;font-weight:700;color:var(--text);">Backend Escalations</div>
     <div style="display:flex; align-items:center; gap:16px;">
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -3020,7 +2950,7 @@
       const holdRow = `<div style="padding:10px 16px; background:var(--bg2); font-size:12px; font-weight:normal; color:var(--text); display:flex; align-items:center; justify-content:center; text-align:center;">Hold</div>` +
         modData.map((d) => {
           const hPct = d.h ? Math.max(8, Math.round((d.h / maxHold) * 100)) : 0;
-          return `<div style="background:color-mix(in srgb, var(--orange) ${hPct}%, var(--bg)); min-height:45px; transition:background 0.3s; cursor:crosshair; box-sizing:border-box;" onmousemove="window.hmHover(event, '${tooltipId}', '${d.mod} - Hold: ${d.h}')" onmouseleave="window.hmLeave('${tooltipId}')"></div>`;
+          return `<div style="background:color-mix(in srgb, #f97316 ${hPct}%, var(--bg)); min-height:45px; transition:background 0.3s; cursor:crosshair; box-sizing:border-box;" onmousemove="window.hmHover(event, '${tooltipId}', '${d.mod} - Hold: ${d.h}')" onmouseleave="window.hmLeave('${tooltipId}')"></div>`;
         }).join('');
 
       return `
@@ -3158,10 +3088,7 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
       <div style="font-size:28px;font-weight:700;color:var(--text); letter-spacing:-0.02em;">BUG OS Dashboard</div>
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -3287,13 +3214,13 @@
       <div style="display:flex;align-items:center;justify-content:center;padding:24px;">
         <svg width="200" height="200" viewBox="0 0 200 200" style="max-width:100%;">
           ${totalWork > 0 ? `
-          ${devPct > 0 ? `<path d="${devPath}" fill="var(--purple)"/>` : ''}
-          ${qaPath ? `<path d="${qaPath}" fill="var(--green)"/>` : ''}
+          ${devPct > 0 ? `<path d="${devPath}" fill="#a855f7"/>` : ''}
+          ${qaPath ? `<path d="${qaPath}" fill="#22c55e"/>` : ''}
           ` : ''}
         </svg>
         <div style="margin-left:24px;font-size:13px;line-height:1.8;">
-          <div><span style="display:inline-block;width:12px;height:12px;background:var(--purple);border-radius:2px;margin-right:8px;"></span>Dev Team: ${devWork} Items - ${devPct}%</div>
-          <div><span style="display:inline-block;width:12px;height:12px;background:var(--green);border-radius:2px;margin-right:8px;"></span>QA Team: ${qaWork} Items - ${qaPct}%</div>
+          <div><span style="display:inline-block;width:12px;height:12px;background:#a855f7;border-radius:2px;margin-right:8px;"></span>Dev Team: ${devWork} Items - ${devPct}%</div>
+          <div><span style="display:inline-block;width:12px;height:12px;background:#22c55e;border-radius:2px;margin-right:8px;"></span>QA Team: ${qaWork} Items - ${qaPct}%</div>
         </div>
       </div>
     </div>
@@ -3392,10 +3319,7 @@
     <div style="display:flex; align-items:center; gap:16px;">
       ${S.role === 'qa' ? `<button class="btn btn-ghost" style="padding:6px 16px; font-size:12px; font-weight:600; border-radius:24px; border:1px solid var(--border); display:inline-flex; align-items:center; gap:6px; background:var(--bg2); box-shadow:0 1px 4px rgba(0,0,0,0.02);" onclick="openImportCSV()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import Test Cases</button><button class="btn" style="padding:6px 16px; font-size:12px; font-weight:600; border-radius:24px; border:none; display:inline-flex; align-items:center; gap:6px; background:var(--accent); color:#fff; box-shadow:0 2px 8px rgba(59, 130, 246, 0.25);" onclick="openAddTC()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Test Case</button>` : ''}
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -3513,10 +3437,7 @@
     <div style="font-size:28px;font-weight:700;color:var(--text);">Bug Reports</div>
     <div style="display:flex; align-items:center; gap:16px;">
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -3611,10 +3532,7 @@
     <div style="font-size:28px;font-weight:700;color:var(--text);">Retest Queue</div>
     <div style="display:flex; align-items:center; gap:16px;">
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -3667,10 +3585,7 @@
     <div style="font-size:28px;font-weight:700;color:var(--text);">Automation</div>
     <div style="display:flex; align-items:center; gap:16px;">
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -3685,7 +3600,7 @@
     .hover-blur-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(18, 18, 18, 0.6);
+      background: rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       z-index: 10;
@@ -3697,8 +3612,8 @@
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       pointer-events: none;
     }
-    [data-theme='light'] .hover-blur-overlay {
-      background: rgba(255, 255, 255, 0.6);
+    [data-theme='dark'] .hover-blur-overlay {
+      background: rgba(18, 18, 18, 0.6);
     }
     .hover-blur-container:hover .hover-blur-overlay {
       opacity: 1;
@@ -3921,10 +3836,7 @@
       </div>
       ${S.role === 'qa' ? `<button class="btn" style="padding:6px 16px; font-size:12px; font-weight:600; border-radius:24px; border:none; display:inline-flex; align-items:center; gap:6px; background:var(--accent); color:#fff; box-shadow:0 2px 8px rgba(59, 130, 246, 0.25);" onclick="openAddModule()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Module</button>` : ''}
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -3967,22 +3879,22 @@
         if (evt.includes('escalated')) {
           eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
           eventColor = 'var(--orange)';
-          iconBg = 'color-mix(in srgb, var(--orange) 10%, transparent)';
+          iconBg = 'rgba(245, 158, 11, 0.1)';
           iconColor = 'var(--orange)';
         } else if (evt.includes('passed') || evt.includes('fixed')) {
           eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
           eventColor = 'var(--green)';
-          iconBg = 'color-mix(in srgb, var(--green) 10%, transparent)';
+          iconBg = 'rgba(34, 197, 94, 0.1)';
           iconColor = 'var(--green)';
         } else if (evt.includes('failed') || evt.includes('deleted')) {
           eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
           eventColor = 'var(--red)';
-          iconBg = 'color-mix(in srgb, var(--red) 10%, transparent)';
+          iconBg = 'rgba(239, 68, 68, 0.1)';
           iconColor = 'var(--red)';
         } else if (evt.includes('added') || evt.includes('imported')) {
           eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
           eventColor = 'var(--accent)';
-          iconBg = 'color-mix(in srgb, var(--accent) 10%, transparent)';
+          iconBg = 'rgba(59, 130, 246, 0.1)';
           iconColor = 'var(--accent)';
         }
 
@@ -4016,10 +3928,7 @@
     <div style="font-size:28px;font-weight:700;color:var(--text);">Audit Log</div>
     <div style="display:flex; align-items:center; gap:16px;">
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -4098,10 +4007,7 @@
         <input type="text" id="reportQ" class="filter-select" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search modules..." oninput="liveFilter(this)" value="${escHtml(reportQ).replace(/\"/g, '&quot;')}">
       </div>
       <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+        <div id="live-clock" style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; border-right:1px solid var(--border); margin-right:4px;">${formatDate(nowFull())}</div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
@@ -4177,16 +4083,11 @@
       const ev = (evidence || '').trim();
       if (!ev) return '—';
       if (/^data:image\//i.test(ev)) {
-        return `<a href="${ev}" target="_blank" rel="noopener noreferrer" title="Open attached image" style="display:inline-block;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><img src="${ev}" alt="Evidence" style="width:36px;height:36px;object-fit:cover;border:1px solid var(--border);border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.05);"></a>`;
+        return `<a href="${ev}" target="_blank" rel="noopener noreferrer" title="Open attached image" style="display:inline-block;"><img src="${ev}" alt="Evidence" style="width:48px;height:48px;object-fit:cover;border:1px solid var(--border2);border-radius:4px;"></a>`;
       }
       if (isHttpUrl(ev)) {
         const safe = escHtml(ev);
-        const isImg = isImageEvidence(ev);
-        const text = isImg ? 'Image' : 'Link';
-        const icon = isImg
-          ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>`
-          : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
-        return `<a href="${safe}" target="_blank" rel="noopener noreferrer" class="table-link-pill">${icon} ${text}</a>`;
+        return `<a href="${safe}" target="_blank" rel="noopener noreferrer" style="color:var(--text);text-decoration:none;">${isImageEvidence(ev) ? 'Open Image' : 'Open Link'}</a>`;
       }
       return `<span style="color:var(--text2);">${escHtml(ev)}</span>`;
     }
@@ -4374,45 +4275,28 @@
       const linkedBug = S.bugs.find(b => bugRefsTestCaseKeys(b, id, tc.module));
       showModal(`Test Case: ${tc.id}`, `
   <div class="detail-section">
-    <h4 style="display:flex;align-items:center;gap:8px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-      Test Case Details
-    </h4>
+    <h4>Test Case Details</h4>
     <div class="detail-grid">
-      <div class="detail-item"><div class="detail-label">ID</div><div class="detail-value" style="font-weight:500;">${tc.id}</div></div>
+      <div class="detail-item"><div class="detail-label">ID</div><div class="detail-value" style="font-family:var(--mono)">${tc.id}</div></div>
       <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${statusBadge(tc.status)}</div></div>
       <div class="detail-item"><div class="detail-label">Module</div><div class="detail-value">${tc.module}</div></div>
       <div class="detail-item"><div class="detail-label">Screen</div><div class="detail-value">${tc.screen || '—'}</div></div>
       <div class="detail-item"><div class="detail-label">Severity</div><div class="detail-value">${sevBadge(tc.severity)}</div></div>
-      <div class="detail-item"><div class="detail-label">Created</div><div class="detail-value" style="font-size:12px;color:var(--text2)">${formatDate(tc.createdAt)}</div></div>
+      <div class="detail-item"><div class="detail-label">Created</div><div class="detail-value" style="font-family:var(--mono);font-size:12px">${formatDate(tc.createdAt)}</div></div>
     </div>
   </div>
   <div class="detail-section">
-    <h4 style="display:flex;align-items:center;gap:8px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-      Test Information
-    </h4>
-    <div class="detail-item" style="margin-bottom:24px"><div class="detail-label">Scenario</div><div class="detail-value" style="color:var(--text2)">${tc.scenario || '—'}</div></div>
-    <div class="detail-item" style="margin-bottom:24px"><div class="detail-label">Test Steps</div><div class="minimal-well">${tc.steps}</div></div>
-    <div class="detail-grid" style="margin-bottom:24px">
-      <div class="detail-item"><div class="detail-label">Expected Results</div><div class="minimal-well">${tc.expected}</div></div>
-      <div class="detail-item"><div class="detail-label">Actual Results</div><div class="minimal-well" style="color:${tc.status === 'Fail' ? 'var(--red)' : 'var(--text2)'}; border-left-color:${tc.status === 'Fail' ? 'var(--red)' : 'var(--border)'}">${tc.actual}</div></div>
+    <h4>Test Information</h4>
+    <div class="detail-item"><div class="detail-label">Scenario</div><div style="font-size:12px;color:var(--text2)">${tc.scenario || '—'}</div></div>
+    <div class="detail-item"><div class="detail-label">Test Steps</div><pre style="font-size:12px;color:var(--text2);white-space:pre-wrap;font-family:var(--font);margin:0;">${tc.steps}</pre></div>
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Expected Results</div><div style="font-size:12px;color:var(--text)">${tc.expected}</div></div>
+      <div class="detail-item"><div class="detail-label">Actual Results</div><div style="font-size:12px;color:${tc.status === 'Fail' ? 'var(--red)' : 'var(--text2)'}">${tc.actual}</div></div>
     </div>
-    ${tc.evidence ? `<div class="detail-item" style="margin-bottom:24px"><div class="detail-label">Evidence</div><div style="margin-top:8px"><a href="${tc.evidence}" target="_blank" class="attachment-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> View Attachment</a></div></div>` : ''}
-    ${tc.notes ? `<div class="detail-item"><div class="detail-label">Notes</div><div class="minimal-well">${tc.notes}</div></div>` : ''}
+    ${tc.evidence ? `<div class="detail-item"><div class="detail-label">Evidence</div><div style="font-size:12px;color:var(--text)">${renderEvidenceCell(tc.evidence)}</div></div>` : ''}
+    ${tc.notes ? `<div class="detail-item"><div class="detail-label">Notes</div><div style="font-size:12px;color:var(--text2)">${tc.notes}</div></div>` : ''}
   </div>
-  ${linkedBug ? `
-  <div class="detail-section" style="margin-bottom:0">
-    <h4 style="display:flex;align-items:center;gap:8px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-      Linked Bug
-    </h4>
-    <div class="linked-bug-card" onclick="closeModal(); setTimeout(()=>viewBug('${linkedBug.id}'),100);">
-      <div style="color:var(--red);font-weight:600;">${linkedBug.id}</div>
-      <div style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;color:var(--text);">${linkedBug.bugTitle || linkedBug.testCase}</div>
-      <div>${statusBadge(linkedBug.status)}</div>
-    </div>
-  </div>` : ''}
+  ${linkedBug ? `<div class="detail-section"><h4>Linked Bug</h4><div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg3);border-radius:var(--radius);"><span style="font-family:var(--mono);color:var(--red)">${linkedBug.id}</span><span style="font-size:12px">${linkedBug.testCase}</span>${statusBadge(linkedBug.status)}</div></div>` : ''}
   `, null, true);
     }
 
@@ -4666,9 +4550,8 @@
       const evidenceInputValue = /^data:image\//i.test(tc.evidence || '') ? '' : (tc.evidence || '');
       const mods = S.modules.map(m => `<option${m === tc.module ? ' selected' : ''}>${m}</option>`).join('');
       showModal(`Edit Test Case: ${tc.id}`, `
-  <div style="margin-bottom:24px;font-size:13px;color:var(--text3);display:flex;align-items:center;gap:8px;">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-    Editing <span style="color:var(--text);font-weight:500;">${tc.id}</span> — ID cannot be changed
+  <div style="padding:8px 14px;background:var(--bg3);border-radius:var(--radius);margin-bottom:16px;font-size:12px;color:var(--text3);">
+    Editing <span style="font-family:var(--mono);color:var(--accent)">${tc.id}</span> — ID cannot be changed.
   </div>
   <div class="form-grid">
     <div class="field">
@@ -4899,36 +4782,35 @@
       _importTargetModule = S.modules[0] || '';
       const moduleOptions = S.modules.map(m => `<option value="${m.replace(/"/g, '&quot;')}">${m}</option>`).join('');
       showModal('Import Test Cases from Excel / CSV', `
-  <div class="field" style="margin-bottom:24px;">
-    <label>Import To Module</label>
+  <div class="field" style="margin-bottom:16px;">
+    <label>Import To Module <span class="required">*</span></label>
     <select id="imp-module" onchange="setImportModule(this.value)">${moduleOptions}</select>
-    <div style="margin-top:8px;font-size:12px;color:var(--text3);line-height:1.5;">
-      Used when a row has no <strong>Module Name</strong> column value. Uniqueness is enforced per module.
+    <div style="margin-top:6px;font-size:12px;color:var(--text3);">
+      Used when a row has no <strong>Module Name</strong> column value. Rows can reuse Test Case IDs in different modules (e.g. 1–50 in Module&nbsp;A and 1–30 in Module&nbsp;B) — uniqueness is enforced per&nbsp;module.
     </div>
   </div>
-  
-  <div style="margin-bottom:24px;text-align:center;">
-    <div style="margin-bottom:12px;">
-      <button class="attachment-pill" style="border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" onclick="downloadImportTemplate()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download Template</button>
+  <div style="padding:12px 16px;background:var(--bg3);border-radius:var(--radius);margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.9;">
+   <div style="font-weight:600;color:var(--text);margin-bottom:6px;">How to import:</div>
+    <div style="color:var(--text3);margin-bottom:10px;">Download the template, fill in your data, save as CSV or Excel, then upload below.</div>
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:12px;" onclick="downloadImportTemplate()">↓ Download Template</button>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--bg4);padding:8px;border-radius:4px;line-height:2;margin-bottom:8px;">
+      Test Case ID &nbsp;·&nbsp; Test Case &nbsp;·&nbsp; Scenario &nbsp;·&nbsp; Module Name &nbsp;·&nbsp; Screen Name &nbsp;·&nbsp; Test Step &nbsp;·&nbsp; Test Data &nbsp;·&nbsp; Expected Results &nbsp;·&nbsp; Actual Results &nbsp;·&nbsp; Status &nbsp;·&nbsp; Severity &nbsp;·&nbsp; Evidence &nbsp;·&nbsp; Notes
     </div>
-    <div style="font-size:12px;color:var(--text3);">
-      Status accepted: <span style="color:var(--text);font-weight:500">Pass / Fail / Hold</span> &nbsp;&nbsp; 
-      Severity accepted: <span style="color:var(--text);font-weight:500">High / Medium / Low</span>
+    <div style="color:var(--text3);font-size:11px;">
+      Status: <span style="color:var(--green)">Pass</span> / <span style="color:var(--red)">Fail</span> / <span style="color:var(--yellow)">Hold</span> &nbsp;&nbsp; 
+      Severity: <span style="color:var(--red)">High</span> / <span style="color:var(--yellow)">Medium</span> / <span style="color:var(--green)">Low</span>
     </div>
   </div>
-
   <div id="imp-dropzone"
-       style="border:1px dashed var(--border);border-radius:8px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;"
+       style="border:2px dashed var(--border2);border-radius:var(--radius2);padding:36px;text-align:center;cursor:pointer;transition:all .2s;"
        onclick="document.getElementById('imp-file').click()"
-       ondragover="event.preventDefault();this.style.borderColor='var(--text)';this.style.background='rgba(59,130,246,.02)'"
-       ondragleave="this.style.borderColor='var(--border)';this.style.background='transparent'"
+       ondragover="event.preventDefault();document.getElementById('imp-dropzone').style.borderColor='var(--accent)';document.getElementById('imp-dropzone').style.background='rgba(59,130,246,.06)'"
+       ondragleave="document.getElementById('imp-dropzone').style.borderColor='';document.getElementById('imp-dropzone').style.background=''"
        ondrop="handleImpDrop(event)">
     <input type="file" id="imp-file" accept=".csv,.txt,.xlsx,.xls,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none" onchange="handleImpFile(this)">
-    <div style="margin-bottom:12px;color:var(--text3);">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-    </div>
-    <div style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:4px;">Click to upload or drag and drop</div>
-    <div style="font-size:12px;color:var(--text3);">CSV UTF‑8 or Excel (.xlsx)</div>
+    <div style="font-size:36px;opacity:.35;margin-bottom:10px;">📄</div>
+    <div style="font-size:14px;color:var(--text);font-weight:500">Click to choose a CSV or Excel file</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:6px">From Excel: Save As → CSV UTF‑8 (.csv) or keep as .xlsx</div>
   </div>
   <div id="imp-status" style="margin-top:14px;font-size:12px;color:var(--text3);text-align:center;"></div>
   <div id="imp-preview" style="margin-top:14px;"></div>
@@ -5156,31 +5038,31 @@
       });
       const skipCount = rows.length - newRows.length;
 
-      status.innerHTML = `
-    <span style="color:var(--text);font-weight:500;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> "${filename}" parsed — ${rows.length} rows found</span>
-    <span style="color:var(--text2);margin-left:12px">Default module: <strong>${_importTargetModule}</strong></span>
-    ${skipCount ? `<span style="color:var(--yellow);margin-left:12px;font-weight:500;">⚠ ${skipCount} row(s) duplicate</span>` : ''}
+      if (status) status.innerHTML = `
+    <span style="color:var(--green)">✓ "${filename}" parsed — ${rows.length} rows found</span>
+    <span style="color:var(--accent);margin-left:12px">Default module: ${_importTargetModule} — CSV <strong>Module Name</strong> overrides per row when present (same numbering in different modules is OK)</span>
+    ${skipCount ? `<span style="color:var(--yellow);margin-left:12px">⚠ ${skipCount} row(s) will be skipped — already saved for that module, or duplicated in this file</span>` : ''}
   `;
 
       preview.innerHTML = `
-    <div style="padding-top:16px;">
-      <div style="display:flex;gap:24px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:12px;">
-        <div style="font-size:13px;"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;font-size:11px;margin-right:6px;">Total rows</span><strong style="font-size:14px;color:var(--text)">${rows.length}</strong></div>
-        <div style="font-size:13px;"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;font-size:11px;margin-right:6px;">Will import</span><strong style="font-size:14px;color:var(--text)">${newRows.length}</strong></div>
-        ${skipCount ? `<div style="font-size:13px;"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;font-size:11px;margin-right:6px;">Will skip</span><strong style="font-size:14px;color:var(--yellow)">${skipCount}</strong></div>` : ''}
-        <div style="font-size:13px;"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;font-size:11px;margin-right:6px;">Auto-bugs</span><strong style="font-size:14px;color:var(--text)">${newRows.filter(r => r.status === 'Fail' || r.status === 'Hold').length}</strong></div>
+    <div style="padding:14px 16px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius2);">
+      <div style="display:flex;gap:16px;margin-bottom:12px;">
+        <div style="font-size:12px;"><span style="color:var(--text3)">Total rows:</span> <strong>${rows.length}</strong></div>
+        <div style="font-size:12px;"><span style="color:var(--text3)">Will import:</span> <strong style="color:var(--green)">${newRows.length}</strong></div>
+        ${skipCount ? `<div style="font-size:12px;"><span style="color:var(--text3)">Will skip:</span> <strong style="color:var(--yellow)">${skipCount}</strong></div>` : ''}
+        <div style="font-size:12px;"><span style="color:var(--text3)">Auto-bugs:</span> <strong style="color:var(--red)">${newRows.filter(r => r.status === 'Fail' || r.status === 'Hold').length}</strong></div>
       </div>
-      ${warnings.length ? `<div style="font-size:13px;color:var(--text);border-left:2px solid var(--yellow);padding-left:16px;margin-bottom:16px;line-height:1.6;">${warnings.slice(0, 3).join('<br>')}</div>` : ''}
-      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">Preview (first 8 rows)</div>
-      <div style="max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:4px;background:transparent;">
+      ${warnings.length ? `<div style="font-size:11px;color:var(--yellow);margin-bottom:10px;padding:6px 10px;background:var(--yellow-bg);border-radius:4px;">${warnings.slice(0, 3).join('<br>')}</div>` : ''}
+      <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">Preview (first 8 rows)</div>
+      <div style="max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius);">
         <table style="width:100%;border-collapse:collapse;min-width:600px;">
           <thead>
-            <tr>
-              <th style="padding:10px 12px;font-size:11px;color:var(--text3);text-align:left;font-weight:600;letter-spacing:.05em;border-bottom:1px solid var(--border);text-transform:uppercase;">ID</th>
-              <th style="padding:10px 12px;font-size:11px;color:var(--text3);text-align:left;font-weight:600;letter-spacing:.05em;border-bottom:1px solid var(--border);text-transform:uppercase;">Test Case</th>
-              <th style="padding:10px 12px;font-size:11px;color:var(--text3);text-align:left;font-weight:600;letter-spacing:.05em;border-bottom:1px solid var(--border);text-transform:uppercase;">Module</th>
-              <th style="padding:10px 12px;font-size:11px;color:var(--text3);text-align:left;font-weight:600;letter-spacing:.05em;border-bottom:1px solid var(--border);text-transform:uppercase;">Status</th>
-              <th style="padding:10px 12px;font-size:11px;color:var(--text3);text-align:left;font-weight:600;letter-spacing:.05em;border-bottom:1px solid var(--border);text-transform:uppercase;">Severity</th>
+            <tr style="background:var(--bg4);">
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">ID</th>
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">Test Case</th>
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">Module</th>
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">Status</th>
+              <th style="padding:6px 10px;font-size:10px;color:var(--text3);text-align:left;font-weight:500;letter-spacing:.06em;border-bottom:1px solid var(--border);">Severity</th>
             </tr>
           </thead>
           <tbody>

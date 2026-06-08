@@ -21,7 +21,7 @@ const io = socketIo(server, {
 });
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/bugos';
 if (!MONGODB_URI) {
   console.error("❌ MONGODB_URI is not set");
   process.exit(1);
@@ -30,30 +30,30 @@ mongoose.connect(MONGODB_URI, {
   serverSelectionTimeoutMS: 5000,
   autoIndex: true
 })
-.then(async () => {
-  console.log("✅ MongoDB connected");
-  mongodbConnected = true;     // ✅ ADD THIS
-  
-  try {
-    const userCount = await mongoose.model('User').countDocuments();
-    if (userCount === 0) {
-      await mongoose.model('User').create({
-        username: 'ADMIN',
-        password: 'ADMIN@nyneos',
-        initialPassword: 'ADMIN@nyneos',
-        role: 'admin',
-        createdAt: new Date().toISOString()
-      });
-      console.log("👤 Default ADMIN user created");
+  .then(async () => {
+    console.log("✅ MongoDB connected");
+    mongodbConnected = true;     // ✅ ADD THIS
+
+    try {
+      const userCount = await mongoose.model('User').countDocuments();
+      if (userCount === 0) {
+        await mongoose.model('User').create({
+          username: 'ADMIN',
+          password: 'ADMIN@nyneos',
+          initialPassword: 'ADMIN@nyneos',
+          role: 'admin',
+          createdAt: new Date().toISOString()
+        });
+        console.log("👤 Default ADMIN user created");
+      }
+    } catch (e) {
+      console.error("Error creating default admin user:", e);
     }
-  } catch (e) {
-    console.error("Error creating default admin user:", e);
-  }
-})
-.catch((err) => {
-  console.error("❌ MongoDB connection failed:", err.message);
-  mongodbConnected = false;    // ✅ ADD THIS
-});
+  })
+  .catch((err) => {
+    console.error("❌ MongoDB connection failed:", err.message);
+    mongodbConnected = false;    // ✅ ADD THIS
+  });
 
 // Define MongoDB Schemas
 const userSchema = new mongoose.Schema({
@@ -107,7 +107,8 @@ const bugSchema = new mongoose.Schema({
 const auditLogSchema = new mongoose.Schema({
   time: { type: String, required: true },
   event: { type: String, required: true },
-  actor: { type: String, required: true }
+  actor: { type: String, required: true },
+  screen: { type: String }
 });
 
 const moduleSchema = new mongoose.Schema({
@@ -159,7 +160,7 @@ async function getNextBugId() {
     { $inc: { value: 1 } },
     { upsert: true, new: true, setDefaultsOnInsert: true }
   );
-  return `BUG-${String(counter.value).padStart(3,'0')}`;
+  return `BUG-${String(counter.value).padStart(3, '0')}`;
 }
 
 // Socket.IO connection handling
@@ -273,8 +274,8 @@ public class AutomationScript {
       const cp = fs.existsSync(path.join(__dirname, 'lib')) ? `"${libPath}:${tempDir}"` : `"${tempDir}"`;
       exec(`java -cp ${cp} AutomationScript`, { timeout: 30000 }, (runErr, runStdout, runStderr) => {
         // Clean up
-        try { fs.unlinkSync(javaFile); } catch {}
-        try { fs.unlinkSync(classFile); } catch {}
+        try { fs.unlinkSync(javaFile); } catch { }
+        try { fs.unlinkSync(classFile); } catch { }
 
         if (runErr && runErr.code !== 0) {
           return res.status(400).json({ error: 'Execution failed', details: runStderr });
@@ -288,7 +289,7 @@ public class AutomationScript {
         }
 
         // Update test case
-        const updatedTc = { ...testCase.toObject(), status: result, updatedAt: new Date().toISOString().slice(0,10), history: [...(testCase.history || []), { date: new Date().toISOString().slice(0,16).replace('T',' '), event: `Automated: ${result}` }] };
+        const updatedTc = { ...testCase.toObject(), status: result, updatedAt: new Date().toISOString().slice(0, 10), history: [...(testCase.history || []), { date: new Date().toISOString().slice(0, 16).replace('T', ' '), event: `Automated: ${result}` }] };
         TestCase.findOneAndUpdate({ id: testCaseId, module }, { $set: updatedTc }, { new: true }).then(() => {
           io.emit('dataUpdate', { type: 'testCase', data: updatedTc });
           res.json({ result, output: runStdout });
@@ -324,7 +325,7 @@ async function sendInitialData(socket) {
     ]);
 
     const moduleNames = modules.map(m => m.name);
-    
+
 
     const dataStore = {
       modules: moduleNames,
