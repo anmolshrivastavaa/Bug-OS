@@ -18,10 +18,16 @@
       --bg4: #1e242c;
       --border: #252c36;
       --border2: #2e3844;
-      --btn-border: rgba(255, 255, 255, 0.5);
+      --btn-border: var(--border2);
       --text: #e2e8f0;
-      --text2: #e2e8f0;
-      --text3: #e2e8f0;
+      --text2: #cbd5e1;
+      --text3: #94a3b8;
+      --th-color: #ffffff;
+      --td-color: #94a3b8;
+      --glow-bg: rgba(255, 255, 255, 0.05);
+      --glow-text: #ffffff;
+      --glow-border: #ffffff;
+      --glow-shadow: 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 4px rgba(255, 255, 255, 0.1);
       --accent: #3b82f6;
       --accent2: #1d4ed8;
       --green: #22c55e;
@@ -55,8 +61,14 @@
       --border2: #cbd5e1;
       --btn-border: var(--border2);
       --text: #0f172a;
-      --text2: #0f172a;
-      --text3: #0f172a;
+      --text2: #334155;
+      --text3: #64748b;
+      --th-color: #0f172a;
+      --td-color: #475569;
+      --glow-bg: rgba(0, 0, 0, 0.03);
+      --glow-text: #0f172a;
+      --glow-border: #0f172a;
+      --glow-shadow: 0 0 10px rgba(15, 23, 42, 0.15), inset 0 0 4px rgba(15, 23, 42, 0.05);
       --accent: #2563eb;
       --accent2: #1d4ed8;
       --green: #16a34a;
@@ -425,14 +437,24 @@
 
     .btn-ghost {
       background: transparent;
-      color: var(--text2);
+      color: var(--td-color);
       border-color: var(--btn-border);
     }
 
     .btn-ghost:hover {
-      background: var(--bg3);
-      color: var(--text);
-      border-color: var(--border2);
+      background: var(--glow-bg) !important;
+      color: var(--glow-text) !important;
+      border-color: var(--glow-border) !important;
+      box-shadow: var(--glow-shadow) !important;
+    }
+
+    .glow-accent {
+      transition: all 0.2s ease;
+    }
+
+    .glow-accent:hover {
+      filter: brightness(1.15) drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+      transform: translateY(-1px);
     }
 
     .btn-danger {
@@ -478,7 +500,7 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       background: var(--bg3);
-      color: var(--text2);
+      color: var(--td-color);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -488,9 +510,10 @@
     }
 
     .theme-btn:hover {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent2);
+      background: var(--glow-bg);
+      color: var(--glow-text);
+      border-color: var(--glow-border);
+      box-shadow: var(--glow-shadow);
     }
 
     .theme-btn.active {
@@ -534,7 +557,7 @@
     .login-title {
       font-size: 15px;
       font-weight: 600;
-      color: #cbd5e1;
+      color: #94a3b8;
       margin-bottom: 32px;
       line-height: 1.4;
       letter-spacing: 0.5px;
@@ -783,7 +806,7 @@
     th {
       font-size: 11px;
       font-weight: 600;
-      color: var(--text3);
+      color: var(--th-color);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       padding: 14px 16px;
@@ -802,6 +825,7 @@
       border-bottom: 1px solid var(--border);
       vertical-align: top;
       font-size: 13px;
+      color: var(--td-color);
       white-space: normal;
       word-break: break-word;
     }
@@ -817,7 +841,7 @@
     .td-id {
       font-family: var(--font);
       font-size: 11px;
-      color: var(--text3);
+      color: var(--td-color);
       white-space: nowrap;
     }
 
@@ -826,7 +850,7 @@
     }
 
     .td-truncate {
-      color: var(--text);
+      color: var(--td-color);
       white-space: normal;
     }
 
@@ -926,7 +950,7 @@
     .date-col {
       font-family: var(--font);
       font-size: 11px;
-      color: var(--text3);
+      color: var(--td-color);
       white-space: normal;
     }
 
@@ -1042,33 +1066,44 @@
 
     .field label {
       font-size: 11px;
-      font-weight: 400;
-      color: var(--text3);
+      font-weight: 600;
+      color: var(--text);
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
     }
 
     .field input,
     .field select,
     .field .custom-select-trigger,
     .field textarea {
-      background: transparent;
+      background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text);
+      border-radius: 6px;
+      color: var(--text3);
       font-family: var(--font);
-      font-size: 15px;
-      padding: 10px 12px;
+      font-size: 14px;
+      padding: 10px 14px;
       outline: none;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    .field input:hover,
+    .field select:hover,
+    .field .custom-select-trigger:hover,
+    .field textarea:hover {
+      border-color: var(--text3);
     }
 
     .field input:focus,
     .field select:focus,
     .field .custom-select.open .custom-select-trigger,
     .field textarea:focus {
-      border-color: var(--text);
-      box-shadow: none;
+      background: var(--glow-bg);
+      border-color: var(--glow-border);
+      box-shadow: var(--glow-shadow);
+      color: var(--text);
     }
 
     .field textarea {
@@ -1088,7 +1123,9 @@
 
     .required {
       color: var(--red);
-      margin-left: 2px;
+      margin-left: 4px;
+      opacity: 0.8;
+      font-weight: 700;
     }
 
     /* FILTERS */
@@ -1105,16 +1142,39 @@
       border-radius: var(--radius);
       box-sizing: border-box;
       height: 28px;
-      color: var(--text2);
+      color: var(--td-color);
       font-family: var(--font);
       font-size: 12px;
       padding: 5px 10px;
       cursor: pointer;
       outline: none;
+      transition: all 0.2s ease;
     }
 
-    .filter-select:focus {
-      border-color: var(--border2);
+    .filter-select:focus,
+    .filter-select:hover,
+    .filter-active {
+      background: var(--glow-bg) !important;
+      color: var(--glow-text) !important;
+      border-color: var(--glow-border) !important;
+      box-shadow: var(--glow-shadow) !important;
+    }
+
+    .dropzone-area {
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: transparent;
+    }
+
+    .dropzone-area:hover,
+    .dropzone-area.dragover {
+      border-color: var(--glow-border) !important;
+      background: var(--glow-bg) !important;
+      box-shadow: var(--glow-shadow) !important;
     }
 
     /* CUSTOM SELECT */
@@ -1274,7 +1334,7 @@
       font-size: 22px;
       font-weight: 700;
       margin-bottom: 28px;
-      color: #e2e8f0;
+      color: #94a3b8;
     }
 
     .login-copy {
@@ -1492,7 +1552,7 @@
       padding: 4px 10px;
       background: var(--bg2);
       border: 1px solid var(--border);
-      color: var(--text);
+      color: var(--td-color);
       border-radius: 12px;
       text-decoration: none;
       font-size: 11px;
@@ -1502,8 +1562,10 @@
     }
 
     .table-link-pill:hover {
-      background: var(--bg3);
-      border-color: var(--text3);
+      background: var(--glow-bg);
+      color: var(--glow-text);
+      border-color: var(--glow-border);
+      box-shadow: var(--glow-shadow);
     }
 
     .detail-section {
@@ -1713,9 +1775,13 @@
       width: 100%;
       height: 100%;
       border: 4px solid var(--border);
-      border-top-color: var(--accent);
+      border-top-color: #fff;
       border-radius: 50%;
       animation: spin 1s linear infinite;
+    }
+
+    [data-theme='light'] .loader-ring {
+      border-top-color: #64748b;
     }
 
     .loader-image {
@@ -1908,6 +1974,10 @@
       render();
     }
     document.addEventListener('click', function (e) {
+      const p = document.getElementById('user-popup');
+      if (p && p.style.display === 'block' && !e.target.closest('[onclick*="user-popup"]')) {
+        p.style.display = 'none';
+      }
       if (S.hmModDropdownOpen && !e.target.closest('#hmModFilterContainer')) {
         S.hmModDropdownOpen = false;
         render();
@@ -2231,12 +2301,18 @@
 
         wrapper.appendChild(optionsList);
 
-        trigger.onclick = (e) => {
-          e.stopPropagation();
-          const isOpen = wrapper.classList.contains('open');
-          document.querySelectorAll('.custom-select.open').forEach(el => el.classList.remove('open'));
-          if (!isOpen) wrapper.classList.add('open');
-        };
+        if (select.disabled) {
+          wrapper.classList.add('disabled');
+          trigger.style.opacity = '0.45';
+          trigger.style.cursor = 'not-allowed';
+        } else {
+          trigger.onclick = (e) => {
+            e.stopPropagation();
+            const isOpen = wrapper.classList.contains('open');
+            document.querySelectorAll('.custom-select.open').forEach(el => el.classList.remove('open'));
+            if (!isOpen) wrapper.classList.add('open');
+          };
+        }
       });
     }
 
@@ -2279,8 +2355,54 @@
     }
 
     function buildLogin() {
+      const d = new Date();
+      let h = d.getHours();
+      const m = d.getMinutes().toString().padStart(2, '0');
+      const s = d.getSeconds().toString().padStart(2, '0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+
+      const rawHour = d.getHours();
+      let greeting = 'Good Night';
+      let greetIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+      if (rawHour >= 5 && rawHour < 12) {
+        greeting = 'Good Morning';
+        greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+      } else if (rawHour >= 12 && rawHour < 17) {
+        greeting = 'Good Afternoon';
+        greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+      } else if (rawHour >= 17 && rawHour < 21) {
+        greeting = 'Good Evening';
+        greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line><polyline points="16 5 12 9 8 5"></polyline></svg>';
+      }
+
+      const flipClockHtml = `
+      <div id="login-flip-clock" style="position:absolute; bottom:60px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:12px; z-index:10;">
+        <div id="login-greeting" style="display:flex; align-items:center; gap:6px; font-size:16px; font-weight:700; color:var(--text); letter-spacing:0.5px;">
+          ${greetIcon} <span>${greeting}</span>
+        </div>
+        <div style="display:flex; gap:6px; align-items:center; justify-content:center;">
+          <div style="position:relative; width:44px; height:52px; background:var(--bg3); border-radius:6px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.1); border:1px solid var(--border); overflow:hidden;">
+            <div id="fc-ampm" style="position:absolute; top:4px; left:4px; font-size:8px; font-weight:800; color:var(--text3); letter-spacing:0.05em; line-height:1; font-family:'Inter', var(--font);">${ampm}</div>
+            <div id="fc-hours" style="font-size:26px; font-weight:900; color:var(--text); line-height:1; font-family:'Inter', var(--font); letter-spacing:-1px; padding-top:1px;">${h}</div>
+            <div style="position:absolute; top:50%; left:0; width:100%; height:1px; background:var(--bg); transform:translateY(-50%); opacity:0.8;"></div>
+          </div>
+          <div style="font-size:20px; font-weight:900; color:var(--text3); padding-bottom:4px;">:</div>
+          <div style="position:relative; width:44px; height:52px; background:var(--bg3); border-radius:6px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.1); border:1px solid var(--border); overflow:hidden;">
+            <div id="fc-mins" style="font-size:26px; font-weight:900; color:var(--text); line-height:1; font-family:'Inter', var(--font); letter-spacing:-1px; padding-top:1px;">${m}</div>
+            <div style="position:absolute; top:50%; left:0; width:100%; height:1px; background:var(--bg); transform:translateY(-50%); opacity:0.8;"></div>
+          </div>
+          <div style="font-size:20px; font-weight:900; color:var(--text3); padding-bottom:4px;">:</div>
+          <div style="position:relative; width:44px; height:52px; background:var(--bg3); border-radius:6px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.1); border:1px solid var(--border); overflow:hidden;">
+            <div id="fc-secs" style="font-size:26px; font-weight:900; color:var(--text); line-height:1; font-family:'Inter', var(--font); letter-spacing:-1px; padding-top:1px;">${s}</div>
+            <div style="position:absolute; top:50%; left:0; width:100%; height:1px; background:var(--bg); transform:translateY(-50%); opacity:0.8;"></div>
+          </div>
+        </div>
+      </div>`;
+
       return `
-  <div class="login-screen">
+  <div class="login-screen" style="padding-bottom: 120px;">
     <div style="position: absolute; top: 24px; right: 24px; z-index: 10;">
       <button onclick="toggleTheme()" title="Toggle Theme" style="background: transparent; border: none; cursor: pointer; color: var(--text); opacity: 0.5; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; padding: 8px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.5">
         ${currentTheme === 'light' ?
@@ -2288,7 +2410,10 @@
           '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>'}
       </button>
     </div>
-    <div class="login-icon"><img src="${currentTheme === 'light' ? 'login-icon light.png' : 'login-icon.png'}" alt="Login" /></div>
+    ${flipClockHtml}
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <div class="login-icon"><img src="${currentTheme === 'light' ? 'login-icon light.png' : 'login-icon.png'}" alt="Login" /></div>
+    </div>
     <div class="login-card">
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#ed3224" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2317,8 +2442,8 @@
       return `
   <div class="sidebar ${S.sidebarCollapsed ? 'collapsed' : ''}">
     <div class="sidebar-logo" style="display:flex; align-items:center; gap:12px; padding:20px 16px; border-bottom:1px solid var(--border); background: linear-gradient(180deg, var(--bg3) 0%, transparent 100%); margin-bottom: 8px;">
-      <div class="logo-icon" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-        <img src="${currentTheme === 'light' ? 'sidebar icon light.png' : 'sidebar icon.png'}" alt="BUG OS" style="width:44px; height:44px; object-fit:contain;"/>
+      <div class="logo-icon" style="width:80px; height:80px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <img src="${currentTheme === 'light' ? 'sidebar icon light.png' : 'sidebar icon.png'}" alt="BUG OS" style="width:80px; height:80px; object-fit:contain;"/>
       </div>
       <div class="logo-text" style="display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
         <div style="display:flex;">
@@ -2326,15 +2451,15 @@
         </div>
       </div>
       <button class="hamburger-btn" onclick="toggleSidebar()" style="background:transparent; border:none; cursor:pointer; color:var(--text2); margin-left:auto; display:flex; align-items:center; justify-content:center; padding:6px; border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='transparent'" title="Toggle Sidebar">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
     </div>
     <nav class="nav">
       ${navItem('dashboard', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>`, 'Dashboard', 0)}
       ${navItem('testcases', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg>`, 'Test Cases', 0)}
-      ${navItem('bugs', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>`, 'Bug Reports', openBugs)}
-      ${navItem('retest', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`, 'Retest Queue', retestPending)}
-      ${navItem('escalations', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>`, 'Backend Bugs', escalatedCount)}
+      ${navItem('bugs', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>`, 'Bug Reports', openBugs, 'var(--red)')}
+      ${navItem('retest', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`, 'Retest Queue', retestPending, 'var(--yellow)')}
+      ${navItem('escalations', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>`, 'Backend Bugs', escalatedCount, 'var(--orange)')}
       ${navItem('automation', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>`, 'Automation', 0)}
       ${navItem('modules', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>`, 'Modules', 0)}
       ${navItem('audit', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`, 'Audit Log', 0)}
@@ -2342,9 +2467,6 @@
       ${S.role === 'admin' ? navItem('users', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`, 'User Management', 0) : ''}
     </nav>
     <div class="sidebar-switch" style="padding:12px 8px; border-top:1px solid var(--border);">
-      ${S.auth.user !== 'ADMIN' ? `<div class="nav-item" onclick="openChangePassword()" title="Change Password">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> <span class="nav-item-label">Change Password</span>
-      </div>` : ''}
       <div class="nav-item" onclick="logout()" style="color:var(--red);" onmouseover="this.style.background='var(--red-bg)'" onmouseout="this.style.background=''" title="Logout">
         <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--red)"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> <span class="nav-item-label">Logout</span>
       </div>   
@@ -2359,11 +2481,33 @@
   `;
     }
 
-    function navItem(id, icon, label, badge) {
+    function navItem(id, icon, label, badge, badgeColor = 'var(--red)') {
       return `<div class="nav-item ${S.view === id ? 'active' : ''}" onclick="nav('${id}')" title="${label}">
     <span class="nav-icon">${icon}</span> <span class="nav-item-label">${label}</span>
-    ${badge > 0 ? `<span class="nav-badge">${badge}</span>` : ''}
+    ${badge > 0 ? `<span class="nav-badge" style="background:${badgeColor}">${badge}</span>` : ''}
   </div>`;
+    }
+
+    
+    function buildUserRing() {
+      const initial = (S.auth && S.auth.user ? S.auth.user[0] : 'U').toUpperCase();
+      const username = S.auth && S.auth.user ? S.auth.user : 'User';
+      return `<div style="position:relative; display:flex; align-items:center;">
+        <div onclick="const p = document.getElementById('user-popup'); p.style.display = p.style.display === 'block' ? 'none' : 'block'" style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--purple)); color:#ffffff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:16px; cursor:pointer; user-select:none; box-shadow:0 2px 8px rgba(0,0,0,0.1);">${initial}</div>
+        <div id="user-popup" style="display:none; position:absolute; top:48px; right:0; background:var(--bg2); border:2px solid var(--accent); border-radius:12px; padding:8px 0; box-shadow:0 8px 24px rgba(0,0,0,0.12); z-index:1000; min-width:180px;">
+          <!-- CSS Triangle pointing up towards the ring -->
+          <div style="position:absolute; top:-7px; right:12px; width:10px; height:10px; background:var(--bg2); border-left:2px solid var(--accent); border-top:2px solid var(--accent); transform:rotate(45deg);"></div>
+          
+          <div style="padding:8px 16px; border-bottom:1px solid var(--border); margin-bottom:4px;">
+            <div style="font-weight:600; color:var(--text); font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${username}</div>
+            <div style="font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:0.05em; margin-top:2px;">${S.role === 'qa' ? 'QA Role' : S.role === 'dev' ? 'DEV Role' : 'Admin Role'}</div>
+          </div>
+          
+          ${S.auth && S.auth.user !== 'ADMIN' ? `<div onclick="openChangePassword(); document.getElementById('user-popup').style.display='none'" style="padding:8px 16px; font-size:13px; color:var(--text2); cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Change Password
+          </div>` : ''}
+        </div>
+      </div>`;
     }
 
     function buildTopbar() {
@@ -2384,9 +2528,10 @@
       <div class="topbar-actions">
         ${actions}
       </div>
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -2395,6 +2540,8 @@
         <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
+      </div>
+        ${buildUserRing()}
       </div>
     </div>
   </div>`;
@@ -2453,10 +2600,11 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">User Management</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <button class="btn btn-ghost" style="padding:6px 12px; font-size:12px; border-radius:6px; display:inline-flex; align-items:center; gap:6px;" onclick="openAddUser()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Create User</button>
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <button class="btn btn-ghost" style="padding:6px 12px; font-size:12px; border-radius:6px; display:inline-flex; align-items:center; gap:6px;" onclick="openAddUser()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Create User</button>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -2466,14 +2614,16 @@
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
       </div>
+        ${buildUserRing()}
+      </div>
     </div>
   </div>
           <div class="section">
             <div class="section-hdr">
               <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">User Management</div><div class="section-meta">${filteredUsers.length} Shown · ${S.users.length} Total</div></div>
               <div style="position:relative; width:220px;">
-                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input class="filter-select" id="usersQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search users..." value="${escHtml(usersQ).replace(/\"/g, '&quot;')}" oninput="liveFilter(this)">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input class="filter-select${usersQ ? ' filter-active' : ''}" id="usersQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search users..." value="${escHtml(usersQ).replace(/\"/g, '&quot;')}" oninput="liveFilter(this)">
               </div>
             </div>
           <div class="tbl-wrap scrollable">
@@ -2636,9 +2786,10 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Backend Escalations</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -2648,6 +2799,8 @@
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
       </div>
+        ${buildUserRing()}
+      </div>
     </div>
   </div>
   <div class="section">
@@ -2655,18 +2808,18 @@
       <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Backend Escalations</div><div class="section-meta">${bugs.length} Shown · ${S.bugs.filter(b => b.status === 'Escalated').length} Total</div></div>
       <div style="font-size:12px;color:var(--text);position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;">${isDev ? 'Escalated by Frontend Team' : 'Waiting for Backend Team to resolve'}</div>
       <div class="filters">
-        <select class="filter-select" id="escModF" onchange="render()">
+        <select class="filter-select${escModF ? ' filter-active' : ''}" id="escModF" onchange="render()">
           <option value="">All Modules</option>${modOpts}
         </select>
-        <select class="filter-select" id="escSevF" onchange="render()">
+        <select class="filter-select${escSevF ? ' filter-active' : ''}" id="escSevF" onchange="render()">
           <option value="">All Severity</option>
           <option${escSevF === 'High' ? ' selected' : ''}>High</option>
           <option${escSevF === 'Medium' ? ' selected' : ''}>Medium</option>
           <option${escSevF === 'Low' ? ' selected' : ''}>Low</option>
         </select>
         <div style="position:relative; width:220px;">
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input class="filter-select" id="escQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search escalations..." value="${escQ.replace(/"/g, '&quot;')}" oninput="liveFilter(this)">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input class="filter-select${escQ ? ' filter-active' : ''}" id="escQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search escalations..." value="${escQ.replace(/"/g, '&quot;')}" oninput="liveFilter(this)">
         </div>
       </div>
     </div>
@@ -2865,7 +3018,7 @@
 
       // Tooltip container
       const tooltipId = 'moduleTrackerTooltip_' + Math.random().toString(36).substr(2, 9);
-      const tooltip = `<div id="${tooltipId}" style="position:fixed;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px;font-size:11px;max-width:300px;z-index:9999;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.3);pointer-events:none;">Module Breakdown</div>`;
+      const tooltip = `<div id="${tooltipId}" style="position:fixed;background:color-mix(in srgb, var(--bg3) 90%, transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:14px;max-width:300px;z-index:9999;display:none;box-shadow:0 10px 30px rgba(0,0,0,0.15), 0 0 0 1px var(--border);pointer-events:none;transition:opacity 0.15s ease, transform 0.15s ease;transform:translateY(4px);opacity:0;"></div>`;
 
       const html = `<div style="position:relative;overflow-x:auto;padding:16px;background:var(--bg3);border-radius:var(--radius);">
         ${chartSVG}
@@ -2922,24 +3075,31 @@
               moduleBreakdown = Object.entries(modCounts).sort((a, b) => b[1] - a[1]);
             }
 
-            let html = '<div style="font-weight:600;margin-bottom:8px;color:var(--text);">' + metrics[metric] + '</div>';
-            html += '<div style="font-size:11px;color:var(--text3);margin-bottom:6px;">Date: ' + formatDate(date) + ' | Total: ' + count + '</div>';
-            html += '<div style="border-top:1px solid var(--border);padding-top:8px;"><strong>Module Breakdown:</strong><br/>';
-
+            let html = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">';
+            html += '<div style="width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);"></div>';
+            html += '<div style="font-weight:700;font-size:13px;color:var(--text);">' + metrics[metric] + '</div>';
+            html += '</div>';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:11px;margin-bottom:12px;background:var(--bg2);padding:6px 8px;border-radius:6px;border:1px solid var(--border);">';
+            html += '<span><span style="color:var(--text);font-weight:600;margin-right:4px;">Date:</span><span style="color:var(--text2);">' + formatDate(date) + '</span></span>';
+            html += '<span><span style="color:var(--text);font-weight:600;margin-right:4px;">Total:</span><span style="color:var(--text2);font-family:var(--mono);font-weight:600;">' + count + '</span></span>';
+            html += '</div>';
+            html += '<div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);font-weight:700;margin-bottom:6px;">Module Breakdown</div>';
+            html += '<div style="display:flex;flex-direction:column;gap:4px;">';
             if (moduleBreakdown.length > 0) {
               moduleBreakdown.forEach(([mod, cnt]) => {
-                html += '<div style="display:flex;justify-content:space-between;padding:4px 0;color:var(--text);">';
-                html += '<span>' + mod + ':</span>';
-                html += '<span style="font-family:var(--mono);font-weight:600;">' + cnt + '</span>';
+                html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--border);color:var(--text);">';
+                html += '<span style="font-size:12px;">' + mod + '</span>';
+                html += '<span style="font-family:var(--mono);font-weight:700;font-size:13px;background:var(--bg2);padding:2px 6px;border-radius:4px;border:1px solid var(--border);">' + cnt + '</span>';
                 html += '</div>';
               });
             } else {
-              html += '<div style="color:var(--text3);padding:4px 0;">No data</div>';
+              html += '<div style="color:var(--text3);font-size:12px;padding:4px 0;">No data</div>';
             }
             html += '</div>';
 
             tooltip.innerHTML = html;
             tooltip.style.display = 'block';
+            setTimeout(() => { tooltip.style.opacity = '1'; tooltip.style.transform = 'translateY(0)'; }, 10);
 
             const rect = this.getBoundingClientRect();
             let tooltipX = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
@@ -2954,7 +3114,9 @@
           });
 
           bar.addEventListener('mouseleave', function () {
-            tooltip.style.display = 'none';
+            tooltip.style.opacity = '0';
+            tooltip.style.transform = 'translateY(4px)';
+            setTimeout(() => { tooltip.style.display = 'none'; }, 150);
           });
         });
       }, 100);
@@ -2983,11 +3145,23 @@
       ).join('');
 
       if (!window.hmHover) {
-        window.hmHover = function (e, id, text) {
+        window.hmHover = function (e, id, mod, status, count) {
           const tt = document.getElementById(id);
           if (tt) {
-            tt.innerHTML = text;
+            const color = status === 'Pass' ? 'var(--green)' : status === 'Fail' ? 'var(--red)' : 'var(--orange)';
+            const html = `
+              <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text3);margin-bottom:6px;font-weight:700;">${mod}</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:${color};box-shadow:0 0 6px ${color};"></div>
+                  <span style="font-size:14px;color:var(--text);font-weight:600;">${status}</span>
+                </div>
+                <span style="font-family:var(--mono);font-size:14px;font-weight:700;background:var(--bg2);padding:2px 8px;border-radius:6px;border:1px solid var(--border);">${count}</span>
+              </div>
+            `;
+            tt.innerHTML = html;
             tt.style.display = 'block';
+            setTimeout(() => { tt.style.opacity = '1'; tt.style.transform = 'translateY(0)'; }, 10);
             let left = e.clientX + 15;
             let top = e.clientY + 15;
             if (left + tt.offsetWidth > window.innerWidth) left = e.clientX - tt.offsetWidth - 15;
@@ -2998,29 +3172,33 @@
         };
         window.hmLeave = function (id) {
           const tt = document.getElementById(id);
-          if (tt) tt.style.display = 'none';
+          if (tt) {
+            tt.style.opacity = '0';
+            tt.style.transform = 'translateY(4px)';
+            setTimeout(() => { tt.style.display = 'none'; }, 150);
+          }
         };
       }
 
       const tooltipId = 'hmTooltip_' + Math.random().toString(36).substr(2, 9);
-      const tooltipHTML = `<div id="${tooltipId}" style="position:fixed;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;font-size:12px;font-family:var(--font);font-weight:600;color:var(--text);z-index:9999;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.3);pointer-events:none;white-space:nowrap;"></div>`;
+      const tooltipHTML = `<div id="${tooltipId}" style="position:fixed;background:color-mix(in srgb, var(--bg3) 90%, transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.05);border-radius:10px;padding:12px 14px;z-index:9999;display:none;box-shadow:0 10px 30px rgba(0,0,0,0.15), 0 0 0 1px var(--border);pointer-events:none;white-space:nowrap;transition:opacity 0.15s ease, transform 0.15s ease;transform:translateY(4px);opacity:0;"></div>`;
 
       const passRow = `<div style="padding:10px 16px; background:var(--bg2); font-size:12px; font-weight:normal; color:var(--text); display:flex; align-items:center; justify-content:center; text-align:center;">Pass</div>` +
         modData.map((d) => {
           const pPct = d.p ? Math.max(8, Math.round((d.p / maxPass) * 100)) : 0;
-          return `<div style="background:color-mix(in srgb, var(--green) ${pPct}%, var(--bg)); min-height:45px; transition:background 0.3s; cursor:crosshair; box-sizing:border-box;" onmousemove="window.hmHover(event, '${tooltipId}', '${d.mod} - Pass: ${d.p}')" onmouseleave="window.hmLeave('${tooltipId}')"></div>`;
+          return `<div style="background:color-mix(in srgb, var(--green) ${pPct}%, var(--bg)); min-height:45px; transition:background 0.3s; cursor:crosshair; box-sizing:border-box;" onmousemove="window.hmHover(event, '${tooltipId}', '${d.mod}', 'Pass', ${d.p})" onmouseleave="window.hmLeave('${tooltipId}')"></div>`;
         }).join('');
 
       const failRow = `<div style="padding:10px 16px; background:var(--bg2); font-size:12px; font-weight:normal; color:var(--text); display:flex; align-items:center; justify-content:center; text-align:center;">Fail</div>` +
         modData.map((d) => {
           const fPct = d.f ? Math.max(8, Math.round((d.f / maxFail) * 100)) : 0;
-          return `<div style="background:color-mix(in srgb, var(--red) ${fPct}%, var(--bg)); min-height:45px; transition:background 0.3s; cursor:crosshair; box-sizing:border-box;" onmousemove="window.hmHover(event, '${tooltipId}', '${d.mod} - Fail: ${d.f}')" onmouseleave="window.hmLeave('${tooltipId}')"></div>`;
+          return `<div style="background:color-mix(in srgb, var(--red) ${fPct}%, var(--bg)); min-height:45px; transition:background 0.3s; cursor:crosshair; box-sizing:border-box;" onmousemove="window.hmHover(event, '${tooltipId}', '${d.mod}', 'Fail', ${d.f})" onmouseleave="window.hmLeave('${tooltipId}')"></div>`;
         }).join('');
 
       const holdRow = `<div style="padding:10px 16px; background:var(--bg2); font-size:12px; font-weight:normal; color:var(--text); display:flex; align-items:center; justify-content:center; text-align:center;">Hold</div>` +
         modData.map((d) => {
           const hPct = d.h ? Math.max(8, Math.round((d.h / maxHold) * 100)) : 0;
-          return `<div style="background:color-mix(in srgb, var(--orange) ${hPct}%, var(--bg)); min-height:45px; transition:background 0.3s; cursor:crosshair; box-sizing:border-box;" onmousemove="window.hmHover(event, '${tooltipId}', '${d.mod} - Hold: ${d.h}')" onmouseleave="window.hmLeave('${tooltipId}')"></div>`;
+          return `<div style="background:color-mix(in srgb, var(--orange) ${hPct}%, var(--bg)); min-height:45px; transition:background 0.3s; cursor:crosshair; box-sizing:border-box;" onmousemove="window.hmHover(event, '${tooltipId}', '${d.mod}', 'Hold', ${d.h})" onmouseleave="window.hmLeave('${tooltipId}')"></div>`;
         }).join('');
 
       return `
@@ -3085,7 +3263,6 @@
       const retestM = bData.filter(b => b.status === 'Fixed' && b.severity === 'Medium').length;
       const retestL = bData.filter(b => b.status === 'Fixed' && b.severity === 'Low').length;
       const modList = dashModFilter.length > 0 ? dashModFilter : S.modules;
-      // modOpts removed since the native select was replaced with custom multi-select
 
       const modSummary = modList.map(mod => {
         const tcs = tData.filter(t => t.module === mod);
@@ -3154,12 +3331,22 @@
       const qaLargeArc = qaPct > 50 ? 1 : 0;
       const qaPath = qaPct === 100 ? `M 100 100 L 100 20 A 80 80 0 1 1 100 180 A 80 80 0 1 1 100 20 Z` : (qaPct > 0 ? `M 100 100 L ${devX} ${devY} A 80 80 0 ${qaLargeArc} 1 100 20 Z` : '');
 
+      // Check if data changed to conditionally trigger animations
+      const hData = `${modPass},${modFail},${modHold}`;
+      const animH = !S._lastHData || S._lastHData !== hData;
+      S._lastHData = hData;
+
+      const wpDataStr = `${devWork},${qaWork}`;
+      const animWP = !S._lastWPData || S._lastWPData !== wpDataStr;
+      S._lastWPData = wpDataStr;
+
       return `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
       <div style="font-size:28px;font-weight:700;color:var(--text); letter-spacing:-0.02em;">BUG OS Dashboard</div>
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -3169,18 +3356,20 @@
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
       </div>
+        ${buildUserRing()}
+      </div>
     </div>
   <div class="section" style="overflow:visible;">
-    <div class="section-hdr" style="overflow:visible; align-items:flex-start; border-bottom:none; padding-bottom:16px;">
-      <div class="section-title" style="margin-top:8px;">KPI Filters</div>
-      <div class="filters" style="display:flex; gap:12px; align-items:flex-start; overflow:visible;">
+    <div class="section-hdr" style="overflow:visible; align-items:center; border-bottom:none; padding-bottom:16px;">
+      <div class="section-title" style="margin-top:0;">KPI Filter</div>
+      <div class="filters" style="display:flex; gap:12px; align-items:center; overflow:visible;">
         <div id="dashModFilterContainer" style="position:relative; width:350px; font-size:12px; font-family:var(--font);">
           <div onclick="window.toggleDashModDropdown(event)" style="border:1px solid var(--btn-border); border-radius:var(--radius); padding:4px 32px 4px 8px; min-height:28px; display:flex; flex-wrap:wrap; gap:4px; cursor:pointer; background:var(--bg3); align-items:center; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--btn-border)'">
             ${(!S.dashModFilter || S.dashModFilter.length === 0) ? `<span style="color:var(--text3); padding:0px;">Select KPI modules...</span>` :
           S.dashModFilter.map(m => `
-              <div style="background:var(--bg2); border:1px solid var(--border); border-radius:4px; padding:2px 6px; display:flex; align-items:center; gap:6px;">
-                <span>${m}</span>
-                <span style="cursor:pointer; font-weight:bold; font-size:11px;" onclick="window.removeDashModFilter(event, '${m}')">×</span>
+              <div style="background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.3); color:var(--green); border-radius:4px; padding:2px 6px; display:flex; align-items:center; gap:6px;">
+                <span style="font-weight:600;">${m}</span>
+                <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeDashModFilter(event, '${m}')">×</span>
               </div>
             `).join('')}
             <div style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:4px; align-items:center;">
@@ -3189,12 +3378,16 @@
             </div>
           </div>
           <div id="dashModDropdown" style="display:${S.dashModDropdownOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 4px); left:0; right:0; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); max-height:250px; overflow-y:auto; z-index:1000; box-shadow:0 4px 12px rgba(0,0,0,0.15); padding:4px 0;">
-            ${S.modules.map(m => `
-              <div class="custom-select-option" onclick="window.toggleDashModFilter(event, '${m}')" style="display:flex; align-items:center; ${(S.dashModFilter || []).includes(m) ? 'background:rgba(59, 130, 246, 0.1); color:var(--accent); font-weight:500;' : ''}">
-                <input type="checkbox" ${(S.dashModFilter || []).includes(m) ? 'checked' : ''} style="margin-right:8px; pointer-events:none;">
+            ${S.modules.map(m => {
+            const isSel = (S.dashModFilter || []).includes(m);
+            return `
+              <div class="custom-select-option" onclick="window.toggleDashModFilter(event, '${m}')" style="display:flex; align-items:center; padding:8px 12px; transition:all 0.2s; ${isSel ? 'background:rgba(59, 130, 246, 0.08); color:var(--accent); font-weight:600;' : 'color:var(--text2);'}">
+                <div style="width:16px; height:16px; flex-shrink:0; border-radius:50%; border:2px solid ${isSel ? 'var(--accent)' : 'var(--text3)'}; background:${isSel ? 'var(--accent)' : 'transparent'}; margin-right:12px; display:flex; align-items:center; justify-content:center; transition:all 0.2s;">
+                  ${isSel ? `<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` : ''}
+                </div>
                 <span>${m}</span>
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
         </div>
       </div>
@@ -3262,12 +3455,23 @@
       </div>
       <div style="display:flex;align-items:center;justify-content:center;padding:24px;">
         <svg width="200" height="200" viewBox="0 0 200 200" style="max-width:100%;">
-          <circle cx="100" cy="100" r="80" fill="none" stroke="var(--green)" stroke-width="20" stroke-dasharray="${modPassPct * 5.03} 502.4" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
-          <circle cx="100" cy="100" r="80" fill="none" stroke="var(--red)" stroke-width="20" stroke-dasharray="${modFailPct * 5.03} 502.4" stroke-dashoffset="${-modPassPct * 5.03}" transform="rotate(-90 100 100)"/>
-          <circle cx="100" cy="100" r="80" fill="none" stroke="var(--yellow)" stroke-width="20" stroke-dasharray="${modHoldPct * 5.03} 502.4" stroke-dashoffset="${-(modPassPct + modFailPct) * 5.03}" transform="rotate(-90 100 100)"/>
+          <defs>
+            <mask id="donutFillMask">
+              <circle cx="100" cy="100" r="80" fill="none" stroke="white" stroke-width="20" stroke-dasharray="502.7 502.7" stroke-dashoffset="${animH ? '502.7' : '0'}" transform="rotate(-90 100 100)">
+                ${animH ? '<animate attributeName="stroke-dashoffset" from="502.7" to="0" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" />' : ''}
+              </circle>
+            </mask>
+          </defs>
+          <g mask="url(#donutFillMask)">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="var(--green)" stroke-width="20" stroke-dasharray="${modPassPct * 5.03} 502.4" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="var(--red)" stroke-width="20" stroke-dasharray="${modFailPct * 5.03} 502.4" stroke-dashoffset="${-modPassPct * 5.03}" transform="rotate(-90 100 100)"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="var(--yellow)" stroke-width="20" stroke-dasharray="${modHoldPct * 5.03} 502.4" stroke-dashoffset="${-(modPassPct + modFailPct) * 5.03}" transform="rotate(-90 100 100)"/>
+          </g>
           <circle cx="100" cy="100" r="50" fill="var(--bg2)"/>
-          <text x="100" y="95" text-anchor="middle" font-size="24" font-weight="600" fill="var(--text)" font-family="var(--mono)">${modPassPct}%</text>
-          <text x="100" y="115" text-anchor="middle" font-size="12" fill="var(--text3)" font-family="var(--mono)">Pass Rate</text>
+          <g>
+            <text x="100" y="95" text-anchor="middle" font-size="24" font-weight="600" fill="var(--text)" font-family="var(--mono)" opacity="${animH ? '0' : '1'}">${modPassPct}%${animH ? '<animate attributeName="opacity" from="0" to="1" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" /><animate attributeName="y" from="105" to="95" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" />' : ''}</text>
+            <text x="100" y="115" text-anchor="middle" font-size="12" fill="var(--text3)" font-family="var(--mono)" opacity="${animH ? '0' : '1'}">Pass Rate${animH ? '<animate attributeName="opacity" from="0" to="1" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" /><animate attributeName="y" from="125" to="115" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" />' : ''}</text>
+          </g>
         </svg>
         <div style="margin-left:24px;font-size:13px;line-height:1.8;">
           <div><span style="display:inline-block;width:12px;height:12px;background:var(--green);border-radius:2px;margin-right:8px;"></span>Pass: ${modPass} - ${modPassPct}%</div>
@@ -3286,10 +3490,19 @@
       </div>
       <div style="display:flex;align-items:center;justify-content:center;padding:24px;">
         <svg width="200" height="200" viewBox="0 0 200 200" style="max-width:100%;">
-          ${totalWork > 0 ? `
-          ${devPct > 0 ? `<path d="${devPath}" fill="var(--purple)"/>` : ''}
-          ${qaPath ? `<path d="${qaPath}" fill="var(--green)"/>` : ''}
-          ` : ''}
+          <defs>
+            <mask id="pieFillMask">
+              <circle cx="100" cy="100" r="50" fill="none" stroke="white" stroke-width="100" stroke-dasharray="314.2 314.2" stroke-dashoffset="${animWP ? '314.2' : '0'}" transform="rotate(-90 100 100)">
+                ${animWP ? '<animate attributeName="stroke-dashoffset" from="314.2" to="0" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" />' : ''}
+              </circle>
+            </mask>
+          </defs>
+          <g mask="url(#pieFillMask)">
+            ${totalWork > 0 ? `
+            ${devPct > 0 ? `<path d="${devPath}" fill="var(--purple)"/>` : ''}
+            ${qaPath ? `<path d="${qaPath}" fill="var(--green)"/>` : ''}
+            ` : ''}
+          </g>
         </svg>
         <div style="margin-left:24px;font-size:13px;line-height:1.8;">
           <div><span style="display:inline-block;width:12px;height:12px;background:var(--purple);border-radius:2px;margin-right:8px;"></span>Dev Team: ${devWork} Items - ${devPct}%</div>
@@ -3309,9 +3522,9 @@
         <div onclick="window.toggleHmModDropdown(event)" style="border:1px solid var(--btn-border); border-radius:var(--radius); padding:4px 32px 4px 8px; min-height:28px; display:flex; flex-wrap:wrap; gap:4px; cursor:pointer; background:var(--bg3); align-items:center; transition: border-color 0.15s;" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--btn-border)'">
           ${(!S.hmModFilter || S.hmModFilter.length === 0) ? `<span style="color:var(--text3); padding:0px;">Select modules...</span>` :
           S.hmModFilter.map(m => `
-            <div style="background:var(--bg2); border:1px solid var(--border); border-radius:4px; padding:2px 6px; display:flex; align-items:center; gap:6px;">
-              <span>${m}</span>
-              <span style="cursor:pointer; font-weight:bold; font-size:11px;" onclick="window.removeHmModFilter(event, '${m}')">×</span>
+            <div style="background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.3); color:var(--green); border-radius:4px; padding:2px 6px; display:flex; align-items:center; gap:6px;">
+              <span style="font-weight:600;">${m}</span>
+              <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeHmModFilter(event, '${m}')">×</span>
             </div>
           `).join('')}
           <div style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:4px; align-items:center;">
@@ -3320,12 +3533,16 @@
           </div>
         </div>
         <div id="hmModDropdown" style="display:${S.hmModDropdownOpen ? 'block' : 'none'}; position:absolute; top:calc(100% + 4px); left:0; right:0; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); max-height:250px; overflow-y:auto; z-index:1000; box-shadow:0 4px 12px rgba(0,0,0,0.15); padding:4px 0;">
-          ${S.modules.map(m => `
-            <div class="custom-select-option" onclick="window.toggleHmModFilter(event, '${m}')" style="display:flex; align-items:center; ${(S.hmModFilter || []).includes(m) ? 'background:rgba(59, 130, 246, 0.1); color:var(--accent); font-weight:500;' : ''}">
-              <input type="checkbox" ${(S.hmModFilter || []).includes(m) ? 'checked' : ''} style="margin-right:8px; pointer-events:none;">
+          ${S.modules.map(m => {
+            const isSel = (S.hmModFilter || []).includes(m);
+            return `
+            <div class="custom-select-option" onclick="window.toggleHmModFilter(event, '${m}')" style="display:flex; align-items:center; padding:8px 12px; transition:all 0.2s; ${isSel ? 'background:rgba(59, 130, 246, 0.08); color:var(--accent); font-weight:600;' : 'color:var(--text2);'}">
+              <div style="width:16px; height:16px; flex-shrink:0; border-radius:50%; border:2px solid ${isSel ? 'var(--accent)' : 'var(--text3)'}; background:${isSel ? 'var(--accent)' : 'transparent'}; margin-right:12px; display:flex; align-items:center; justify-content:center; transition:all 0.2s;">
+                ${isSel ? `<svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>` : ''}
+              </div>
               <span>${m}</span>
             </div>
-          `).join('')}
+          `}).join('')}
         </div>
       </div>
     </div>
@@ -3338,7 +3555,73 @@
     }
 
     // ─────────────────────────── TEST CASES ───────────────────────────
+    function switchTestCasesTab(tabId) {
+      S.testCasesTab = tabId;
+      render();
+    }
+
     function buildTestCases() {
+      S.testCasesTab = S.testCasesTab || 'all';
+
+      const tabStyle = (isActive) => isActive
+        ? `background:var(--text); color:var(--bg); border-color:var(--text); cursor:default; box-shadow:0 2px 8px rgba(0,0,0,0.1);`
+        : `background:transparent; color:var(--text2); border-color:transparent; cursor:pointer; opacity:0.8; transition:all 0.2s;`;
+
+      const tabsHtml = `
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px; padding:4px; background:var(--bg2); border-radius:30px; display:inline-flex; border:1px solid var(--border);">
+          <div onclick="switchTestCasesTab('all')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.testCasesTab === 'all')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.testCasesTab === 'all' ? '1' : '0.8'}'">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            All Test Cases
+          </div>
+          ${S.role === 'qa' ? `
+          <div onclick="switchTestCasesTab('add')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.testCasesTab === 'add')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.testCasesTab === 'add' ? '1' : '0.8'}'">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Test Case
+          </div>
+          <div onclick="switchTestCasesTab('import')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.testCasesTab === 'import')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.testCasesTab === 'import' ? '1' : '0.8'}'">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Import Test Cases
+          </div>
+          ` : ''}
+        </div>
+      `;
+
+      let contentHtml = '';
+      if (S.testCasesTab === 'add' && S.role === 'qa') {
+        contentHtml = buildAddTestCaseTab();
+      } else if (S.testCasesTab === 'import' && S.role === 'qa') {
+        contentHtml = buildImportTestCaseTab();
+      } else {
+        contentHtml = buildAllTestCasesTab();
+      }
+
+      return `
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+    <div style="font-size:28px;font-weight:700;color:var(--text);">Test Cases</div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span id="live-clock">${formatDate(nowFull())}</span>
+        </div>
+        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        </button>
+        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
+          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
+        </button>
+      </div>
+        ${buildUserRing()}
+      </div>
+    </div>
+  </div>
+  ${tabsHtml}
+  ${contentHtml}
+  `;
+    }
+
+    function buildAllTestCasesTab() {
       const modF = (document.getElementById('tcModF') || { value: '' }).value;
       const stF = (document.getElementById('tcStF') || { value: '' }).value;
       const sevF = (document.getElementById('tcSevF') || { value: '' }).value;
@@ -3387,51 +3670,33 @@
       }).join('');
 
       return `
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-    <div style="font-size:28px;font-weight:700;color:var(--text);">Test Cases</div>
-    <div style="display:flex; align-items:center; gap:16px;">
-      ${S.role === 'qa' ? `<button class="btn btn-ghost" style="padding:6px 16px; font-size:12px; font-weight:600; border-radius:24px; border:1px solid var(--border); display:inline-flex; align-items:center; gap:6px; background:var(--bg2); box-shadow:0 1px 4px rgba(0,0,0,0.02);" onclick="openImportCSV()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import Test Cases</button><button class="btn" style="padding:6px 16px; font-size:12px; font-weight:600; border-radius:24px; border:none; display:inline-flex; align-items:center; gap:6px; background:var(--accent); color:#fff; box-shadow:0 2px 8px rgba(59, 130, 246, 0.25);" onclick="openAddTC()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Test Case</button>` : ''}
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-    </div>
-  </div>
   <div class="section">
     <div class="section-hdr">
       <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">All Test Cases</div><div class="section-meta">${data.length} Shown · ${S.testCases.length} Total</div></div>
       <div class="filters">
-        <select class="filter-select" id="tcModF" onchange="render()">
+        <select class="filter-select${modF ? ' filter-active' : ''}" id="tcModF" onchange="render()">
           <option value="">All Modules</option>${modOpts}
         </select>
-        <select class="filter-select" id="tcStF" onchange="render()">
+        <select class="filter-select${stF ? ' filter-active' : ''}" id="tcStF" onchange="render()">
           <option value="">All Status</option>
           <option${stF === 'Pass' ? ' selected' : ''}>Pass</option>
           <option${stF === 'Fail' ? ' selected' : ''}>Fail</option>
           <option${stF === 'Hold' ? ' selected' : ''}>Hold</option>
         </select>
-        <select class="filter-select" id="tcSevF" onchange="render()">
+        <select class="filter-select${sevF ? ' filter-active' : ''}" id="tcSevF" onchange="render()">
           <option value="">All Severity</option>
           <option${sevF === 'High' ? ' selected' : ''}>High</option>
           <option${sevF === 'Medium' ? ' selected' : ''}>Medium</option>
           <option${sevF === 'Low' ? ' selected' : ''}>Low</option>
         </select>
         <div style="position:relative; width:220px;">
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <input class="filter-select" id="tcQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search test cases..." value="${tcQ.replace(/"/g, '&quot;')}" oninput="liveFilter(this)">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input class="filter-select${tcQ ? ' filter-active' : ''}" id="tcQ" style="width:100%; padding-left:36px; border-radius:24px;" placeholder="Search test cases..." value="${tcQ.replace(/"/g, '&quot;')}" oninput="liveFilter(this)">
         </div>
       </div>
     </div>
     <div style="padding:8px 24px; background:rgba(0,0,0,0.005); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:flex-start; gap:8px; flex-wrap:wrap;">
-      <button onclick="downloadTestCasesCSV()" class="btn btn-ghost" style="padding:4px 12px; font-size:11px; font-weight:600; border-radius:12px; display:inline-flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border); color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,0.05); text-transform:uppercase; letter-spacing:0.06em; margin-right:8px; cursor:pointer;" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='var(--bg)'"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> EXPORT CSV</button>
+      <button onclick="downloadTestCasesCSV()" class="btn btn-ghost" style="padding:4px 12px; font-size:11px; font-weight:600; border-radius:12px; display:inline-flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:0.06em; margin-right:8px; cursor:pointer;"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> EXPORT CSV</button>
       <select class="filter-select" id="tcDlMod" onchange="render()" style="background:transparent; border:1px dashed var(--btn-border); height:26px; padding:0 24px 0 8px;">
         <option value="">All Modules</option>${dlModOpts}
       </select>
@@ -3508,13 +3773,15 @@
       }).join('');
 
       const openCount = S.bugs.filter(b => b.status === 'Open' || b.status === 'Retest Failed' || b.status === 'Escalated').length;
+
       return `
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Bug Reports</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -3524,35 +3791,37 @@
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
       </div>
+        ${buildUserRing()}
+      </div>
     </div>
   </div>
   <div class="section">
     <div class="section-hdr">
       <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Bug Reports</div><div class="section-meta">${data.length} Shown </div></div>
       <div class="filters">
-        <select class="filter-select" id="bugModF" onchange="render()">
+        <select class="filter-select${bugModF ? ' filter-active' : ''}" id="bugModF" onchange="render()">
           <option value="">All Modules</option>${modOpts}
         </select>
-        <select class="filter-select" id="bugStF" onchange="render()">
+        <select class="filter-select${bugStF ? ' filter-active' : ''}" id="bugStF" onchange="render()">
           <option value="">All Bug Status</option>
           <option${bugStF === 'Open' ? ' selected' : ''}>Open</option>
           <option${bugStF === 'Escalated' ? ' selected' : ''}>Escalated</option>
           <option${bugStF === 'Fixed' ? ' selected' : ''}>Fixed</option>
         </select>
-        <select class="filter-select" id="bugTcStF" onchange="render()">
+        <select class="filter-select${bugTcStF ? ' filter-active' : ''}" id="bugTcStF" onchange="render()">
           <option value="">All Test Status</option>
           
           <option${bugTcStF === 'Fail' ? ' selected' : ''}>Fail</option>
           <option${bugTcStF === 'Hold' ? ' selected' : ''}>Hold</option>
         </select>
-        <select class="filter-select" id="bugSevF" onchange="render()">
+        <select class="filter-select${bugSevF ? ' filter-active' : ''}" id="bugSevF" onchange="render()">
           <option value="">All Severity</option>
           <option${bugSevF === 'High' ? ' selected' : ''}>High</option>
           <option${bugSevF === 'Medium' ? ' selected' : ''}>Medium</option>
           <option${bugSevF === 'Low' ? ' selected' : ''}>Low</option>
         </select>
         <div style="position:relative; width:220px;">
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input class="filter-select" id="bugQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search bug reports..." value="${bugQ.replace(/"/g, '&quot;')}" oninput="liveFilter(this)">
         </div>
       </div>
@@ -3596,13 +3865,15 @@
       <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
       <td>${sevBadge(b.severity)}</td>
-      <td><button class="btn btn-ghost btn-sm" onclick="viewBug('${b.id}')" style="white-space:nowrap;">View Details</button></td>
-      ${S.role === 'qa' ? `<td>
-        <div style="display:flex; gap:6px; align-items:center; justify-content:flex-end; min-width:max-content;">
+      <td>
+        <div style="display:flex; gap:6px; align-items:center; min-width:max-content;">
+          <button class="btn btn-ghost btn-sm" onclick="viewBug('${b.id}')" style="white-space:nowrap;">View Details</button>
+          ${S.role === 'qa' ? `
           <button class="btn btn-success btn-sm" onclick="retestPass('${b.id}')">Pass ✓ </button>
           <button class="btn btn-danger btn-sm" onclick="retestFail('${b.id}')">Fail ✕ </button>
+          ` : ''}
         </div>
-      </td>` : ''}
+      </td>
     </tr>`;
       }).join('');
 
@@ -3610,9 +3881,10 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Retest Queue</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -3621,6 +3893,8 @@
         <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
+      </div>
+        ${buildUserRing()}
       </div>
     </div>
   </div>
@@ -3639,7 +3913,7 @@
           <option${rtSevF === 'Low' ? ' selected' : ''}>Low</option>
         </select>
         <div style="position:relative; width:220px;">
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input class="filter-select" id="rtQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search retest queue..." value="${rtQ.replace(/"/g, '&quot;')}" oninput="liveFilter(this)">
         </div>
       </div>
@@ -3648,7 +3922,7 @@
           ? `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>No bugs marked as fixed matches filters</div>`
           : `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>No bugs awaiting retest. All clear!</div>`) : `
     <div class="tbl-wrap scrollable"><table>
-      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>View Details</th>${S.role === 'qa' ? '<th>ACTIONS</th>' : ''}</tr></thead>
+      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>ACTIONS</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`}
   </div>`;
@@ -3666,9 +3940,10 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Automation</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -3677,6 +3952,8 @@
         <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
+      </div>
+        ${buildUserRing()}
       </div>
     </div>
   </div>
@@ -3916,13 +4193,14 @@
     <div style="font-size:28px;font-weight:700;color:var(--text);">Modules</div>
     <div style="display:flex; align-items:center; gap:16px;">
       <div style="position:relative; width:220px;">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" id="modQ" class="filter-select" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search modules..." oninput="liveFilter(this)" value="${escHtml(modQ).replace(/\"/g, '&quot;')}">
       </div>
-      ${S.role === 'qa' ? `<button class="btn" style="padding:6px 16px; font-size:12px; font-weight:600; border-radius:24px; border:none; display:inline-flex; align-items:center; gap:6px; background:var(--accent); color:#fff; box-shadow:0 2px 8px rgba(59, 130, 246, 0.25);" onclick="openAddModule()"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Module</button>` : ''}
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      ${S.role === 'qa' ? `<button class="btn btn-ghost" style="padding:6px 16px; font-size:12px; font-weight:600; border-radius:24px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" onclick="openAddModule()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Module</button>` : ''}
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -3931,6 +4209,8 @@
         <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
+      </div>
+        ${buildUserRing()}
       </div>
     </div>
   </div>`;
@@ -3958,29 +4238,29 @@
         let timePart = parts[1] || '—';
         let screenName = a.screen ? (titles[a.screen] || a.screen) : '—';
 
-        let eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 16 12 12 12 8"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+        let eventIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 16 12 12 12 8"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
         let eventColor = 'var(--text)';
         let iconBg = 'var(--bg3)';
         let iconColor = 'var(--text2)';
 
         const evt = a.event.toLowerCase();
         if (evt.includes('escalated')) {
-          eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+          eventIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
           eventColor = 'var(--orange)';
           iconBg = 'color-mix(in srgb, var(--orange) 10%, transparent)';
           iconColor = 'var(--orange)';
         } else if (evt.includes('passed') || evt.includes('fixed')) {
-          eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+          eventIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
           eventColor = 'var(--green)';
           iconBg = 'color-mix(in srgb, var(--green) 10%, transparent)';
           iconColor = 'var(--green)';
         } else if (evt.includes('failed') || evt.includes('deleted')) {
-          eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+          eventIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
           eventColor = 'var(--red)';
           iconBg = 'color-mix(in srgb, var(--red) 10%, transparent)';
           iconColor = 'var(--red)';
         } else if (evt.includes('added') || evt.includes('imported')) {
-          eventIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+          eventIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
           eventColor = 'var(--accent)';
           iconBg = 'color-mix(in srgb, var(--accent) 10%, transparent)';
           iconColor = 'var(--accent)';
@@ -4015,9 +4295,10 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Audit Log</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -4027,13 +4308,15 @@
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
       </div>
+        ${buildUserRing()}
+      </div>
     </div>
   </div>
   <div class="section">
     <div class="section-hdr">
       <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Audit Log</div><div class="section-meta">${filteredAuditLog.length} events</div></div>
       <div style="position:relative; width:220px;">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input class="filter-select" id="auditQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search audit log..." value="${escHtml(auditQ).replace(/\"/g, '&quot;')}" oninput="liveFilter(this)">
       </div>
     </div>
@@ -4094,12 +4377,13 @@
     <div style="font-size:28px;font-weight:700;color:var(--text);">Reports</div>
     <div style="display:flex; align-items:center; gap:16px;">
       <div style="position:relative; width:220px;">
-        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" id="reportQ" class="filter-select" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search modules..." oninput="liveFilter(this)" value="${escHtml(reportQ).replace(/\"/g, '&quot;')}">
       </div>
-      <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
+        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
   <span id="live-clock">${formatDate(nowFull())}</span>
 </div>
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
@@ -4108,6 +4392,8 @@
         <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
+      </div>
+        ${buildUserRing()}
       </div>
     </div>
   </div>
@@ -4136,7 +4422,7 @@
   <div class="section">
     <div class="section-hdr">
       <div class="section-title">Module Breakdown</div>
-      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">Export CSV</button>
+      <button class="btn btn-ghost btn-sm" style="display:inline-flex; align-items:center; gap:6px;" onclick="exportCSV()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Export CSV</button>
     </div>
     <div class="tbl-wrap"><table>
       <thead><tr><th>Module</th><th>Total Tests</th><th>Pass</th><th>Fail</th><th>Hold</th><th>Total Bugs</th><th>Open Bugs</th></tr></thead>
@@ -4238,81 +4524,108 @@
     }
 
     // ─────────────────────────── MODALS ───────────────────────────
-    function openAddTC() {
-      if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+    function updateAutoTcId() {
+      const mod = document.getElementById('f-mod').value;
+      let count = S.testCases.filter(t => t.module === mod).length + 1;
+      let newId = 'TC-' + count;
+      while (S.testCases.some(t => t.module === mod && t.id === newId)) {
+        count++;
+        newId = 'TC-' + count;
+      }
+      const idField = document.getElementById('f-id');
+      if (idField) {
+        idField.value = newId;
+      }
+    }
+
+    function buildAddTestCaseTab() {
+      if (!initialDataReceived) return `<div class="empty">Waiting for server data...</div>`;
       const mods = S.modules.map(m => `<option>${m}</option>`).join('');
-      showModal('Add Test Case', `
-  <div class="form-grid">
-    <div class="field">
-      <label>Test Case ID <span class="required">*</span></label>
-      <input id="f-id" placeholder="Enter test case ID">
+      setTimeout(updateAutoTcId, 50);
+      return `
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">Add New Test Case</div>
     </div>
-    <div class="field">
-      <label>Module <span class="required">*</span></label>
-      <select id="f-mod">${mods}</select>
+    <div style="padding: 24px;">
+      <div class="form-grid">
+        <div class="field">
+          <label>Test Case ID <span class="required">*</span></label>
+          <input id="f-id" disabled style="opacity:0.6;cursor:not-allowed;" placeholder="e.g. TC-1001">
+        </div>
+        <div class="field">
+          <label>Module <span class="required">*</span></label>
+          <select id="f-mod" onchange="updateAutoTcId()">${mods}</select>
+        </div>
+        <div class="field form-full">
+          <label>Test Case Title <span class="required">*</span></label>
+          <input id="f-tc" placeholder="What is being tested?">
+        </div>
+        <div class="field form-full">
+          <label>Scenario <span class="required">*</span></label>
+          <input id="f-scenario" placeholder="Test scenario description">
+        </div>
+        <div class="field">
+          <label>Screen Name <span class="required">*</span></label>
+          <input id="f-screen" placeholder="e.g. FD Booking > All Bookings">
+        </div>
+        <div class="field">
+          <label>Severity <span class="required">*</span></label>
+          <select id="f-sev"><option>High</option><option selected>Medium</option><option>Low</option></select>
+        </div>
+        <div class="field form-full">
+          <label>Test Steps <span class="required">*</span></label>
+          <textarea id="f-steps" placeholder="1. Go to...&#10;2. Click...&#10;3. Observe..."></textarea>
+        </div>
+        <div class="field form-full">
+          <label>Expected Results <span class="required">*</span></label>
+          <textarea id="f-expected" placeholder="What should happen?"></textarea>
+        </div>
+        <div class="field form-full">
+          <label>Actual Results <span class="required">*</span></label>
+          <textarea id="f-actual" placeholder="What actually happened?"></textarea>
+        </div>
+        <div class="field">
+          <label>Status <span class="required">*</span></label>
+          <select id="f-status"><option>Pass</option><option>Fail</option><option>Hold</option></select>
+        </div>
+        <div class="field">
+          <label>Evidence (URL/filename) <span class="required">*</span></label>
+          <input id="f-evidence" placeholder="Paste evidence URL" oninput="onEvidenceTextChange('f-evidence','f-evidence-file','f-evidence-preview')">
+          <div id="f-evidence-preview"></div>
+        </div>
+        <div class="field form-full">
+          <label>Notes</label>
+          <textarea id="f-notes" placeholder="Additional notes..."></textarea>
+        </div>
+        <div class="form-full" style="display:flex; flex-direction:row; justify-content:flex-end; align-items:center; gap:12px; margin-top:16px;">
+          <button class="btn btn-ghost" onclick="switchTestCasesTab('add')">Cancel</button>
+          <button class="btn btn-ghost" onclick="submitTC()" style="padding:7px 20px;">Save Test Case</button>
+        </div>
+      </div>
     </div>
-    <div class="field form-full">
-      <label>Test Case Title <span class="required">*</span></label>
-      <input id="f-tc" placeholder="What is being tested?">
-    </div>
-    <div class="field form-full">
-      <label>Scenario</label>
-      <input id="f-scenario" placeholder="Test scenario description">
-    </div>
-    <div class="field">
-      <label>Screen Name</label>
-      <input id="f-screen" placeholder="e.g. Login Page">
-    </div>
-    <div class="field">
-      <label>Severity <span class="required">*</span></label>
-      <select id="f-sev"><option>High</option><option selected>Medium</option><option>Low</option></select>
-    </div>
-    <div class="field form-full">
-      <label>Test Steps <span class="required">*</span></label>
-      <textarea id="f-steps" placeholder="1. Go to...&#10;2. Click...&#10;3. Observe..."></textarea>
-    </div>
-    <div class="field form-full">
-      <label>Expected Results <span class="required">*</span></label>
-      <textarea id="f-expected" placeholder="What should happen?"></textarea>
-    </div>
-    <div class="field form-full">
-      <label>Actual Results <span class="required">*</span></label>
-      <textarea id="f-actual" placeholder="What actually happened?"></textarea>
-    </div>
-    <div class="field">
-      <label>Status <span class="required">*</span></label>
-      <select id="f-status"><option>Pass</option><option>Fail</option><option>Hold</option></select>
-    </div>
-    <div class="field">
-      <label>Evidence (URL/filename)</label>
-      <input id="f-evidence" placeholder="Paste evidence URL" oninput="onEvidenceTextChange('f-evidence','f-evidence-file','f-evidence-preview')">
-      <div id="f-evidence-preview"></div>
-    </div>
-    <div class="field form-full">
-      <label>Notes</label>
-      <textarea id="f-notes" placeholder="Additional notes..."></textarea>
-    </div>
-  </div>`,
-        () => submitTC());
+  </div>`;
     }
 
     function submitTC() {
       const id = normalizeTcRowId(document.getElementById('f-id').value);
       const tc = document.getElementById('f-tc').value.trim();
       const mod = normalizeTcModule(document.getElementById('f-mod').value);
+      const scenario = document.getElementById('f-scenario').value.trim();
+      const screen = document.getElementById('f-screen').value.trim();
       const actual = document.getElementById('f-actual').value.trim();
       const expected = document.getElementById('f-expected').value.trim();
       const status = document.getElementById('f-status').value;
       const steps = document.getElementById('f-steps').value.trim();
+      const evidenceText = (document.getElementById('f-evidence') || { value: '' }).value.trim();
 
-      if (!id || !tc || !mod || !actual || !expected || !steps) {
+      if (!id || !tc || !mod || !actual || !expected || !steps || !scenario || !screen || !evidenceText) {
         toast('Please fill all required fields', 'error'); return;
       }
       if (S.testCases.find(t => testcaseKeysMatch(t, { id, module: mod }))) {
         toast(`Test Case ID "${id}" already exists in module "${mod}"`, 'error'); return;
       }
 
-      const evidenceText = (document.getElementById('f-evidence') || { value: '' }).value.trim();
       const newTC = {
         id, testCase: tc, scenario: document.getElementById('f-scenario').value.trim(),
         module: mod, screen: document.getElementById('f-screen').value.trim(),
@@ -4336,9 +4649,9 @@
         autoCreateBug(newTC);
       }
 
-      closeModal();
       save();
       toast(`Test case ${id} added successfully`, 'success');
+      switchTestCasesTab('all');
     }
 
     function generateUniqueBugId() {
@@ -4372,39 +4685,67 @@
       const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module }));
       if (!tc) return;
       const linkedBug = S.bugs.find(b => bugRefsTestCaseKeys(b, id, tc.module));
-      showModal(`Test Case: ${tc.id}`, `
-  <div class="detail-section">
-    <h4 style="display:flex;align-items:center;gap:8px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-      Test Case Details
-    </h4>
-    <div class="detail-grid">
-      <div class="detail-item"><div class="detail-label">ID</div><div class="detail-value" style="font-weight:500;">${tc.id}</div></div>
-      <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${statusBadge(tc.status)}</div></div>
-      <div class="detail-item"><div class="detail-label">Module</div><div class="detail-value">${tc.module}</div></div>
-      <div class="detail-item"><div class="detail-label">Screen</div><div class="detail-value">${tc.screen || '—'}</div></div>
-      <div class="detail-item"><div class="detail-label">Severity</div><div class="detail-value">${sevBadge(tc.severity)}</div></div>
-      <div class="detail-item"><div class="detail-label">Created</div><div class="detail-value" style="font-size:12px;color:var(--text2)">${formatDate(tc.createdAt)}</div></div>
+      const viewIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;vertical-align:middle;color:var(--text2);"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      showModal(`<div style="display:flex;align-items:center;">${viewIcon}View Mode <span style="color:var(--text3);margin-left:6px;font-size:14px;font-weight:400;">| ${tc.id}</span></div>`, `
+  <div style="display:flex; flex-direction:column; gap:24px; text-align:left;">
+    <!-- Top Details Card -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <h4 style="margin-top:0; margin-bottom:16px; font-size:14px; color:var(--text); display:flex; align-items:center; justify-content:flex-start; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+        Test Case Details
+      </h4>
+      <div class="detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">ID</div><div class="detail-value" style="font-family:var(--font);color:var(--text2); font-weight:600; font-size:15px;">${tc.id}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Status</div><div class="detail-value">${statusBadge(tc.status)}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Module</div><div class="detail-value" style="color:var(--text2);">${tc.module}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${tc.screen || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Severity</div><div class="detail-value">${sevBadge(tc.severity)}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Created</div><div class="detail-value" style="font-family:var(--font); font-size:13px; color:var(--text2); background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(tc.createdAt)}</div></div>
+      </div>
     </div>
-  </div>
-  <div class="detail-section">
-    <h4 style="display:flex;align-items:center;gap:8px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-      Test Information
-    </h4>
-    <div class="detail-item" style="margin-bottom:24px"><div class="detail-label">Scenario</div><div class="detail-value" style="color:var(--text2)">${tc.scenario || '—'}</div></div>
-    <div class="detail-item" style="margin-bottom:24px"><div class="detail-label">Test Steps</div><div class="minimal-well">${tc.steps}</div></div>
-    <div class="detail-grid" style="margin-bottom:24px">
-      <div class="detail-item"><div class="detail-label">Expected Results</div><div class="minimal-well">${tc.expected}</div></div>
-      <div class="detail-item"><div class="detail-label">Actual Results</div><div class="minimal-well" style="color:${tc.status === 'Fail' ? 'var(--red)' : 'var(--text2)'}; border-left-color:${tc.status === 'Fail' ? 'var(--red)' : 'var(--border)'}">${tc.actual}</div></div>
+
+    <!-- Test Information Card -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <h4 style="margin-top:0; margin-bottom:16px; font-size:14px; color:var(--text); display:flex; align-items:center; justify-content:flex-start; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple);"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        Test Information
+      </h4>
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Scenario</div>
+          <div class="detail-value" style="color:var(--text2); font-size:13px;">${tc.scenario || '—'}</div>
+        </div>
+        <div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Test Steps</div>
+          <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${tc.steps}</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+          <div>
+            <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Expected Results</div>
+            <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${tc.expected}</div>
+          </div>
+          <div>
+            <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Actual Results</div>
+            <div class="minimal-well" style="color:${tc.status === 'Fail' ? 'var(--red)' : 'var(--text2)'}; border-left-color:${tc.status === 'Fail' ? 'var(--red)' : 'var(--border)'}; font-size:13px; margin:0;">${tc.actual}</div>
+          </div>
+        </div>
+        ${tc.evidence ? `
+        <div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Evidence</div>
+          <div><a href="${tc.evidence}" target="_blank" class="attachment-pill" style="display:inline-flex;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> View Attachment</a></div>
+        </div>` : ''}
+        ${tc.notes ? `
+        <div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Notes</div>
+          <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${tc.notes}</div>
+        </div>` : ''}
+      </div>
     </div>
-    ${tc.evidence ? `<div class="detail-item" style="margin-bottom:24px"><div class="detail-label">Evidence</div><div style="margin-top:8px"><a href="${tc.evidence}" target="_blank" class="attachment-pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> View Attachment</a></div></div>` : ''}
-    ${tc.notes ? `<div class="detail-item"><div class="detail-label">Notes</div><div class="minimal-well">${tc.notes}</div></div>` : ''}
   </div>
   ${linkedBug ? `
-  <div class="detail-section" style="margin-bottom:0">
-    <h4 style="display:flex;align-items:center;gap:8px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+  <div style="background:var(--bg2); border:1px solid var(--red-border); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05); margin-top:24px;">
+    <h4 style="margin-top:0; margin-bottom:16px; font-size:14px; color:var(--text); display:flex; align-items:center; justify-content:flex-start; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--red);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
       Linked Bug
     </h4>
     <div class="linked-bug-card" onclick="closeModal(); setTimeout(()=>viewBug('${linkedBug.id}'),100);">
@@ -4433,35 +4774,55 @@
     </div>`;
       }).join('');
 
-      showModal(`Bug Report: ${b.id}`, `
-  <div class="detail-section">
-    <h4>Bug Details</h4>
-    <div class="detail-grid">
-      <div class="detail-item"><div class="detail-label">Bug ID</div><div class="detail-value" style="font-family:var(--mono);color:var(--text)">${b.id}</div></div>
-      <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">${statusBadge(b.status)}</div></div>
-      <div class="detail-item"><div class="detail-label">Module</div><div class="detail-value">${b.module}</div></div>
-      <div class="detail-item"><div class="detail-label">Screen</div><div class="detail-value">${b.screen || '—'}</div></div>
-      <div class="detail-item"><div class="detail-label">Severity</div><div class="detail-value">${sevBadge(b.severity)}</div></div>
-      <div class="detail-item"><div class="detail-label">Linked Test Case</div><div class="detail-value" style="font-family:var(--mono)">${b.tcId}</div></div>
+      const viewIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;vertical-align:middle;color:var(--text2);"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+      showModal(`<div style="display:flex;align-items:center;">${viewIcon}View Mode <span style="color:var(--text3);margin-left:6px;font-size:14px;font-weight:400;">| ${b.id}</span></div>`, `
+  <div style="display:flex; flex-direction:column; gap:24px; text-align:left;">
+    <!-- Top Details Card -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <h4 style="margin-top:0; margin-bottom:16px; font-size:14px; color:var(--text); display:flex; align-items:center; justify-content:flex-start; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Bug Overview
+      </h4>
+      <div class="detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Bug ID</div><div class="detail-value" style="font-family:var(--font);color:var(--text2); font-weight:600; font-size:15px;">${b.id}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Status</div><div class="detail-value">${statusBadge(b.status)}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Module</div><div class="detail-value" style="color:var(--text2);">${b.module}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Severity</div><div class="detail-value">${sevBadge(b.severity)}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Linked Test Case</div><div class="detail-value" style="font-family:var(--font); color:var(--accent);">${b.tcId}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${b.screen || '—'}</div></div>
+      </div>
+      
+      <div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);">
+        <div class="detail-item" style="margin-bottom:12px;"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Evidence</div><div style="font-size:13px;color:var(--text2)">${renderEvidenceCell(linkedTc?.evidence)}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Notes</div><div style="font-size:13px;color:var(--text2); background:var(--bg3); padding:10px; border-radius:6px; margin-top:4px;">${linkedTc?.notes || '—'}</div></div>
+      </div>
     </div>
-    <div class="detail-item"><div class="detail-label">Evidence</div><div style="font-size:12px;color:var(--text)">${renderEvidenceCell(linkedTc?.evidence)}</div></div>
-    <div class="detail-item"><div class="detail-label">Notes</div><div style="font-size:12px;color:var(--text2)">${linkedTc?.notes || '—'}</div></div>
-  </div>
-  <div class="detail-section">
-    <h4>Audit Timeline</h4>
-    <div class="timeline">${history || '<div style="color:var(--text3);font-size:13px">No history yet</div>'}</div>
-  </div>
-  <div class="detail-section">
-    <h4>Date Tracking</h4>
-    <div class="detail-grid">
-      <div class="detail-item"><div class="detail-label">Failed On</div><div style="color:var(--text);font-family:var(--mono);font-size:12px">${formatDate(b.failedAt) || '—'}</div></div>
-      <div class="detail-item"><div class="detail-label">Fixed On</div><div style="color:var(--text);font-family:var(--mono);font-size:12px">${formatDate(b.fixedAt) || 'Not fixed yet'}</div></div>
-      <div class="detail-item"><div class="detail-label">Retest On</div><div style="color:var(--text);font-family:var(--mono);font-size:12px">${formatDate(b.retestAt) || 'Not retested yet'}</div></div>
-      <div class="detail-item"><div class="detail-label">Retest Count</div><div style="font-family:var(--mono);font-size:12px">${b.retestCount}</div></div>
-      ${b.escalatedAt ? `<div class="detail-item"><div class="detail-label">Escalated On</div><div style="color:var(--text);font-family:var(--mono);font-size:12px">${formatDate(b.escalatedAt)}</div></div>` : ''}
+
+    <!-- Date Tracking Card -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <h4 style="margin-top:0; margin-bottom:16px; font-size:14px; color:var(--text); display:flex; align-items:center; justify-content:flex-start; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        Tracking & Lifecycle
+      </h4>
+      <div class="detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Failed On</div><div style="color:var(--text2);font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.failedAt) || '—'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Fixed On</div><div style="color:${b.fixedAt ? 'var(--green)' : 'var(--text2)'};font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.fixedAt) || 'Not fixed yet'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Retest On</div><div style="color:var(--text2);font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.retestAt) || 'Not retested yet'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Retest Count</div><div style="font-family:var(--font);color:var(--text2);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${b.retestCount}</div></div>
+        ${b.escalatedAt ? `<div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Escalated On</div><div style="color:var(--red);font-family:var(--font);font-size:13px; background:var(--red-bg); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.escalatedAt)}</div></div>` : ''}
+      </div>
+      ${b.devNotes ? `<div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Dev Notes</div><div style="font-size:13px;color:var(--text2); background:var(--bg3); padding:12px; border-radius:6px; border-left:3px solid var(--accent);">${b.devNotes}</div></div>` : ''}
+      ${b.escalationReason ? `<div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Escalation Reason</div><div style="font-size:13px;color:var(--text2); background:var(--red-bg); padding:12px; border-radius:6px; border-left:3px solid var(--red);">${b.escalationReason}</div></div>` : ''}
     </div>
-    ${b.devNotes ? `<div class="detail-item"><div class="detail-label">Dev Notes</div><div style="font-size:12px;color:var(--text2)">${b.devNotes}</div></div>` : ''}
-    ${b.escalationReason ? `<div class="detail-item"><div class="detail-label">Escalation Reason</div><div style="font-size:12px;color:var(--text)">${b.escalationReason}</div></div>` : ''}
+
+    <!-- Timeline Card -->
+    <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <h4 style="margin-top:0; margin-bottom:16px; font-size:14px; color:var(--text); display:flex; align-items:center; justify-content:flex-start; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Audit Timeline
+      </h4>
+      <div class="timeline" style="margin-top:12px; background:var(--bg); padding:16px; border-radius:8px; border:1px solid var(--border);">${history || '<div style="color:var(--text3);font-size:13px; text-align:center; padding:12px 0;">No history yet</div>'}</div>
+    </div>
   </div>
   `, null, true);
     }
@@ -4469,14 +4830,18 @@
     // ─────────────────────────── ACTIONS ───────────────────────────
     function markFixed(bugId) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
-      showModal('Mark Bug as Fixed', `
-  <div style="margin-bottom:16px;padding:12px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius);">
-    <div style="font-size:12px;color:var(--green);font-family:var(--font);font-weight:600;letter-spacing:0.05em;margin-bottom:4px">BUG: ${bugId}</div>
-    <div style="font-size:14px;font-weight:500">${S.bugs.find(b => b.id === bugId)?.testCase}</div>
-  </div>
-  <div class="field">
-    <label>Dev Fix Notes <span class="required">*</span></label>
-    <textarea id="dev-notes" placeholder="Describe what was fixed and how..."></textarea>
+      const viewIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;vertical-align:middle;color:var(--green);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+      showModal(`<div style="display:flex;align-items:center;">${viewIcon}Mark Bug as Fixed</div>`, `
+  <div style="display:flex; flex-direction:column; gap:20px; text-align:left;">
+    <div style="background:var(--bg2); border:1px solid var(--green-border); border-radius:12px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border-left:4px solid var(--green);">
+      <div style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;">Resolving Bug</div>
+      <div style="font-family:var(--font); color:var(--green); font-weight:600; font-size:15px; margin-bottom:4px;">${bugId}</div>
+      <div style="font-size:13px; color:var(--text2);">${S.bugs.find(b => b.id === bugId)?.testCase}</div>
+    </div>
+    <div class="field" style="margin-bottom:0;">
+      <label style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Dev Fix Notes <span class="required" style="color:var(--red);">*</span></label>
+      <textarea id="dev-notes" placeholder="Describe what was fixed and how..." style="min-height:100px; resize:vertical; background:var(--bg3);"></textarea>
+    </div>
   </div>
   `, () => {
         const notes = document.getElementById('dev-notes').value.trim();
@@ -4504,7 +4869,7 @@
       if (!b) return;
       const tc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
       openConfirm('Confirm Retest Pass',
-        `Mark bug ${bugId} as PASSED?\n\nTest case "${b.testCase}" will be updated to PASS status and returned to Test Cases.`,
+        `Mark bug ${bugId} as PASSED?Test case "${b.testCase}" will be updated to PASS status and returned to Test Cases.`,
         () => {
           b.status = 'Verified';
           b.retestAt = now();
@@ -4538,7 +4903,7 @@
       const b = S.bugs.find(x => x.id === bugId);
       if (!b) return;
       openConfirm('Confirm Retest Fail',
-        `Mark bug ${bugId} as FAILED?\n\nThis will re-open the bug and return it to the active Bug Reports queue.`,
+        `Mark bug ${bugId} as FAILED?This will re-open the bug and return it to the active Bug Reports queue.`,
         () => {
           b.status = 'Open';
           b.retestAt = now();
@@ -4573,7 +4938,7 @@
       const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module }));
       if (!tc) return;
       openConfirm('Permanently Delete Test Case',
-        `Delete "${tc.testCase}" (${id})?\n\nThis will also remove any linked bugs and CANNOT be undone. The record will be completely removed from the system.`,
+        `Delete "${tc.testCase}" (${id})?This will also remove any linked bugs and CANNOT be undone. The record will be completely removed from the system.`,
         () => {
           const deletedBugIds = S.bugs.filter(b => bugRefsTestCaseKeys(b, id, module)).map(b => b.id);
           S.bugs = S.bugs.filter(b => !bugRefsTestCaseKeys(b, id, module));
@@ -4593,7 +4958,7 @@
       const b = S.bugs.find(x => x.id === id);
       if (!b) return;
       openConfirm('Permanently Delete Bug Report',
-        `Delete bug "${id}" (${b.testCase})?\n\nThis action is PERMANENT and cannot be undone. The bug record will be completely removed from the system.`,
+        `Delete bug "${id}" (${b.testCase})?This action is PERMANENT and cannot be undone. The bug record will be completely removed from the system.`,
         () => {
           S.bugs = S.bugs.filter(x => x.id !== id);
           audit(`Bug ${id} "${b.testCase}" permanently deleted`);
@@ -4606,7 +4971,7 @@
     function deleteModule(name) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       openConfirm('Delete Module',
-        `Delete module "${name}"?\n\nAll test cases and bugs in this module will also be permanently deleted. This CANNOT be undone.`,
+        `Delete module "${name}"?All test cases and bugs in this module will also be permanently deleted. This CANNOT be undone.`,
         () => {
           const deletedTCs = S.testCases.filter(t => t.module === name).map(t => t.id);
           const deletedBugIds = S.bugs.filter(b => b.module === name).map(b => b.id);
@@ -4646,11 +5011,11 @@
     }
 
     function exportCSV() {
-      let csv = 'Module,Total Tests,Pass,Fail,Total Bugs,Open Bugs,High Severity\n';
+      let csv = 'Module,Total Tests,Pass,Fail,Total Bugs,Open Bugs,High Severity';
       S.modules.forEach(mod => {
         const tcs = S.testCases.filter(t => t.module === mod);
         const bugs = S.bugs.filter(b => b.module === mod);
-        csv += `${mod},${tcs.length},${tcs.filter(t => t.status === 'Pass').length},${tcs.filter(t => t.status === 'Fail').length},${bugs.length},${bugs.filter(b => b.status === 'Open').length},${bugs.filter(b => b.severity === 'High').length}\n`;
+        csv += `${mod},${tcs.length},${tcs.filter(t => t.status === 'Pass').length},${tcs.filter(t => t.status === 'Fail').length},${bugs.length},${bugs.filter(b => b.status === 'Open').length},${bugs.filter(b => b.severity === 'High').length}`;
       });
       const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
       a.download = `qa-report-${now()}.csv`; a.click();
@@ -4665,30 +5030,30 @@
       if (!tc) return;
       const evidenceInputValue = /^data:image\//i.test(tc.evidence || '') ? '' : (tc.evidence || '');
       const mods = S.modules.map(m => `<option${m === tc.module ? ' selected' : ''}>${m}</option>`).join('');
-      showModal(`Edit Test Case: ${tc.id}`, `
+      showModal('<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit Mode</div>', `
   <div style="margin-bottom:24px;font-size:13px;color:var(--text3);display:flex;align-items:center;gap:8px;">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-    Editing <span style="color:var(--text);font-weight:500;">${tc.id}</span> — ID cannot be changed
+    Editing <span style="color:var(--text);font-weight:500;">${tc.id}</span> of <span style="color:var(--text);font-weight:500;">${tc.module.replace(/"/g, '&quot;')}</span>
   </div>
   <div class="form-grid">
     <div class="field">
-      <label>Test Case ID</label>
+      <label>Test Case ID <span class="required">*</span></label>
       <input value="${tc.id}" disabled style="opacity:.45;cursor:not-allowed;">
     </div>
     <div class="field">
       <label>Module <span class="required">*</span></label>
-      <select id="e-mod">${mods}</select>
+      <select id="e-mod" disabled style="opacity:.45;cursor:not-allowed;">${mods}</select>
     </div>
     <div class="field form-full">
       <label>Test Case Title <span class="required">*</span></label>
       <input id="e-tc" value="${tc.testCase.replace(/"/g, '&quot;').replace(/</g, '&lt;')}">
     </div>
     <div class="field form-full">
-      <label>Scenario</label>
+      <label>Scenario <span class="required">*</span></label>
       <input id="e-scenario" value="${(tc.scenario || '').replace(/"/g, '&quot;').replace(/</g, '&lt;')}">
     </div>
     <div class="field">
-      <label>Screen Name</label>
+      <label>Screen Name <span class="required">*</span></label>
       <input id="e-screen" value="${(tc.screen || '').replace(/"/g, '&quot;')}">
     </div>
     <div class="field">
@@ -4720,7 +5085,7 @@
       </select>
     </div>
     <div class="field">
-      <label>Evidence (URL/filename)</label>
+      <label>Evidence (URL/filename) <span class="required">*</span></label>
       <input id="e-evidence" value="${evidenceInputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence','e-evidence-file','e-evidence-preview')">
       <input id="e-evidence-file" type="hidden">
       <div id="e-evidence-preview"></div>
@@ -4743,12 +5108,15 @@
       const oldMod = normalizeTcModule((document.getElementById('e-tcmodold') || { value: '' }).value);
       const title = (document.getElementById('e-tc') || { value: '' }).value.trim();
       const mod = normalizeTcModule((document.getElementById('e-mod') || { value: '' }).value);
+      const scenario = (document.getElementById('e-scenario') || { value: '' }).value.trim();
+      const screen = (document.getElementById('e-screen') || { value: '' }).value.trim();
       const steps = (document.getElementById('e-steps') || { value: '' }).value.trim();
       const expected = (document.getElementById('e-expected') || { value: '' }).value.trim();
       const actual = (document.getElementById('e-actual') || { value: '' }).value.trim();
       const status = (document.getElementById('e-status') || { value: '' }).value;
+      const evidence = (document.getElementById('e-evidence') || { value: '' }).value.trim();
 
-      if (!title || !mod || !steps || !expected || !actual) {
+      if (!title || !mod || !steps || !expected || !actual || !scenario || !screen || !evidence) {
         toast('Please fill all required fields', 'error'); return;
       }
       const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module: oldMod }));
@@ -4822,22 +5190,34 @@
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       const b = S.bugs.find(x => x.id === bugId);
       if (!b) return;
-      showModal('Escalate Bug to Backend Team', `
-  <div style="padding:12px 16px;background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:var(--radius);margin-bottom:16px;">
-    <div style="font-size:11px;color:var(--purple);font-family:var(--font);font-weight:600;letter-spacing:0.05em;margin-bottom:4px">ESCALATING: ${bugId}</div>
-    <div style="font-size:14px;font-weight:500">${b.testCase}</div>
-    <div style="font-size:12px;color:var(--text3);margin-top:4px">${b.module} · ${b.screen || '—'} · ${b.severity}</div>
-  </div>
-  <div style="padding:10px 14px;background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:var(--radius);margin-bottom:16px;font-size:12px;color:var(--purple);">
-    ⚠ Use only when the bug cannot be fixed from the frontend. The backend queue will be updated.
-  </div>
-  <div class="field">
-    <label>Escalation Reason <span class="required">*</span></label>
-    <textarea id="esc-reason" placeholder="Describe why this needs backend intervention (e.g. API error, database issue, server-side logic)..."></textarea>
-  </div>
-  <div class="field" style="margin-top:16px;">
-    <label>Affected Backend Area</label>
-    <input id="esc-area" placeholder="e.g. Payment API, Auth service, Database query...">
+      const viewIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;vertical-align:middle;color:var(--purple);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+      showModal(`<div style="display:flex;align-items:center;">${viewIcon}Escalate to Backend Team</div>`, `
+  <div style="display:flex; flex-direction:column; gap:20px; text-align:left;">
+    <div style="background:var(--bg2); border:1px solid var(--purple-border); border-radius:12px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border-left:4px solid var(--purple);">
+      <div style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;">Escalating Bug</div>
+      <div style="font-family:var(--font); color:var(--purple); font-weight:600; font-size:15px; margin-bottom:4px;">${bugId}</div>
+      <div style="font-size:13px; color:var(--text2); margin-bottom:8px;">${b.testCase}</div>
+      <div style="font-size:11px; color:var(--text3); display:flex; align-items:center; gap:6px;">
+        <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.module}</span>
+        <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.screen || '—'}</span>
+        <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.severity}</span>
+      </div>
+    </div>
+    
+    <div style="padding:12px 16px; background:var(--purple-bg); border:1px dashed var(--purple-border); border-radius:8px; font-size:12.5px; color:var(--purple); display:flex; align-items:center; gap:8px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      Use only when the bug cannot be fixed from the frontend. The backend queue will be updated.
+    </div>
+
+    <div class="field" style="margin-bottom:0;">
+      <label style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Escalation Reason <span class="required" style="color:var(--red);">*</span></label>
+      <textarea id="esc-reason" placeholder="Describe why this needs backend intervention (e.g. API error, database issue, server-side logic)..." style="min-height:80px; resize:vertical; background:var(--bg3);"></textarea>
+    </div>
+    
+    <div class="field" style="margin-bottom:0;">
+      <label style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Affected Backend Area</label>
+      <input id="esc-area" placeholder="e.g. Payment API, Auth service, Database query..." style="background:var(--bg3);">
+    </div>
   </div>
   `, () => {
         const reason = (document.getElementById('esc-reason') || { value: '' }).value.trim();
@@ -4860,8 +5240,8 @@
     // ─────────────────────────── DOWNLOAD TEST CASES CSV ───────────────────────────
     function downloadImportTemplate() {
       const headers = 'Test Case ID,Test Case,Scenario,Module Name,Screen Name,Test Step,Test Data,Expected Results,Actual Results,Status,Severity,Evidence,Notes';
-      const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page\n2. Enter credentials\n3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,';
-      const csv = headers + '\n' + example;
+      const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page2. Enter credentials3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,';
+      const csv = headers + '' + example;
       const a = document.createElement('a');
       a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
       a.download = 'bugos-test-case-template.csv';
@@ -4877,9 +5257,9 @@
       if (dlSt) data = data.filter(t => t.status === dlSt);
       if (!data.length) { toast('No test cases match selected filters', 'error'); return; }
       const esc = v => `"${(v || '').replace(/"/g, '""')}"`;
-      let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Expected Results,Actual Results,Status,Severity,Evidence,Notes,Created,Updated\n';
+      let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Expected Results,Actual Results,Status,Severity,Evidence,Notes,Created,Updated';
       data.forEach(tc => {
-        csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.notes)},${formatDate(tc.createdAt)},${formatDate(tc.updatedAt)}\n`;
+        csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.notes)},${formatDate(tc.createdAt)},${formatDate(tc.updatedAt)}`;
       });
       const fname = `test-cases${dlMod ? '-' + dlMod : ''}${dlSt ? '-' + dlSt : ''}-${now()}.csv`;
       const a = document.createElement('a');
@@ -4892,47 +5272,76 @@
     let _importRows = [];
     let _importTargetModule = '';
 
-    function openImportCSV() {
-      if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
-      if (!S.modules.length) { toast('Please add a module before importing test cases', 'error'); return; }
-      _importRows = [];
-      _importTargetModule = S.modules[0] || '';
+    function buildImportTestCaseTab() {
+      if (!initialDataReceived) { return `<div class="empty">Waiting for server data...</div>`; }
+      if (!S.modules.length) { return `<div class="empty">Please add a module before importing test cases</div>`; }
+      if (!_importTargetModule) {
+        _importRows = [];
+        _importTargetModule = S.modules[0] || '';
+      }
       const moduleOptions = S.modules.map(m => `<option value="${m.replace(/"/g, '&quot;')}">${m}</option>`).join('');
-      showModal('Import Test Cases from Excel / CSV', `
-  <div class="field" style="margin-bottom:24px;">
-    <label>Import To Module</label>
-    <select id="imp-module" onchange="setImportModule(this.value)">${moduleOptions}</select>
-    <div style="margin-top:8px;font-size:12px;color:var(--text3);line-height:1.5;">
-      Used when a row has no <strong>Module Name</strong> column value. Uniqueness is enforced per module.
+      return `
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">Import Test Cases</div>
     </div>
-  </div>
-  
-  <div style="margin-bottom:24px;text-align:center;">
-    <div style="margin-bottom:12px;">
-      <button class="attachment-pill" style="border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" onclick="downloadImportTemplate()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download Template</button>
-    </div>
-    <div style="font-size:12px;color:var(--text3);">
-      Status accepted: <span style="color:var(--text);font-weight:500">Pass / Fail / Hold</span> &nbsp;&nbsp; 
-      Severity accepted: <span style="color:var(--text);font-weight:500">High / Medium / Low</span>
-    </div>
-  </div>
+    <div style="padding: 24px;">
+      <div class="form-grid">
+        <!-- LEFT COLUMN -->
+        <div>
+          <div class="field" style="margin-bottom:24px;">
+            <label>Import To Module</label>
+            <select id="imp-module" class="${_importTargetModule ? 'filter-active' : ''}" style="width:100%; transition:all 0.2s ease;" onmouseover="this.classList.add('filter-active')" onmouseout="if(!this.value) this.classList.remove('filter-active')" onchange="setImportModule(this.value); if(this.value) this.classList.add('filter-active'); else this.classList.remove('filter-active');">${moduleOptions}</select>
+            <div style="margin-top:8px;font-size:12px;color:var(--text3);line-height:1.5;">
+              Used when a row has no <strong>Module Name</strong> column value. Uniqueness is enforced per module.
+            </div>
+          </div>
 
-  <div id="imp-dropzone"
-       style="border:1px dashed var(--border);border-radius:8px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s;"
-       onclick="document.getElementById('imp-file').click()"
-       ondragover="event.preventDefault();this.style.borderColor='var(--text)';this.style.background='rgba(59,130,246,.02)'"
-       ondragleave="this.style.borderColor='var(--border)';this.style.background='transparent'"
-       ondrop="handleImpDrop(event)">
-    <input type="file" id="imp-file" accept=".csv,.txt,.xlsx,.xls,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none" onchange="handleImpFile(this)">
-    <div style="margin-bottom:12px;color:var(--text3);">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <div id="imp-dropzone"
+               class="dropzone-area"
+               onclick="document.getElementById('imp-file').click()"
+               ondragover="event.preventDefault();this.classList.add('dragover')"
+               ondragleave="this.classList.remove('dragover')"
+               ondrop="this.classList.remove('dragover');handleImpDrop(event)">
+            <input type="file" id="imp-file" accept=".csv,.txt,.xlsx,.xls,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" style="display:none" onchange="handleImpFile(this)">
+            <div style="margin-bottom:12px;color:var(--text3);">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            </div>
+            <div style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:4px;">Click to upload or drag and drop</div>
+            <div style="font-size:12px;color:var(--text3);">CSV UTF‑8 or Excel (.xlsx)</div>
+          </div>
+
+          <div style="margin-top:24px;text-align:center;background:var(--bg3);padding:16px;border-radius:var(--radius);border:1px dashed var(--border);">
+            <div style="margin-bottom:12px;">
+              <button class="attachment-pill" style="border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" onclick="downloadImportTemplate()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Download Template</button>
+            </div>
+            <div style="font-size:12px;color:var(--text3);">
+              Status accepted: <span style="color:var(--text);font-weight:500">Pass / Fail / Hold</span> &nbsp;&nbsp; 
+              Severity accepted: <span style="color:var(--text);font-weight:500">High / Medium / Low</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div style="display:flex; flex-direction:column; height:100%; min-height:0;">
+          <div id="imp-stats"></div>
+          <div id="imp-preview" style="flex:1; display:flex; flex-direction:column; min-height:0; margin-top:22px;">
+            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px dashed var(--border); border-radius:var(--radius); background:var(--bg3); padding:24px; text-align:center; color:var(--text3);">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.3;margin-bottom:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+              <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;">No File Uploaded</div>
+              <div style="font-size:12px;">Upload a CSV or Excel file to see the preview here.</div>
+            </div>
+          </div>
+          <div id="imp-status"></div>
+        </div>
+
+        <div class="form-full" style="display:flex; flex-direction:row; justify-content:flex-end; align-items:center; gap:12px; margin-top:40px;">
+          <button class="btn btn-ghost" onclick="_importRows=[]; _importTargetModule=''; switchTestCasesTab('import')">Cancel</button>
+          <button class="btn btn-ghost" id="imp-btn" onclick="doImport()" style="padding:7px 20px; opacity:0.5; pointer-events:none;">Run Import</button>
+        </div>
+      </div>
     </div>
-    <div style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:4px;">Click to upload or drag and drop</div>
-    <div style="font-size:12px;color:var(--text3);">CSV UTF‑8 or Excel (.xlsx)</div>
-  </div>
-  <div id="imp-status" style="margin-top:14px;font-size:12px;color:var(--text3);text-align:center;"></div>
-  <div id="imp-preview" style="margin-top:14px;"></div>
-  `, () => doImport());
+  </div>`;
     }
 
     function setImportModule(moduleName) {
@@ -4988,7 +5397,7 @@
             raw = e.target.result;
           }
           // Normalize line endings
-          const lines = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+          const lines = raw.replace(/\r/g, '').replace(/\r/g, '').split('');
           // Remove completely empty lines
           const nonEmpty = lines.filter(l => l.trim().length > 0);
 
@@ -5095,7 +5504,7 @@
             .map(r => normalizeTcModule(r.module))
             .filter(m => m && !S.modules.includes(m))));
           if (newModules.length) {
-            warnings.push(`New module(s) detected: ${newModules.join(', ')}. They will be created automatically on import.`);
+            warnings.push(`New module detected: ${newModules.join(', ')}. This will be created automatically on import.`);
           }
 
           const seenSameFile = Object.create(null);
@@ -5145,7 +5554,8 @@
     }
 
     function renderImpPreview(rows, warnings, filename) {
-      const status = document.getElementById('imp-status');
+      const statsDiv = document.getElementById('imp-stats');
+      const statusDiv = document.getElementById('imp-status');
       const preview = document.getElementById('imp-preview');
       if (!preview) return;
 
@@ -5156,23 +5566,52 @@
       });
       const skipCount = rows.length - newRows.length;
 
-      status.innerHTML = `
-    <span style="color:var(--text);font-weight:500;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> "${filename}" parsed — ${rows.length} rows found</span>
-    <span style="color:var(--text2);margin-left:12px">Default module: <strong>${_importTargetModule}</strong></span>
-    ${skipCount ? `<span style="color:var(--yellow);margin-left:12px;font-weight:500;">⚠ ${skipCount} row(s) duplicate</span>` : ''}
-  `;
+      const impBtn = document.getElementById('imp-btn');
+      if (impBtn) {
+        if (newRows.length > 0) {
+          impBtn.style.opacity = '1';
+          impBtn.style.pointerEvents = 'auto';
+        } else {
+          impBtn.style.opacity = '0.5';
+          impBtn.style.pointerEvents = 'none';
+        }
+      }
 
+      if (statsDiv) {
+        statsDiv.innerHTML = `
+          <div style="display:flex; justify-content:center; gap:32px; align-items:center; margin-bottom:12px;">
+            <div style="display:flex; flex-direction:column; gap:4px; text-align:center;">
+              <span style="color:var(--text3); text-transform:uppercase; letter-spacing:0.05em; font-size:11px; font-weight:600;">Total rows</span>
+              <strong style="font-size:24px; color:var(--text); line-height:1;">${rows.length}</strong>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px; text-align:center;">
+              <span style="color:var(--text3); text-transform:uppercase; letter-spacing:0.05em; font-size:11px; font-weight:600;">Will import</span>
+              <strong style="font-size:24px; color:var(--text); line-height:1;">${newRows.length}</strong>
+            </div>
+            ${skipCount ? `
+            <div style="display:flex; flex-direction:column; gap:4px; text-align:center;">
+              <span style="color:var(--yellow); text-transform:uppercase; letter-spacing:0.05em; font-size:11px; font-weight:600;">Will skip</span>
+              <strong style="font-size:24px; color:var(--yellow); line-height:1;">${skipCount}</strong>
+            </div>
+            ` : ''}
+            <div style="display:flex; flex-direction:column; gap:4px; text-align:center;">
+              <span style="color:var(--text3); text-transform:uppercase; letter-spacing:0.05em; font-size:11px; font-weight:600;">Auto-bugs</span>
+              <strong style="font-size:24px; color:var(--text); line-height:1;">${newRows.filter(r => r.status === 'Fail' || r.status === 'Hold').length}</strong>
+            </div>
+          </div>
+        `;
+      }
+
+      if (statusDiv) {
+        statusDiv.innerHTML = '';
+      }
+
+      preview.style.marginTop = '0';
       preview.innerHTML = `
-    <div style="padding-top:16px;">
-      <div style="display:flex;gap:24px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:12px;">
-        <div style="font-size:13px;"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;font-size:11px;margin-right:6px;">Total rows</span><strong style="font-size:14px;color:var(--text)">${rows.length}</strong></div>
-        <div style="font-size:13px;"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;font-size:11px;margin-right:6px;">Will import</span><strong style="font-size:14px;color:var(--text)">${newRows.length}</strong></div>
-        ${skipCount ? `<div style="font-size:13px;"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;font-size:11px;margin-right:6px;">Will skip</span><strong style="font-size:14px;color:var(--yellow)">${skipCount}</strong></div>` : ''}
-        <div style="font-size:13px;"><span style="color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;font-size:11px;margin-right:6px;">Auto-bugs</span><strong style="font-size:14px;color:var(--text)">${newRows.filter(r => r.status === 'Fail' || r.status === 'Hold').length}</strong></div>
-      </div>
-      ${warnings.length ? `<div style="font-size:13px;color:var(--text);border-left:2px solid var(--yellow);padding-left:16px;margin-bottom:16px;line-height:1.6;">${warnings.slice(0, 3).join('<br>')}</div>` : ''}
-      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">Preview (first 8 rows)</div>
-      <div style="max-height:220px;overflow-y:auto;border:1px solid var(--border);border-radius:4px;background:transparent;">
+    <div style="display:flex; flex-direction:column; height:100%; min-height:0;">
+      ${warnings.length ? `<div style="flex-shrink:0; font-size:13px;color:var(--text);border-left:2px solid var(--yellow);padding-left:16px;margin-bottom:16px;line-height:1.6;">${warnings.slice(0, 3).join('<br>')}</div>` : ''}
+      <div style="flex-shrink:0; font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">Preview (first 8 rows)</div>
+      <div style="flex:1; min-height:0; overflow-y:auto; border:1px solid var(--border); border-radius:4px; background:transparent;">
         <table style="width:100%;border-collapse:collapse;min-width:600px;">
           <thead>
             <tr>
@@ -5202,7 +5641,7 @@
         </table>
         ${rows.length > 8 ? `<div style="padding:8px 10px;font-size:12px;color:var(--text3);background:var(--bg3);">...and ${rows.length - 8} more rows</div>` : ''}
       </div>
-      ${newRows.length === 0 ? `<div style="margin-top:10px;padding:8px 12px;background:var(--yellow-bg);border:1px solid var(--yellow-border);border-radius:var(--radius);font-size:12px;color:var(--yellow);">All rows are duplicates — nothing new to import.</div>` : ''}
+      ${newRows.length === 0 ? `<div style="margin-top:10px;padding:8px 12px;background:var(--yellow-bg);border:1px solid var(--yellow-border);border-radius:var(--radius);font-size:12px;color:var(--yellow);">All rows are duplicates nothing new to import.</div>` : ''}
     </div>`;
     }
 
@@ -5243,9 +5682,9 @@
 
       audit(`Imported ${added} test cases from CSV (${skipped} duplicates skipped, ${bugs} bugs auto-created, ${passed} passed cases)`);
       _importRows = [];
-      closeModal();
       save();
       toast(`✓ Imported ${added} test cases${skipped ? `, ${skipped} skipped` : ''}${bugs ? `, ${bugs} bugs created` : ''}`, 'success');
+      switchTestCasesTab('all');
     }
 
     // ─────────────────────────── MODAL ENGINE ───────────────────────────
@@ -5281,7 +5720,12 @@
 
     function attachHandlers() { }
 
-    function nav(v) { S.view = v; save(); }
+    function nav(v) {
+      S.view = v;
+      S._lastHData = null;
+      S._lastWPData = null;
+      save();
+    }
 
     // ─── INIT ───
     render();
@@ -5290,6 +5734,41 @@
     setInterval(() => {
       const el = document.getElementById('live-clock');
       if (el) el.textContent = formatDate(nowFull());
+
+      const fcH = document.getElementById('fc-hours');
+      const fcM = document.getElementById('fc-mins');
+      const fcS = document.getElementById('fc-secs');
+      const fcA = document.getElementById('fc-ampm');
+      if (fcH && fcM && fcS && fcA) {
+        const d = new Date();
+        const rawHour = d.getHours();
+        const m = d.getMinutes().toString().padStart(2, '0');
+        const s = d.getSeconds().toString().padStart(2, '0');
+        fcA.textContent = rawHour >= 12 ? 'PM' : 'AM';
+
+        const fcG = document.getElementById('login-greeting');
+        if (fcG && s === '00' && m === '00') {
+          let greeting = 'Good Night';
+          let greetIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+          if (rawHour >= 5 && rawHour < 12) {
+            greeting = 'Good Morning';
+            greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+          } else if (rawHour >= 12 && rawHour < 17) {
+            greeting = 'Good Afternoon';
+            greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
+          } else if (rawHour >= 17 && rawHour < 21) {
+            greeting = 'Good Evening';
+            greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line><polyline points="16 5 12 9 8 5"></polyline></svg>';
+          }
+          fcG.innerHTML = greetIcon + ' <span>' + greeting + '</span>';
+        }
+
+        let h = rawHour % 12 || 12;
+        fcH.textContent = h;
+        fcM.textContent = m;
+        fcS.textContent = s;
+      }
     }, 1000);
   </script>
 </body>
