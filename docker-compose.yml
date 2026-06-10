@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  bugos-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/bugos
+      - PORT=3000
+    depends_on:
+      - mongodb
+    # We do not map /app/temp or /app/public/videos to host volumes
+    # to ensure they remain ephemeral and contained inside the container.
+
+  mongodb:
+    image: mongo:6
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

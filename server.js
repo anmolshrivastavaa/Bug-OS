@@ -9,6 +9,8 @@ const { exec } = require('child_process');
 let mongodbConnected = false;
 
 const app = express();
+app.use(express.static('public')); // Serve harvested videos
+
 app.get('/health', (req, res) => {
   res.send('OK');
 });
@@ -215,7 +217,7 @@ io.on('connection', (socket) => {
 
 // API endpoints
 app.post('/api/run-automation', express.json(), async (req, res) => {
-  const { testCaseId, module, script } = req.body;
+  const { testCaseId, module, script, language = 'java' } = req.body;
   if (!testCaseId || !module || !script) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -226,76 +228,138 @@ app.post('/api/run-automation', express.json(), async (req, res) => {
       return res.status(404).json({ error: 'Test case not found' });
     }
 
-    // Inject test case data into script
-    const injectedScript = `
-import java.util.*;
+    const baseTempDir = path.join(__dirname, 'temp');
+    if (!fs.existsSync(baseTempDir)) {
+      fs.mkdirSync(baseTempDir);
+    }
+    const execId = Date.now() + '_' + Math.floor(Math.random() * 1000);
+    const tempDir = path.join(baseTempDir, `exec_${execId}`);
+    fs.mkdirSync(tempDir);
 
+    const publicVideosDir = path.join(__dirname, 'public', 'videos');
+    if (!fs.existsSync(publicVideosDir)) {
+      fs.mkdirSync(publicVideosDir, { recursive: true });
+    }
+
+    const handleResult = (runErr, runStdout, runStderr) => {
+      let videoUrl = null;
+      try {
+        const files = fs.readdirSync(tempDir);
+        fs.appendFileSync(path.join(__dirname, 'video_harvest.log'), `[${new Date().toISOString()}] execId: ${execId}, files in tempDir: ${JSON.stringify(files)}\n`);
+        for (const file of files) {
+          if (file.endsWith('.webm') || file.endsWith('.mp4')) {
+            const newFilename = `video_${execId}_${file}`;
+            fs.renameSync(path.join(tempDir, file), path.join(publicVideosDir, newFilename));
+            videoUrl = `/videos/${newFilename}`;
+            fs.appendFileSync(path.join(__dirname, 'video_harvest.log'), `[${new Date().toISOString()}] Harvested video: ${videoUrl}\n`);
+            break;
+          }
+        }
+      } catch (e) {
+        console.error("Error harvesting video:", e);
+        fs.appendFileSync(path.join(__dirname, 'video_harvest.log'), `[${new Date().toISOString()}] Error: ${e.message}\n`);
+      }
+
+      try {
+        fs.rmSync(tempDir, { recursive: true, force: true });
+      } catch (e) {
+        console.error("Error cleaning up temp dir:", e);
+      }
+      
+      if (runErr && runErr.code !== 0) {
+        return res.status(400).json({ error: 'Execution failed', details: runStderr || runErr.message, output: runStdout, videoUrl });
+      }
+      const output = runStdout.trim().toUpperCase();
+      const result = /\bFAIL\b/.test(output) ? 'Fail' : /\bPASS\b/.test(output) ? 'Pass' : null;
+      if (!result) {
+        return res.status(400).json({ error: 'Script must output PASS or FAIL', output: runStdout, videoUrl });
+      }
+      const updatedTc = { ...testCase.toObject(), status: result, updatedAt: new Date().toISOString().slice(0, 10), history: [...(testCase.history || []), { date: new Date().toISOString().slice(0, 16).replace('T', ' '), event: `Automated: ${result}` }] };
+      TestCase.findOneAndUpdate({ id: testCaseId, module }, { $set: updatedTc }, { new: true }).then(() => {
+        io.emit('dataUpdate', { type: 'testCase', data: updatedTc });
+        res.json({ result, output: runStdout, videoUrl });
+      }).catch(err => res.status(500).json({ error: 'Failed to update test case' }));
+    };
+
+    const safeStr = (val) => JSON.stringify(val || '');
+
+    if (language === 'python') {
+      const pyScript = `
+id = ${safeStr(testCase.id)}
+testCaseName = ${safeStr(testCase.testCase)}
+scenario = ${safeStr(testCase.scenario)}
+moduleName = ${safeStr(testCase.module)}
+screen = ${safeStr(testCase.screen)}
+steps = ${safeStr(testCase.steps)}
+testData = ${safeStr(testCase.testData)}
+expected = ${safeStr(testCase.expected)}
+actual = ${safeStr(testCase.actual)}
+status = ${safeStr(testCase.status)}
+severity = ${safeStr(testCase.severity)}
+evidence = ${safeStr(testCase.evidence)}
+notes = ${safeStr(testCase.notes)}
+
+${script}
+`;
+      const pyFile = path.join(tempDir, `script.py`);
+      fs.writeFileSync(pyFile, pyScript);
+      exec(`python3 "${pyFile}"`, { cwd: tempDir, timeout: 300000 }, (err, stdout, stderr) => handleResult(err, stdout, stderr));
+
+    } else if (language === 'javascript') {
+      const jsScript = `
+const id = ${safeStr(testCase.id)};
+const testCaseName = ${safeStr(testCase.testCase)};
+const scenario = ${safeStr(testCase.scenario)};
+const moduleName = ${safeStr(testCase.module)};
+const screen = ${safeStr(testCase.screen)};
+const steps = ${safeStr(testCase.steps)};
+const testData = ${safeStr(testCase.testData)};
+const expected = ${safeStr(testCase.expected)};
+const actual = ${safeStr(testCase.actual)};
+const status = ${safeStr(testCase.status)};
+const severity = ${safeStr(testCase.severity)};
+const evidence = ${safeStr(testCase.evidence)};
+const notes = ${safeStr(testCase.notes)};
+
+${script}
+`;
+      const jsFile = path.join(tempDir, `script.js`);
+      fs.writeFileSync(jsFile, jsScript);
+      exec(`node "${jsFile}"`, { cwd: tempDir, timeout: 300000 }, (err, stdout, stderr) => handleResult(err, stdout, stderr));
+
+    } else { // java
+      const javaScript = `
+import java.util.*;
 public class AutomationScript {
     public static void main(String[] args) {
-        // Test case data
-        String id = "${testCase.id}";
-        String testCaseName = "${testCase.testCase}";
-        String scenario = "${testCase.scenario || ''}";
-        String moduleName = "${testCase.module}";
-        String screen = "${testCase.screen || ''}";
-        String steps = "${testCase.steps || ''}";
-        String testData = "${testCase.testData || ''}";
-        String expected = "${testCase.expected || ''}";
-        String actual = "${testCase.actual || ''}";
-        String status = "${testCase.status}";
-        String severity = "${testCase.severity}";
-        String evidence = "${testCase.evidence || ''}";
-        String notes = "${testCase.notes || ''}";
-
-        // User script
-        ${script.replace(/"/g, '\\"').replace(/\n/g, '\n        ')}
+        String id = ${safeStr(testCase.id)};
+        String testCaseName = ${safeStr(testCase.testCase)};
+        String scenario = ${safeStr(testCase.scenario)};
+        String moduleName = ${safeStr(testCase.module)};
+        String screen = ${safeStr(testCase.screen)};
+        String steps = ${safeStr(testCase.steps)};
+        String testData = ${safeStr(testCase.testData)};
+        String expected = ${safeStr(testCase.expected)};
+        String actual = ${safeStr(testCase.actual)};
+        String status = ${safeStr(testCase.status)};
+        String severity = ${safeStr(testCase.severity)};
+        String evidence = ${safeStr(testCase.evidence)};
+        String notes = ${safeStr(testCase.notes)};
+        ${script.replace(/\n/g, '\n        ')}
     }
 }
 `;
-
-    // Write to temp file
-    const tempDir = path.join(__dirname, 'temp');
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir);
-    }
-    const javaFile = path.join(tempDir, `AutomationScript_${Date.now()}.java`);
-    fs.writeFileSync(javaFile, injectedScript);
-
-    // Compile
-    const classFile = javaFile.replace('.java', '.class');
-    exec(`javac "${javaFile}"`, (compileErr, compileStdout, compileStderr) => {
-      if (compileErr) {
-        fs.unlinkSync(javaFile);
-        return res.status(400).json({ error: 'Compilation failed', details: compileStderr });
-      }
-
-      // Run
-      const libPath = path.join(__dirname, 'lib', '*');
-      const cp = fs.existsSync(path.join(__dirname, 'lib')) ? `"${libPath}:${tempDir}"` : `"${tempDir}"`;
-      exec(`java -cp ${cp} AutomationScript`, { timeout: 30000 }, (runErr, runStdout, runStderr) => {
-        // Clean up
-        try { fs.unlinkSync(javaFile); } catch { }
-        try { fs.unlinkSync(classFile); } catch { }
-
-        if (runErr && runErr.code !== 0) {
-          return res.status(400).json({ error: 'Execution failed', details: runStderr });
+      const javaFile = path.join(tempDir, `AutomationScript.java`);
+      fs.writeFileSync(javaFile, javaScript);
+      exec(`javac "${javaFile}"`, { cwd: tempDir }, (compileErr, compileStdout, compileStderr) => {
+        if (compileErr) {
+          return res.status(400).json({ error: 'Compilation failed', details: compileStderr });
         }
-
-        // Check output for PASS/FAIL
-        const output = runStdout.trim().toUpperCase();
-        const result = output.includes('PASS') ? 'Pass' : output.includes('FAIL') ? 'Fail' : null;
-        if (!result) {
-          return res.status(400).json({ error: 'Script must output PASS or FAIL' });
-        }
-
-        // Update test case
-        const updatedTc = { ...testCase.toObject(), status: result, updatedAt: new Date().toISOString().slice(0, 10), history: [...(testCase.history || []), { date: new Date().toISOString().slice(0, 16).replace('T', ' '), event: `Automated: ${result}` }] };
-        TestCase.findOneAndUpdate({ id: testCaseId, module }, { $set: updatedTc }, { new: true }).then(() => {
-          io.emit('dataUpdate', { type: 'testCase', data: updatedTc });
-          res.json({ result, output: runStdout });
-        }).catch(err => res.status(500).json({ error: 'Failed to update test case' }));
+        const libPath = path.join(__dirname, 'lib', '*');
+        const cp = fs.existsSync(path.join(__dirname, 'lib')) ? `"${libPath}:${tempDir}"` : `"${tempDir}"`;
+        exec(`java -cp ${cp} AutomationScript`, { cwd: tempDir, timeout: 300000 }, (err, stdout, stderr) => handleResult(err, stdout, stderr));
       });
-    });
+    }
 
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -550,6 +614,44 @@ async function handleUserUpdate(data) {
 
 
 const PORT = process.env.PORT || 3000;
+
+function cleanupOldExecutions() {
+  try {
+    const now = Date.now();
+    const expiryMs = 15 * 60 * 1000; // 15 minutes
+
+    const publicVideosDir = path.join(__dirname, 'public', 'videos');
+    if (fs.existsSync(publicVideosDir)) {
+      const files = fs.readdirSync(publicVideosDir);
+      files.forEach(file => {
+        if (file.endsWith('.webm') || file.endsWith('.mp4')) {
+          const filePath = path.join(publicVideosDir, file);
+          const stats = fs.statSync(filePath);
+          if (now - stats.mtimeMs > expiryMs) {
+            fs.unlinkSync(filePath);
+          }
+        }
+      });
+    }
+
+    const baseTempDir = path.join(__dirname, 'temp');
+    if (fs.existsSync(baseTempDir)) {
+      const dirs = fs.readdirSync(baseTempDir);
+      dirs.forEach(dir => {
+        const dirPath = path.join(baseTempDir, dir);
+        const stats = fs.statSync(dirPath);
+        if (now - stats.mtimeMs > expiryMs) {
+          fs.rmSync(dirPath, { recursive: true, force: true });
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Error during automatic cleanup:', error);
+  }
+}
+
+// Run cleanup every 10 minutes
+setInterval(cleanupOldExecutions, 10 * 60 * 1000);
 
 server.listen(PORT, () => {
   console.log(`🚀 QA Enterprise Tracker Server running on port ${PORT}`);

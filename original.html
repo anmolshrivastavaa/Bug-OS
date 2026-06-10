@@ -1,5 +1,1847 @@
+<!DOCTYPE html>
+<html lang="en">
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ STATE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bug OS</title>
+  <link rel="icon" type="image/png" href="header%20icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0c0f;
+      --bg2: #111418;
+      --bg3: #181c22;
+      --bg4: #1e242c;
+      --border: #252c36;
+      --border2: #2e3844;
+      --btn-border: var(--border2);
+      --text: #e2e8f0;
+      --text2: #cbd5e1;
+      --text3: #94a3b8;
+      --th-color: #ffffff;
+      --td-color: #94a3b8;
+      --glow-bg: rgba(255, 255, 255, 0.05);
+      --glow-text: #ffffff;
+      --glow-border: #ffffff;
+      --glow-shadow: 0 0 10px rgba(255, 255, 255, 0.3), inset 0 0 4px rgba(255, 255, 255, 0.1);
+      --accent: #3b82f6;
+      --accent2: #1d4ed8;
+      --green: #22c55e;
+      --green-bg: #052e16;
+      --green-border: #166534;
+      --red: #ef4444;
+      --red-bg: #2a0a0a;
+      --red-border: #7f1d1d;
+      --yellow: #f59e0b;
+      --yellow-bg: #1c1400;
+      --yellow-border: #78350f;
+      --orange: #f97316;
+      --orange-bg: #1a0c00;
+      --orange-border: #7c2d12;
+      --purple: #a855f7;
+      --purple-bg: #1a0a2e;
+      --purple-border: #6b21a8;
+      --cyan: #06b6d4;
+      --font: 'IBM Plex Sans', sans-serif;
+      --mono: 'IBM Plex Mono', monospace;
+      --radius: 6px;
+      --radius2: 10px;
+    }
+
+    [data-theme='light'] {
+      --bg: #f8fafc;
+      --bg2: #ffffff;
+      --bg3: #f1f5f9;
+      --bg4: #e2e8f0;
+      --border: #d1d5db;
+      --border2: #cbd5e1;
+      --btn-border: var(--border2);
+      --text: #0f172a;
+      --text2: #334155;
+      --text3: #64748b;
+      --th-color: #0f172a;
+      --td-color: #475569;
+      --glow-bg: rgba(0, 0, 0, 0.03);
+      --glow-text: #0f172a;
+      --glow-border: #0f172a;
+      --glow-shadow: 0 0 10px rgba(15, 23, 42, 0.15), inset 0 0 4px rgba(15, 23, 42, 0.05);
+      --accent: #2563eb;
+      --accent2: #1d4ed8;
+      --green: #16a34a;
+      --green-bg: #ecfdf5;
+      --green-border: #a7f3d0;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --red-border: #fecaca;
+      --yellow: #ea580c;
+      --yellow-bg: #ffedd5;
+      --yellow-border: #fed7aa;
+      --orange: #f97316;
+      --orange-bg: #fff7ed;
+      --orange-border: #fed7aa;
+      --purple: #7c3aed;
+      --purple-bg: #ede9fe;
+      --purple-border: #ddd6fe;
+      --cyan: #0891b2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      background: var(--bg);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-x: hidden;
+    }
+
+    .sidebar.collapsed {
+      width: 68px;
+    }
+
+    .sidebar.collapsed .logo-text,
+    .sidebar.collapsed .logo-icon,
+    .sidebar.collapsed .nav-item-label,
+    .sidebar.collapsed .nav-badge {
+      display: none !important;
+    }
+
+    .sidebar.collapsed .sidebar-logo {
+      justify-content: center;
+      padding: 18px 0;
+    }
+
+    .sidebar.collapsed .hamburger-btn {
+      margin-left: 0 !important;
+    }
+
+    .sidebar.collapsed .nav-item {
+      justify-content: center;
+      padding: 12px 0;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 16px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+      background: transparent;
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-text {
+      min-width: 0;
+    }
+
+    .logo-mark {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    .logo-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-top: 2px;
+    }
+
+    .sidebar-user {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .user-role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: var(--mono);
+      letter-spacing: 0.05em;
+    }
+
+    .role-qa {
+      background: var(--purple-bg);
+      color: var(--purple);
+      border: 1px solid var(--purple-border);
+    }
+
+    .role-dev {
+      background: #001a2e;
+      color: var(--cyan);
+      border: 1px solid #0c4a6e;
+    }
+
+    [data-theme='light'] .role-dev {
+      background: #e0f2fe;
+      color: var(--cyan);
+      border: 1px solid #bae6fd;
+    }
+
+    .role-admin {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid var(--red-border);
+    }
+
+    .user-name {
+      font-size: 13px;
+      color: var(--text);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .nav {
+      padding: 12px 8px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 400;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: var(--bg3);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: var(--bg4);
+      color: var(--text);
+      border-color: var(--border2);
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-icon svg {
+      width: 100%;
+      height: 100%;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .nav-item:hover .nav-icon svg,
+    .nav-item.active .nav-icon svg {
+      opacity: 1;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      font-family: var(--mono);
+      padding: 1px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-switch {
+      padding: 12px 8px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .switch-label {
+      font-size: 11px;
+      color: var(--text3);
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      padding: 0 8px;
+    }
+
+    .role-btn {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: var(--radius);
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      cursor: pointer;
+      font-family: var(--font);
+      font-size: 12px;
+      text-align: left;
+      transition: all 0.15s;
+    }
+
+    .role-btn:hover {
+      background: var(--bg3);
+      color: var(--text);
+      border-color: var(--border2);
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .topbar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .page-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .page-sub {
+      font-size: 12px;
+      color: var(--text3);
+      font-family: var(--mono);
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 7px 16px;
+      border-radius: var(--radius);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent2);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent2);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--td-color);
+      border-color: var(--btn-border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--glow-bg) !important;
+      color: var(--glow-text) !important;
+      border-color: var(--glow-border) !important;
+      box-shadow: var(--glow-shadow) !important;
+    }
+
+    .glow-accent {
+      transition: all 0.2s ease;
+    }
+
+    .glow-accent:hover {
+      filter: brightness(1.15) drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      background: var(--red-bg);
+      color: var(--red);
+      border-color: var(--red-border);
+    }
+
+    .btn-danger:hover {
+      background: var(--red-bg);
+      border-color: var(--red);
+      color: var(--red);
+      filter: brightness(0.88);
+    }
+
+    .btn-success {
+      background: var(--green-bg);
+      color: var(--green);
+      border-color: var(--green-border);
+    }
+
+    .btn-success:hover {
+      background: var(--green-bg);
+      border-color: var(--green);
+      color: var(--green);
+      filter: brightness(0.88);
+    }
+
+    .btn-warning {
+      background: var(--yellow-bg);
+      color: var(--yellow);
+      border-color: var(--yellow-border);
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 12px;
+    }
+
+    .theme-btn {
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg3);
+      color: var(--td-color);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .theme-btn:hover {
+      background: var(--glow-bg);
+      color: var(--glow-text);
+      border-color: var(--glow-border);
+      box-shadow: var(--glow-shadow);
+    }
+
+    .theme-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    /* LOGIN */
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg);
+      padding: 40px;
+      gap: 140px;
+      position: relative;
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .login-icon img {
+      max-width: 400px;
+      height: auto;
+    }
+
+    .login-card {
+      width: min(420px, calc(100% - 40px));
+      background: var(--bg2);
+      border: none;
+      border-radius: 12px;
+      padding: 40px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+    }
+
+    .login-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 32px;
+      line-height: 1.4;
+      letter-spacing: 0.5px;
+    }
+
+    .login-header-text {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 1.5px;
+    }
+
+    [data-theme='light'] .login-screen {
+      background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.08) 0%, #f1f5f9 70%);
+    }
+
+    [data-theme='light'] .login-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    [data-theme='light'] .login-header-text {
+      color: #0f172a;
+    }
+
+    [data-theme='light'] .login-title {
+      color: #64748b;
+    }
+
+    [data-theme='light'] .login-card .field label {
+      color: #64748b;
+    }
+
+    [data-theme='light'] .login-card .field input {
+      background: #f8fafc;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      color: #0f172a;
+    }
+
+    .login-card .field {
+      margin-bottom: 20px;
+    }
+
+    .login-card .field label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .login-card .field input {
+      width: 100%;
+      background: #0a0c0f;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .login-card .field input:focus {
+      outline: none;
+      border-color: rgba(59, 130, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .login-card button {
+      width: 100%;
+      justify-content: center;
+      margin-top: 16px;
+      background: #ed3224;
+      color: #ffffff;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(237, 50, 36, 0.3);
+    }
+
+    .login-card button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(237, 50, 36, 0.4);
+      filter: brightness(1.1);
+    }
+
+    .login-company {
+      position: absolute;
+      bottom: 32px;
+      right: 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .login-company img {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+
+    .company-tagline {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ea580c;
+      letter-spacing: 0.2px;
+      margin-bottom: 2px;
+    }
+
+    .company-pill {
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: #ea580c;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(234, 88, 12, 0.4);
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+
+    /* CARDS / SECTIONS */
+    .section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    [data-theme='light'] .section {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .section-hdr {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    [data-theme='light'] .section-hdr {
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .section-meta {
+      font-size: 11px;
+      color: var(--accent);
+      font-family: var(--font);
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      padding: 4px 12px;
+      border-radius: 24px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+
+
+    /* STATS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      background: linear-gradient(180deg, var(--bg3) 0%, var(--bg2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    [data-theme='light'] .stat {
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    }
+
+    .stat:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme='light'] .stat:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .stat-val {
+      font-size: 36px;
+      font-weight: 700;
+      font-family: var(--font);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-lbl {
+      font-size: 11px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 8px;
+      font-weight: 600;
+    }
+
+    .stat-sub {
+      font-size: 11px;
+      color: var(--text2);
+      margin-top: 2px;
+    }
+
+    /* TABLE */
+    .tbl-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    th {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--th-color);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.02);
+      white-space: normal;
+    }
+
+    [data-theme='light'] th {
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      font-size: 13px;
+      color: var(--td-color);
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--bg3);
+    }
+
+    .td-id {
+      font-family: var(--font);
+      font-size: 11px;
+      color: var(--td-color);
+      white-space: nowrap;
+    }
+
+    .td-title {
+      font-weight: normal;
+    }
+
+    .td-truncate {
+      color: var(--td-color);
+      white-space: normal;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: var(--mono);
+      white-space: nowrap;
+      border: 1px solid;
+    }
+
+    .b-pass {
+      background: var(--green-bg);
+      color: var(--green);
+      border-color: var(--green-border);
+    }
+
+    .b-fail {
+      background: var(--red-bg);
+      color: var(--red);
+      border-color: var(--red-border);
+    }
+
+    .b-hold {
+      background: var(--yellow-bg);
+      color: var(--yellow);
+      border-color: var(--yellow-border);
+    }
+
+    .b-retest {
+      background: var(--yellow-bg);
+      color: var(--yellow);
+      border-color: var(--yellow-border);
+    }
+
+    .b-blocked {
+      background: var(--purple-bg);
+      color: var(--purple);
+      border-color: var(--purple-border);
+    }
+
+    .b-open {
+      background: var(--red-bg);
+      color: var(--red);
+      border-color: var(--red-border);
+    }
+
+    .b-fixed {
+      background: var(--yellow-bg);
+      color: var(--yellow);
+      border-color: var(--yellow-border);
+    }
+
+    .b-verified {
+      background: var(--green-bg);
+      color: var(--green);
+      border-color: var(--green-border);
+    }
+
+    .b-retest-fail {
+      background: var(--orange-bg);
+      color: var(--orange);
+      border-color: var(--orange-border);
+    }
+
+    .b-escalated {
+      background: var(--purple-bg);
+      color: var(--purple);
+      border-color: var(--purple-border);
+    }
+
+    .b-high {
+      background: var(--red-bg);
+      color: var(--red);
+      border-color: var(--red-border);
+    }
+
+    .b-medium {
+      background: var(--yellow-bg);
+      color: var(--yellow);
+      border-color: var(--yellow-border);
+    }
+
+    .b-low {
+      background: var(--green-bg);
+      color: var(--green);
+      border-color: var(--green-border);
+    }
+
+    /* DATE STAMPS */
+    .date-col {
+      font-family: var(--font);
+      font-size: 11px;
+      color: var(--td-color);
+      white-space: normal;
+    }
+
+    .date-entry {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .date-entry span {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius2);
+      width: 780px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    .modal-hdr {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: var(--bg2);
+      z-index: 1;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text3);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .close-btn:hover {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    /* FORM */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-full {
+      grid-column: 1 / -1;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-grid+.field {
+      margin-top: 18px;
+    }
+
+    .field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+
+    .field input,
+    .field select,
+    .field .custom-select-trigger,
+    .field textarea {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text3);
+      font-family: var(--font);
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      transition: all 0.25s ease;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+
+    .field input:hover,
+    .field select:hover,
+    .field .custom-select-trigger:hover,
+    .field textarea:hover {
+      border-color: var(--text3);
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field .custom-select.open .custom-select-trigger,
+    .field textarea:focus {
+      background: var(--glow-bg);
+      border-color: var(--glow-border);
+      box-shadow: var(--glow-shadow);
+      color: var(--text);
+    }
+
+    .field textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder,
+    .filter-select::placeholder {
+      color: var(--text3);
+    }
+
+    .field select option {
+      background: var(--bg3);
+    }
+
+    .required {
+      color: var(--red);
+      margin-left: 4px;
+      opacity: 0.8;
+      font-weight: 700;
+    }
+
+    /* FILTERS */
+    .filters {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      background: var(--bg3);
+      border: 1px solid var(--btn-border);
+      border-radius: var(--radius);
+      box-sizing: border-box;
+      height: 28px;
+      color: var(--td-color);
+      font-family: var(--font);
+      font-size: 12px;
+      padding: 5px 10px;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .filter-select:focus,
+    .filter-select:hover,
+    .filter-active {
+      background: var(--glow-bg) !important;
+      color: var(--glow-text) !important;
+      border-color: var(--glow-border) !important;
+      box-shadow: var(--glow-shadow) !important;
+    }
+
+    .dropzone-area {
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: transparent;
+    }
+
+    .dropzone-area:hover,
+    .dropzone-area.dragover {
+      border-color: var(--glow-border) !important;
+      background: var(--glow-bg) !important;
+      box-shadow: var(--glow-shadow) !important;
+    }
+
+    /* CUSTOM SELECT */
+    .custom-select {
+      position: relative;
+      display: inline-block;
+      user-select: none;
+      width: 100%;
+    }
+
+    .custom-select.inline {
+      width: auto;
+      min-width: 120px;
+    }
+
+    .custom-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .custom-select-trigger svg {
+      width: 12px;
+      height: 12px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.6;
+    }
+
+    .custom-select-options {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      min-width: 100%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 999;
+      max-height: 250px;
+      overflow-y: auto;
+      display: none;
+      padding: 4px 0;
+      white-space: nowrap;
+    }
+
+    .custom-select.open .custom-select-options {
+      display: block;
+    }
+
+    .custom-select-option {
+      padding: 6px 12px;
+      font-size: 12px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+    }
+
+    .custom-select-option:hover {
+      background: var(--bg4);
+    }
+
+    .custom-select-option.selected {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .automation-notice {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      margin-top: 12px;
+    }
+
+    .automation-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .automation-output {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 10px;
+      white-space: pre-wrap;
+      width: 100%;
+      min-height: 36px;
+    }
+
+    /* AUDIT LOG */
+    .audit-row {
+      display: flex;
+      gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .audit-row:last-child {
+      border-bottom: none;
+    }
+
+    .audit-time {
+      font-family: var(--mono);
+      color: var(--text3);
+      min-width: 130px;
+    }
+
+    .audit-event {
+      color: var(--text2);
+      flex: 1;
+    }
+
+    .audit-actor {
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .actor-qa {
+      background: var(--purple-bg);
+      color: var(--purple);
+    }
+
+    .actor-admin {
+      background: var(--bg4);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* LOGIN */
+
+
+    .login-card {
+      width: min(420px, 100%);
+      padding: 32px;
+      border-radius: 10px;
+      background: #111418;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45), 0 0 25px rgba(255, 255, 255, 0.1);
+    }
+
+    .login-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 28px;
+      color: #94a3b8;
+    }
+
+    .login-copy {
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .login-hint {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #5a6a7e;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .actor-dev {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    [data-theme='dark'] .actor-dev {
+      background: #001a2e;
+      color: #06b6d4;
+    }
+
+    .login-card .field label {
+      color: #e2e8f0;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .login-card .field input,
+    .login-card .field select {
+      background: #181c22;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #e2e8f0;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 12px rgba(255, 255, 255, 0.08);
+    }
+
+    .login-card .field input:focus,
+    .login-card .field select:focus {
+      border-color: #94a3b8;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+    }
+
+    .login-card .field input::placeholder {
+      color: #5a6a7e;
+    }
+
+    .login-card .field input:-webkit-autofill,
+    .login-card .field input:-webkit-autofill:hover,
+    .login-card .field input:-webkit-autofill:focus,
+    .login-card .field select:-webkit-autofill,
+    .login-card .field select:-webkit-autofill:hover,
+    .login-card .field select:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0px 1000px #181c22 inset !important;
+      -webkit-text-fill-color: #e2e8f0 !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
+    [data-theme='light'] .login-card .field input:-webkit-autofill,
+    [data-theme='light'] .login-card .field input:-webkit-autofill:hover,
+    [data-theme='light'] .login-card .field input:-webkit-autofill:focus,
+    [data-theme='light'] .login-card .field select:-webkit-autofill,
+    [data-theme='light'] .login-card .field select:-webkit-autofill:hover,
+    [data-theme='light'] .login-card .field select:-webkit-autofill:focus {
+      -webkit-box-shadow: 0 0 0px 1000px #f8fafc inset !important;
+      -webkit-text-fill-color: #0f172a !important;
+    }
+
+    .login-card .btn-ghost {
+      background: #94a3b8;
+      color: #0f172a;
+      border: 1px solid #94a3b8;
+      font-weight: 600;
+    }
+
+    .login-card .btn-ghost:hover {
+      background: #64748b;
+      border-color: #64748b;
+    }
+
+    .login-icon {
+      width: 350px;
+      height: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .login-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .login-icon,
+    .login-card {
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-company {
+      position: absolute;
+      right: 36px;
+      bottom: 36px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      z-index: 1;
+    }
+
+    .login-company img {
+      height: 100px;
+      width: auto;
+      display: block;
+    }
+
+    .company-tagline {
+      color: #df5826;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .company-pill {
+      color: #df5826;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border: 2px solid #df5826;
+      border-radius: 999px;
+    }
+
+    /* EMPTY */
+    .empty {
+      text-align: center;
+      padding: 48px;
+      color: var(--text3);
+      font-size: 13px;
+    }
+
+    .empty-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      opacity: 0.4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .empty-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* DETAIL PANEL */
+    .minimal-well {
+      border-left: 2px solid var(--border);
+      padding-left: 16px;
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--text2);
+      line-height: 1.6;
+      white-space: pre-wrap;
+      font-family: var(--font);
+    }
+
+    .linked-bug-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: transparent;
+    }
+
+    .linked-bug-card:hover {
+      border-color: var(--border);
+      background: var(--bg2);
+      transform: translateY(-1px);
+    }
+
+    .attachment-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(59, 130, 246, 0.08);
+      color: var(--accent);
+      border-radius: 20px;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .attachment-pill:hover {
+      background: rgba(59, 130, 246, 0.15);
+    }
+
+    .table-link-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--td-color);
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .table-link-pill:hover {
+      background: var(--glow-bg);
+      color: var(--glow-text);
+      border-color: var(--glow-border);
+      box-shadow: var(--glow-shadow);
+    }
+
+    .detail-section {
+      margin-bottom: 32px;
+    }
+
+    .detail-section h4 {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 24px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-label {
+      font-size: 13px;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .detail-value {
+      font-size: 12px;
+      color: var(--text2);
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .timeline {}
+
+    .tl-item {
+      display: flex;
+      gap: 12px;
+      padding: 8px 0;
+      border-left: 2px solid var(--border);
+      margin-left: 8px;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .tl-item::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border2);
+      position: absolute;
+      left: -5px;
+      top: 12px;
+    }
+
+    .tl-item.tl-green::before {
+      background: var(--green);
+    }
+
+    .tl-item.tl-red::before {
+      background: var(--red);
+    }
+
+    .tl-item.tl-yellow::before {
+      background: var(--yellow);
+    }
+
+    .tl-item.tl-blue::before {
+      background: var(--accent);
+    }
+
+    .tl-date {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text3);
+      min-width: 120px;
+    }
+
+    .tl-text {
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    .tl-actor {
+      font-size: 11px;
+    }
+
+    /* CONFIRM DIALOG */
+    .confirm-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-overlay.open {
+      display: flex;
+    }
+
+    .confirm-box {
+      background: var(--bg2);
+      border: 1px solid var(--red);
+      border-radius: var(--radius2);
+      padding: 24px;
+      width: 400px;
+    }
+
+    .confirm-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+
+    .confirm-msg {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .confirm-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* TOAST */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 280px;
+      animation: slideIn 0.2s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .toast-success {
+      border-left: 3px solid var(--green);
+    }
+
+    .toast-error {
+      border-left: 3px solid var(--red);
+    }
+
+    .toast-info {
+      border-left: 3px solid var(--accent);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loader-wrapper {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader-ring {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 4px solid var(--border);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    [data-theme='light'] .loader-ring {
+      border-top-color: #64748b;
+    }
+
+    .loader-image {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 50%;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+    }
+
+    .tab {
+      padding: 10px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--text3);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.15s;
+    }
+
+    .tab:hover {
+      color: var(--text2);
+    }
+
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .scrollable {
+      overflow-x: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app" id="app"></div>
+  <div class="toast-container" id="toasts"></div>
+  <div class="confirm-overlay" id="confirm-overlay">
+    <div class="confirm-box">
+      <div class="confirm-title" id="confirm-title">Confirm Delete</div>
+      <div class="confirm-msg" id="confirm-msg"></div>
+      <div class="confirm-actions">
+        <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+        <button class="btn btn-danger" id="confirm-ok">Delete permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    // ─────────────────────────── STATE ───────────────────────────
 
 
     // Socket.IO connection
@@ -283,7 +2125,7 @@
     }
 
     function formatDate(dStr) {
-      if (!dStr || dStr === 'ΓÇö') return 'ΓÇö';
+      if (!dStr || dStr === '—') return '—';
       let s = String(dStr);
       if (s.endsWith('Z')) {
         const d = new Date(s);
@@ -367,18 +2209,18 @@
       socket.emit('updateData', { type: 'audit', data: auditEntry });
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ TOAST ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── TOAST ───────────────────────────
     function toast(msg, type = 'info') {
       const c = document.getElementById('toasts');
       const el = document.createElement('div');
       el.className = `toast toast-${type}`;
-      const icons = { success: 'Γ£ô', error: 'Γ£ò', info: 'Γä╣' };
+      const icons = { success: '✓', error: '✕', info: 'ℹ' };
       el.innerHTML = `<span style="color:${type === 'success' ? 'var(--green)' : type === 'error' ? 'var(--red)' : 'var(--accent)'}">${icons[type]}</span> ${msg}`;
       c.appendChild(el);
       setTimeout(() => el.remove(), 3000);
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ CONFIRM ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── CONFIRM ───────────────────────────
     let _confirmCb = null;
     function openConfirm(title, msg, cb, btnText = 'Delete permanently', btnClass = 'btn-danger', type = 'red') {
       const box = document.querySelector('.confirm-box');
@@ -478,7 +2320,7 @@
       document.querySelectorAll('.custom-select.open').forEach(el => el.classList.remove('open'));
     });
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ RENDER ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── RENDER ───────────────────────────
     function render() {
       const app = document.getElementById('app');
       let scrollContent = 0;
@@ -524,13 +2366,13 @@
       let greeting = 'Good Night';
       let greetIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
 
-      if (rawHour >= 5 && rawHour <12) {
+      if (rawHour >= 5 && rawHour < 12) {
         greeting = 'Good Morning';
         greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-      } else if (rawHour >= 12 && rawHour <17) {
+      } else if (rawHour >= 12 && rawHour < 17) {
         greeting = 'Good Afternoon';
         greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-      } else if (rawHour >= 17 && rawHour <21) {
+      } else if (rawHour >= 17 && rawHour < 21) {
         greeting = 'Good Evening';
         greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line><polyline points="16 5 12 9 8 5"></polyline></svg>';
       }
@@ -673,7 +2515,7 @@
       const titles = { dashboard: 'Dashboard', testcases: 'Test Cases', bugs: 'Bug Reports', retest: 'Retest Queue', escalations: 'Backend Escalations', automation: 'Automation', modules: 'Modules', audit: 'Audit Log', report: 'Reports', users: 'User Management' };
       let actions = '';
       if (S.view === 'testcases' && S.role === 'qa') {
-        actions = `<button class="btn btn-ghost btn-sm" onclick="openImportCSV()">Γåæ Import Test Cases</button><button class="btn btn-ghost btn-sm" onclick="openAddTC()">+ Add Test Case</button>`;
+        actions = `<button class="btn btn-ghost btn-sm" onclick="openImportCSV()">↑ Import Test Cases</button><button class="btn btn-ghost btn-sm" onclick="openAddTC()">+ Add Test Case</button>`;
       }
       if (S.view === 'modules' && S.role === 'qa') {
         actions = `<button class="btn btn-ghost btn-sm" onclick="openAddModule()">+ Add Module</button>`;
@@ -719,7 +2561,7 @@
       return '';
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ USER MANAGEMENT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── USER MANAGEMENT ───────────────────────────
     function buildUsers() {
       if (S.role !== 'admin') return '<div class="empty">Unauthorized</div>';
 
@@ -778,7 +2620,7 @@
   </div>
           <div class="section">
             <div class="section-hdr">
-              <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">User Management</div><div class="section-meta">${filteredUsers.length} Shown ┬╖ ${S.users.length} Total</div></div>
+              <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">User Management</div><div class="section-meta">${filteredUsers.length} Shown · ${S.users.length} Total</div></div>
               <div style="position:relative; width:220px;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <input class="filter-select${usersQ ? ' filter-active' : ''}" id="usersQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search users..." value="${escHtml(usersQ).replace(/\"/g, '&quot;')}" oninput="liveFilter(this)">
@@ -899,7 +2741,7 @@
       });
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ BACKEND ESCALATIONS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── BACKEND ESCALATIONS ───────────────────────────
     function buildEscalations() {
       const escModF = (document.getElementById('escModF') || { value: '' }).value;
       const escSevF = (document.getElementById('escSevF') || { value: '' }).value;
@@ -925,12 +2767,12 @@
       <td class="td-id">${b.id}</td>
       <td class="td-id">${b.tcId}</td>
       <td><div class="td-title">${b.testCase}</div></td>
-      <td class="td-truncate">${linkedTc?.scenario || 'ΓÇö'}</td>
+      <td class="td-truncate">${linkedTc?.scenario || '—'}</td>
       <td>${b.module}</td>
-      <td>${b.screen || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.steps || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.expected || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.actual || 'ΓÇö'}</td>
+      <td>${b.screen || '—'}</td>
+      <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.expected || '—'}</td>
+      <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
       <td>${sevBadge(b.severity)}</td>
 
@@ -963,7 +2805,7 @@
   </div>
   <div class="section">
     <div class="section-hdr">
-      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Backend Escalations</div><div class="section-meta">${bugs.length} Shown ┬╖ ${S.bugs.filter(b => b.status === 'Escalated').length} Total</div></div>
+      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Backend Escalations</div><div class="section-meta">${bugs.length} Shown · ${S.bugs.filter(b => b.status === 'Escalated').length} Total</div></div>
       <div style="font-size:12px;color:var(--text);position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;">${isDev ? 'Escalated by Frontend Team' : 'Waiting for Backend Team to resolve'}</div>
       <div class="filters">
         <select class="filter-select${escModF ? ' filter-active' : ''}" id="escModF" onchange="render()">
@@ -992,7 +2834,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ MODULE-WISE TRACKER ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── MODULE-WISE TRACKER ───────────────────────────
     function buildModuleTracker() {
       // Collect all dates with data
       const allDates = new Set();
@@ -1131,21 +2973,21 @@
         let testHeight = (testCount / maxValue) * graphHeight;
         let testY = chartHeight - padding - testHeight;
         const testX1 = centerX - barWidth - barGap;
-        if (!testHeight || testHeight <2) { testHeight = 2; testY = chartHeight - padding - testHeight; chartSVG += `<rect x="${testX1}" y="${testY}" width="${barWidth}" height="${testHeight}" fill="var(--accent)" opacity="0.35" class="bar-test zero" data-date="${date}" data-metric="testCreated" data-count="${testCount}" style="cursor:pointer;"/>`; }
+        if (!testHeight || testHeight < 2) { testHeight = 2; testY = chartHeight - padding - testHeight; chartSVG += `<rect x="${testX1}" y="${testY}" width="${barWidth}" height="${testHeight}" fill="var(--accent)" opacity="0.35" class="bar-test zero" data-date="${date}" data-metric="testCreated" data-count="${testCount}" style="cursor:pointer;"/>`; }
         else { chartSVG += `<rect x="${testX1}" y="${testY}" width="${barWidth}" height="${testHeight}" fill="var(--accent)" opacity="0.85" class="bar-test" data-date="${date}" data-metric="testCreated" data-count="${testCount}" style="cursor:pointer;"/>`; }
 
         // Bar 2: Bug Fixed (Green)
         let fixHeight = (fixCount / maxValue) * graphHeight;
         let fixY = chartHeight - padding - fixHeight;
         const fixX = centerX;
-        if (!fixHeight || fixHeight <2) { fixHeight = 2; fixY = chartHeight - padding - fixHeight; chartSVG += `<rect x="${fixX}" y="${fixY}" width="${barWidth}" height="${fixHeight}" fill="var(--green)" opacity="0.35" class="bar-fix zero" data-date="${date}" data-metric="bugFixed" data-count="${fixCount}" style="cursor:pointer;"/>`; }
+        if (!fixHeight || fixHeight < 2) { fixHeight = 2; fixY = chartHeight - padding - fixHeight; chartSVG += `<rect x="${fixX}" y="${fixY}" width="${barWidth}" height="${fixHeight}" fill="var(--green)" opacity="0.35" class="bar-fix zero" data-date="${date}" data-metric="bugFixed" data-count="${fixCount}" style="cursor:pointer;"/>`; }
         else { chartSVG += `<rect x="${fixX}" y="${fixY}" width="${barWidth}" height="${fixHeight}" fill="var(--green)" opacity="0.85" class="bar-fix" data-date="${date}" data-metric="bugFixed" data-count="${fixCount}" style="cursor:pointer;"/>`; }
 
         // Bar 3: Retest Done (Orange)
         let retestHeight = (retestCount / maxValue) * graphHeight;
         let retestY = chartHeight - padding - retestHeight;
         const retestX = centerX + barWidth + barGap;
-        if (!retestHeight || retestHeight <2) { retestHeight = 2; retestY = chartHeight - padding - retestHeight; chartSVG += `<rect x="${retestX}" y="${retestY}" width="${barWidth}" height="${retestHeight}" fill="var(--orange)" opacity="0.35" class="bar-retest zero" data-date="${date}" data-metric="retestDone" data-count="${retestCount}" style="cursor:pointer;"/>`; }
+        if (!retestHeight || retestHeight < 2) { retestHeight = 2; retestY = chartHeight - padding - retestHeight; chartSVG += `<rect x="${retestX}" y="${retestY}" width="${barWidth}" height="${retestHeight}" fill="var(--orange)" opacity="0.35" class="bar-retest zero" data-date="${date}" data-metric="retestDone" data-count="${retestCount}" style="cursor:pointer;"/>`; }
         else { chartSVG += `<rect x="${retestX}" y="${retestY}" width="${barWidth}" height="${retestHeight}" fill="var(--orange)" opacity="0.85" class="bar-retest" data-date="${date}" data-metric="retestDone" data-count="${retestCount}" style="cursor:pointer;"/>`; }
 
         // Date label on X-axis
@@ -1263,7 +3105,7 @@
             let tooltipX = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
             let tooltipY = rect.top - tooltip.offsetHeight - 10;
 
-            if (tooltipY <10) {
+            if (tooltipY < 10) {
               tooltipY = rect.bottom + 10;
             }
 
@@ -1373,7 +3215,7 @@
       `;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ DASHBOARD ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── DASHBOARD ───────────────────────────
     function buildDashboard() {
       const dashModFilter = S.dashModFilter || [];
       const dashStF = (document.getElementById('dashStF') || { value: '' }).value;
@@ -1527,11 +3369,11 @@
           S.dashModFilter.map(m => `
               <div style="background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.3); color:var(--green); border-radius:4px; padding:2px 6px; display:flex; align-items:center; gap:6px;">
                 <span style="font-weight:600;">${m}</span>
-                <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeDashModFilter(event, '${m}')">├ù</span>
+                <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeDashModFilter(event, '${m}')">×</span>
               </div>
             `).join('')}
             <div style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:4px; align-items:center;">
-              ${(S.dashModFilter && S.dashModFilter.length > 0) ? `<span style="cursor:pointer; font-size:14px; color:var(--text3);" onclick="window.clearDashModFilter(event)">├ù</span> <span style="color:var(--border);">|</span>` : ''}
+              ${(S.dashModFilter && S.dashModFilter.length > 0) ? `<span style="cursor:pointer; font-size:14px; color:var(--text3);" onclick="window.clearDashModFilter(event)">×</span> <span style="color:var(--border);">|</span>` : ''}
               <svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; opacity:0.6;"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
           </div>
@@ -1682,11 +3524,11 @@
           S.hmModFilter.map(m => `
             <div style="background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.3); color:var(--green); border-radius:4px; padding:2px 6px; display:flex; align-items:center; gap:6px;">
               <span style="font-weight:600;">${m}</span>
-              <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeHmModFilter(event, '${m}')">├ù</span>
+              <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeHmModFilter(event, '${m}')">×</span>
             </div>
           `).join('')}
           <div style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:4px; align-items:center;">
-            ${(S.hmModFilter && S.hmModFilter.length > 0) ? `<span style="cursor:pointer; font-size:14px; color:var(--text3);" onclick="window.clearHmModFilter(event)">├ù</span> <span style="color:var(--border);">|</span>` : ''}
+            ${(S.hmModFilter && S.hmModFilter.length > 0) ? `<span style="cursor:pointer; font-size:14px; color:var(--text3);" onclick="window.clearHmModFilter(event)">×</span> <span style="color:var(--border);">|</span>` : ''}
             <svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; opacity:0.6;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
         </div>
@@ -1707,12 +3549,12 @@
     ${buildModuleHeatmap()}
   </div>
   <div class="section">
-    <div class="section-hdr"><div class="section-title">Recent Bug Reports</div><button class="btn btn-ghost btn-sm" onclick="nav('bugs')">View all ΓåÆ</button></div>
+    <div class="section-hdr"><div class="section-title">Recent Bug Reports</div><button class="btn btn-ghost btn-sm" onclick="nav('bugs')">View all →</button></div>
     <div class="tbl-wrap"><table><thead><tr><th>Bug ID</th><th>Test Case</th><th>Module</th><th>Severity</th><th>Status</th><th>Failed On</th></tr></thead><tbody>${recentBugs || '<tr><td colspan="6" class="empty">No bugs yet</td></tr>'}</tbody></table></div>
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ TEST CASES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── TEST CASES ───────────────────────────
     function switchTestCasesTab(tabId) {
       S.testCasesTab = tabId;
       render();
@@ -1809,14 +3651,14 @@
       <td class="td-title">${tc.testCase}</td>
       <td class="td-truncate">${tc.scenario || ''}</td>
       <td>${tc.module}</td>
-      <td>${tc.screen || 'ΓÇö'}</td>
+      <td>${tc.screen || '—'}</td>
       <td class="td-truncate">${tc.steps || ''}</td>
       <td class="td-truncate">${tc.expected || ''}</td>
       <td class="td-truncate">${tc.actual || ''}</td>
       <td>${statusBadge(tc.status)}</td>
       <td>${sevBadge(tc.severity)}</td>
       <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td>
-      <td class="td-truncate">${tc.notes || 'ΓÇö'}</td>
+      <td class="td-truncate">${tc.notes || '—'}</td>
       <td style="white-space:nowrap;">
         <div style="display:flex; gap:6px; align-items:center; justify-content:flex-end; min-width:max-content;">
           <button class="btn btn-ghost btn-sm" onclick="viewTC(decodeURIComponent('${idArg}'), decodeURIComponent('${modArg}'))">View</button>
@@ -1830,7 +3672,7 @@
       return `
   <div class="section">
     <div class="section-hdr">
-      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">All Test Cases</div><div class="section-meta">${data.length} Shown ┬╖ ${S.testCases.length} Total</div></div>
+      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">All Test Cases</div><div class="section-meta">${data.length} Shown · ${S.testCases.length} Total</div></div>
       <div class="filters">
         <select class="filter-select${modF ? ' filter-active' : ''}" id="tcModF" onchange="render()">
           <option value="">All Modules</option>${modOpts}
@@ -1872,7 +3714,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ BUGS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── BUGS ───────────────────────────
     function buildBugs() {
       const bugModF = (document.getElementById('bugModF') || { value: '' }).value;
       const bugStF = (document.getElementById('bugStF') || { value: '' }).value;
@@ -1915,17 +3757,17 @@
       <td class="td-id">${b.id}</td>
       <td class="td-id">${b.tcId}</td>
       <td><div class="td-title">${b.testCase}</div></td>
-      <td class="td-truncate">${linkedTc?.scenario || 'ΓÇö'}</td>
+      <td class="td-truncate">${linkedTc?.scenario || '—'}</td>
       <td>${b.module}</td>
-      <td>${b.screen || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.steps || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.expected || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.actual || 'ΓÇö'}</td>
+      <td>${b.screen || '—'}</td>
+      <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.expected || '—'}</td>
+      <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
       <td>${statusBadge(linkedTc?.status)}</td>
       <td>${sevBadge(b.severity)}</td>
       <td class="td-truncate">${renderEvidenceCell(linkedTc?.evidence)}</td>
-      <td class="td-truncate">${linkedTc?.notes || 'ΓÇö'}</td>
+      <td class="td-truncate">${linkedTc?.notes || '—'}</td>
       <td><div style="display:flex; gap:6px; align-items:center; justify-content:flex-end; min-width:max-content;">${actions}</div></td>
     </tr>`;
       }).join('');
@@ -1991,7 +3833,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ RETEST QUEUE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── RETEST QUEUE ───────────────────────────
     function buildRetest() {
       const rtModF = (document.getElementById('rtModF') || { value: '' }).value;
       const rtSevF = (document.getElementById('rtSevF') || { value: '' }).value;
@@ -2015,20 +3857,20 @@
       <td class="td-id">${b.id}</td>
       <td class="td-id">${b.tcId}</td>
       <td><div class="td-title">${b.testCase}</div></td>
-      <td class="td-truncate">${linkedTc?.scenario || 'ΓÇö'}</td>
+      <td class="td-truncate">${linkedTc?.scenario || '—'}</td>
       <td>${b.module}</td>
-      <td>${b.screen || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.steps || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.expected || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.actual || 'ΓÇö'}</td>
+      <td>${b.screen || '—'}</td>
+      <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.expected || '—'}</td>
+      <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
       <td>${sevBadge(b.severity)}</td>
       <td>
         <div style="display:flex; gap:6px; align-items:center; min-width:max-content;">
           <button class="btn btn-ghost btn-sm" onclick="viewBug('${b.id}')" style="white-space:nowrap;">View Details</button>
           ${S.role === 'qa' ? `
-          <button class="btn btn-success btn-sm" onclick="retestPass('${b.id}')">Pass Γ£ô </button>
-          <button class="btn btn-danger btn-sm" onclick="retestFail('${b.id}')">Fail Γ£ò </button>
+          <button class="btn btn-success btn-sm" onclick="retestPass('${b.id}')">Pass ✓ </button>
+          <button class="btn btn-danger btn-sm" onclick="retestFail('${b.id}')">Fail ✕ </button>
           ` : ''}
         </div>
       </td>
@@ -2058,7 +3900,7 @@
   </div>
   <div class="section">
     <div class="section-hdr">
-      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Retest Queue</div><div class="section-meta">${bugs.length} Shown ┬╖ ${S.bugs.filter(b => normalizeStatus(b.status) === 'fixed').length} Total</div></div>
+      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Retest Queue</div><div class="section-meta">${bugs.length} Shown · ${S.bugs.filter(b => normalizeStatus(b.status) === 'fixed').length} Total</div></div>
       <div style="font-size:12px;color:var(--text);position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;">Dev has marked these as fixed</div>
       <div class="filters">
         <select class="filter-select" id="rtModF" onchange="render()">
@@ -2086,7 +3928,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ AUTOMATION ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── AUTOMATION ───────────────────────────
     function buildAutomation() {
       const moduleOptions = S.modules.map(mod => `<option value="${mod}"${S.selectedAutomationModule === mod ? ' selected' : ''}>${mod}</option>`).join('');
       const testCaseOptions = S.selectedAutomationModule ? S.testCases.filter(tc => tc.module === S.selectedAutomationModule).map(tc => {
@@ -2183,7 +4025,7 @@
     <div class="section-hdr">
       <div>
         <div class="section-title">Test Case Automation</div>
-        <div class="automation-notice">ΓÜÖ Coming Soon - Automation features are currently under development. Check back soon for updates on automated testing capabilities.</div>
+        <div class="automation-notice">⚙ Coming Soon - Automation features are currently under development. Check back soon for updates on automated testing capabilities.</div>
       </div>
     </div>
     <div style="padding: 20px;">
@@ -2307,7 +4149,7 @@
       }
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ MODULES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── MODULES ───────────────────────────
     function buildModules() {
       const modQ = (document.getElementById('modQ') || { value: '' }).value.toLowerCase();
       let filteredModules = S.modules;
@@ -2378,7 +4220,7 @@
       return header + (cards || `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></div>${emptyMsg}</div>`);
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ AUDIT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── AUDIT ───────────────────────────
     function buildAudit() {
       const auditQ = (document.getElementById('auditQ') || { value: '' }).value.toLowerCase();
       const titles = { dashboard: 'Dashboard', testcases: 'Test Cases', bugs: 'Bug Reports', retest: 'Retest Queue', escalations: 'Backend Escalations', automation: 'Automation', modules: 'Modules', audit: 'Audit Log', report: 'Reports', users: 'User Management' };
@@ -2392,9 +4234,9 @@
       const rows = filteredAuditLog.slice(0, 100).map(a => {
         let fullDateStr = formatDate(a.time);
         let parts = fullDateStr.split(' ');
-        let datePart = parts[0] || 'ΓÇö';
-        let timePart = parts[1] || 'ΓÇö';
-        let screenName = a.screen ? (titles[a.screen] || a.screen) : 'ΓÇö';
+        let datePart = parts[0] || '—';
+        let timePart = parts[1] || '—';
+        let screenName = a.screen ? (titles[a.screen] || a.screen) : '—';
 
         let eventIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 16 12 12 12 8"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
         let eventColor = 'var(--text)';
@@ -2497,7 +4339,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ REPORT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── REPORT ───────────────────────────
     function buildReport() {
       const reportQ = (document.getElementById('reportQ') || { value: '' }).value.toLowerCase();
       const total = S.testCases.length;
@@ -2589,7 +4431,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ BADGES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── BADGES ───────────────────────────
     function statusBadge(s) {
       const m = { Pass: 'b-pass', Fail: 'b-fail', Hold: 'b-hold', Retest: 'b-retest', Blocked: 'b-blocked', Open: 'b-open', Fixed: 'b-fixed', Verified: 'b-verified', 'Retest Failed': 'b-retest-fail', Escalated: 'b-escalated' };
       return `<span class="badge ${m[s] || 'b-blocked'}">${s}</span>`;
@@ -2619,7 +4461,7 @@
 
     function renderEvidenceCell(evidence) {
       const ev = (evidence || '').trim();
-      if (!ev) return 'ΓÇö';
+      if (!ev) return '—';
       if (/^data:image\//i.test(ev)) {
         return `<a href="${ev}" target="_blank" rel="noopener noreferrer" title="Open attached image" style="display:inline-block;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><img src="${ev}" alt="Evidence" style="width:36px;height:36px;object-fit:cover;border:1px solid var(--border);border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.05);"></a>`;
       }
@@ -2681,7 +4523,7 @@
       renderEvidencePreview(previewId, txt);
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ MODALS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── MODALS ───────────────────────────
     function updateAutoTcId() {
       const mod = document.getElementById('f-mod').value;
       let count = S.testCases.filter(t => t.module === mod).length + 1;
@@ -2856,7 +4698,7 @@
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">ID</div><div class="detail-value" style="font-family:var(--font);color:var(--text2); font-weight:600; font-size:15px;">${tc.id}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Status</div><div class="detail-value">${statusBadge(tc.status)}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Module</div><div class="detail-value" style="color:var(--text2);">${tc.module}</div></div>
-        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${tc.screen || 'ΓÇö'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${tc.screen || '—'}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Severity</div><div class="detail-value">${sevBadge(tc.severity)}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Created</div><div class="detail-value" style="font-family:var(--font); font-size:13px; color:var(--text2); background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(tc.createdAt)}</div></div>
       </div>
@@ -2871,7 +4713,7 @@
       <div style="display:flex; flex-direction:column; gap:20px;">
         <div>
           <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Scenario</div>
-          <div class="detail-value" style="color:var(--text2); font-size:13px;">${tc.scenario || 'ΓÇö'}</div>
+          <div class="detail-value" style="color:var(--text2); font-size:13px;">${tc.scenario || '—'}</div>
         </div>
         <div>
           <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Test Steps</div>
@@ -2947,12 +4789,12 @@
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Module</div><div class="detail-value" style="color:var(--text2);">${b.module}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Severity</div><div class="detail-value">${sevBadge(b.severity)}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Linked Test Case</div><div class="detail-value" style="font-family:var(--font); color:var(--accent);">${b.tcId}</div></div>
-        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${b.screen || 'ΓÇö'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${b.screen || '—'}</div></div>
       </div>
       
       <div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);">
         <div class="detail-item" style="margin-bottom:12px;"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Evidence</div><div style="font-size:13px;color:var(--text2)">${renderEvidenceCell(linkedTc?.evidence)}</div></div>
-        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Notes</div><div style="font-size:13px;color:var(--text2); background:var(--bg3); padding:10px; border-radius:6px; margin-top:4px;">${linkedTc?.notes || 'ΓÇö'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Notes</div><div style="font-size:13px;color:var(--text2); background:var(--bg3); padding:10px; border-radius:6px; margin-top:4px;">${linkedTc?.notes || '—'}</div></div>
       </div>
     </div>
 
@@ -2963,7 +4805,7 @@
         Tracking & Lifecycle
       </h4>
       <div class="detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Failed On</div><div style="color:var(--text2);font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.failedAt) || 'ΓÇö'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Failed On</div><div style="color:var(--text2);font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.failedAt) || '—'}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Fixed On</div><div style="color:${b.fixedAt ? 'var(--green)' : 'var(--text2)'};font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.fixedAt) || 'Not fixed yet'}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Retest On</div><div style="color:var(--text2);font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.retestAt) || 'Not retested yet'}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Retest Count</div><div style="font-family:var(--font);color:var(--text2);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${b.retestCount}</div></div>
@@ -2985,7 +4827,7 @@
   `, null, true);
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ACTIONS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── ACTIONS ───────────────────────────
     function markFixed(bugId) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       const viewIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;vertical-align:middle;color:var(--green);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
@@ -3017,7 +4859,7 @@
         audit(`${bugId} marked as Fixed`);
         closeModal();
         save();
-        toast(`Bug ${bugId} marked as fixed ΓÇö awaiting QA retest`, 'success');
+        toast(`Bug ${bugId} marked as fixed — awaiting QA retest`, 'success');
       });
     }
 
@@ -3033,12 +4875,12 @@
           b.retestAt = now();
           b.retestCount++;
           b.retestResult = 'Pass';
-          b.history.push({ date: now(), event: 'Retest PASSED ΓÇö bug verified and closed', actor: S.auth.user });
+          b.history.push({ date: now(), event: 'Retest PASSED — bug verified and closed', actor: S.auth.user });
           if (tc) {
             tc.status = 'Pass';
             tc.updatedAt = now();
             tc.history = tc.history || [];
-            tc.history.push({ date: now(), event: `Retest passed ΓÇö test case restored to PASS status` });
+            tc.history.push({ date: now(), event: `Retest passed — test case restored to PASS status` });
 
             // Send updates to server
             socket.emit('updateData', { type: 'testCase', data: tc });
@@ -3068,7 +4910,7 @@
           b.retestCount++;
           b.retestResult = 'Fail';
           b.fixedAt = null;
-          b.history.push({ date: now(), event: `Retest FAILED ΓÇö bug re-opened (Retest #${b.retestCount})`, actor: S.auth.user });
+          b.history.push({ date: now(), event: `Retest FAILED — bug re-opened (Retest #${b.retestCount})`, actor: S.auth.user });
           const tc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
           if (tc) {
             tc.status = 'Fail';
@@ -3181,7 +5023,7 @@
       toast('Report exported', 'success');
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ EDIT TEST CASE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── EDIT TEST CASE ───────────────────────────
     function openEditTC(id, module) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module }));
@@ -3299,7 +5141,7 @@
       tc.notes = (document.getElementById('e-notes') || { value: '' }).value.trim();
       tc.updatedAt = now();
       tc.history = tc.history || [];
-      tc.history.push({ date: now(), event: `Edited. Status: ${oldStatus} ΓåÆ ${status}` });
+      tc.history.push({ date: now(), event: `Edited. Status: ${oldStatus} → ${status}` });
 
       // Send test case update to server
       socket.emit('updateData', { type: 'testCase', data: tc });
@@ -3328,7 +5170,7 @@
           bugRefsTestCaseKeys(b, id, tc.module) && (b.status === 'Open' || b.status === 'Retest Failed'));
         if (linked) {
           linked.status = 'Verified';
-          linked.history.push({ date: now(), event: `Bug auto-closed ΓÇö test case changed to ${status}`, actor: S.auth.user });
+          linked.history.push({ date: now(), event: `Bug auto-closed — test case changed to ${status}`, actor: S.auth.user });
 
           // Send bug update to server
           socket.emit('updateData', { type: 'bug', data: linked });
@@ -3337,13 +5179,13 @@
         }
       }
 
-      audit(`Test case ${id} edited ΓÇö status ${oldStatus} ΓåÆ ${status}`);
+      audit(`Test case ${id} edited — status ${oldStatus} → ${status}`);
       closeModal();
       save();
       toast(`Test case ${id} updated`, 'success');
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ESCALATE BUG ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── ESCALATE BUG ───────────────────────────
     function escalateBug(bugId) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       const b = S.bugs.find(x => x.id === bugId);
@@ -3357,7 +5199,7 @@
       <div style="font-size:13px; color:var(--text2); margin-bottom:8px;">${b.testCase}</div>
       <div style="font-size:11px; color:var(--text3); display:flex; align-items:center; gap:6px;">
         <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.module}</span>
-        <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.screen || 'ΓÇö'}</span>
+        <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.screen || '—'}</span>
         <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.severity}</span>
       </div>
     </div>
@@ -3395,7 +5237,7 @@
       });
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ DOWNLOAD TEST CASES CSV ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── DOWNLOAD TEST CASES CSV ───────────────────────────
     function downloadImportTemplate() {
       const headers = 'Test Case ID,Test Case,Scenario,Module Name,Screen Name,Test Step,Test Data,Expected Results,Actual Results,Status,Severity,Evidence,Notes';
       const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page2. Enter credentials3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,';
@@ -3404,7 +5246,7 @@
       a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
       a.download = 'bugos-test-case-template.csv';
       a.click();
-      toast('Template downloaded ΓÇö fill it in and import', 'success');
+      toast('Template downloaded — fill it in and import', 'success');
     }
 
     function downloadTestCasesCSV() {
@@ -3426,7 +5268,7 @@
       toast(`Downloaded ${data.length} test cases`, 'success');
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ IMPORT CSV ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── IMPORT CSV ───────────────────────────
     let _importRows = [];
     let _importTargetModule = '';
 
@@ -3466,7 +5308,7 @@
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
             </div>
             <div style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:4px;">Click to upload or drag and drop</div>
-            <div style="font-size:12px;color:var(--text3);">CSV UTFΓÇæ8 or Excel (.xlsx)</div>
+            <div style="font-size:12px;color:var(--text3);">CSV UTF‑8 or Excel (.xlsx)</div>
           </div>
 
           <div style="margin-top:24px;text-align:center;background:var(--bg3);padding:16px;border-radius:var(--radius);border:1px dashed var(--border);">
@@ -3530,19 +5372,19 @@
       _importTargetModule = selectedModule || _importTargetModule;
 
       if (!_importTargetModule) {
-        if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î Please select a module before importing.</span>`;
+        if (status) status.innerHTML = `<span style="color:var(--red)">❌ Please select a module before importing.</span>`;
         return;
       }
 
       // Accept CSV, TXT, Excel files
       if (!file.name.match(/\.(csv|txt|xlsx|xls)$/i)) {
-        if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î Use a .csv, .txt, .xlsx, or .xls file.</span>`;
+        if (status) status.innerHTML = `<span style="color:var(--red)">❌ Use a .csv, .txt, .xlsx, or .xls file.</span>`;
         return;
       }
 
       const reader = new FileReader();
       reader.onerror = () => {
-        if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î Failed to read file.</span>`;
+        if (status) status.innerHTML = `<span style="color:var(--red)">❌ Failed to read file.</span>`;
       };
       reader.onload = e => {
         try {
@@ -3559,12 +5401,12 @@
           // Remove completely empty lines
           const nonEmpty = lines.filter(l => l.trim().length > 0);
 
-          if (nonEmpty.length <2) {
-            if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î File appears empty or has no data rows.</span>`;
+          if (nonEmpty.length < 2) {
+            if (status) status.innerHTML = `<span style="color:var(--red)">❌ File appears empty or has no data rows.</span>`;
             return;
           }
 
-          // Parse headers ΓÇö be very flexible
+          // Parse headers — be very flexible
           const rawHeaders = parseImpLine(nonEmpty[0]);
           const headers = rawHeaders.map(h => h.toLowerCase().trim()
             .replace(/[^a-z0-9 ]/g, ' ')  // strip special chars
@@ -3574,7 +5416,7 @@
 
           if (status) status.textContent = `Parsed ${nonEmpty.length - 1} data rows. Mapping columns...`;
 
-          // Column finder ΓÇö tries multiple aliases
+          // Column finder — tries multiple aliases
           const col = (aliases) => {
             for (const alias of aliases) {
               const idx = headers.findIndex(h => h === alias);
@@ -3606,7 +5448,7 @@
           const rows = [];
           const warnings = [];
 
-          for (let i = 1; i <nonEmpty.length; i++) {
+          for (let i = 1; i < nonEmpty.length; i++) {
             const cols = parseImpLine(nonEmpty[i]);
             if (cols.every(c => !c.trim())) continue; // skip blank rows
 
@@ -3637,7 +5479,7 @@
             // Generate ID if missing
             let rowId = normalizeTcRowId(get('id', ''));
             if (!rowId) {
-              warnings.push(`Row ${i + 1}: missing Test Case ID ΓÇö row skipped`);
+              warnings.push(`Row ${i + 1}: missing Test Case ID — row skipped`);
               continue;
             }
 
@@ -3673,7 +5515,7 @@
             else seenSameFile[k] = true;
           });
           if (intraFileDupRows > 0) {
-            warnings.unshift(`${intraFileDupRows} row(s) repeat the same Test Case ID within the same module ΓÇö extras will be skipped on import`);
+            warnings.unshift(`${intraFileDupRows} row(s) repeat the same Test Case ID within the same module — extras will be skipped on import`);
           }
 
           _importRows = rows;
@@ -3681,7 +5523,7 @@
 
         } catch (err) {
           console.error('Import parse error:', err);
-          if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î Parse error: ${err.message}</span>`;
+          if (status) status.innerHTML = `<span style="color:var(--red)">❌ Parse error: ${err.message}</span>`;
         }
       };
       if (file.name.match(/\.xlsx?$/i)) {
@@ -3691,12 +5533,12 @@
       }
     }
 
-    // Robust CSV line parser ΓÇö handles quoted fields, commas inside quotes, escaped quotes
+    // Robust CSV line parser — handles quoted fields, commas inside quotes, escaped quotes
     function parseImpLine(line) {
       const res = [];
       let cur = '';
       let inQ = false;
-      for (let i = 0; i <line.length; i++) {
+      for (let i = 0; i < line.length; i++) {
         const ch = line[i];
         if (ch === '"') {
           if (inQ && line[i + 1] === '"') { cur += '"'; i++; } // escaped quote ""
@@ -3787,7 +5629,7 @@
         const isIntraDup = intraIdx !== idx;
         const isDupe = isStoredDupe || isIntraDup;
         let dupeLbl = ''; if (isStoredDupe) dupeLbl = 'stored'; else if (isIntraDup) dupeLbl = 'repeat in file';
-        return `<tr style="${isDupe ? 'opacity:.45;' : ''}" title="${isDupe ? `Skipped ΓÇö ${dupeLbl}` : ''}">
+        return `<tr style="${isDupe ? 'opacity:.45;' : ''}" title="${isDupe ? `Skipped — ${dupeLbl}` : ''}">
                 <td style="padding:6px 10px;font-family:var(--mono);font-size:11px;color:${isDupe ? 'var(--yellow)' : 'var(--text3)'};border-bottom:1px solid var(--border);">${r.id}${isDupe ? ' (skip)' : ''}</td>
                 <td style="padding:6px 10px;font-size:12px;color:var(--text);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid var(--border);">${r.testCase}</td>
                 <td style="padding:6px 10px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);">${r.module}</td>
@@ -3805,7 +5647,7 @@
 
     function doImport() {
       if (!_importRows.length) {
-        toast('No data loaded ΓÇö please select a CSV file first', 'error'); return;
+        toast('No data loaded — please select a CSV file first', 'error'); return;
       }
       let added = 0, skipped = 0, bugs = 0, passed = 0;
       _importRows.forEach(r => {
@@ -3841,11 +5683,11 @@
       audit(`Imported ${added} test cases from CSV (${skipped} duplicates skipped, ${bugs} bugs auto-created, ${passed} passed cases)`);
       _importRows = [];
       save();
-      toast(`Γ£ô Imported ${added} test cases${skipped ? `, ${skipped} skipped` : ''}${bugs ? `, ${bugs} bugs created` : ''}`, 'success');
+      toast(`✓ Imported ${added} test cases${skipped ? `, ${skipped} skipped` : ''}${bugs ? `, ${bugs} bugs created` : ''}`, 'success');
       switchTestCasesTab('all');
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ MODAL ENGINE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── MODAL ENGINE ───────────────────────────
     let _submitCb = null;
     function showModal(title, body, submitCb, viewOnly = false) {
       _submitCb = submitCb;
@@ -3857,7 +5699,7 @@
       overlay.innerHTML = `<div class="modal">
     <div class="modal-hdr">
       <div class="modal-title">${title}</div>
-      <button class="close-btn" onclick="closeModal()">Γ£ò</button>
+      <button class="close-btn" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">${body}</div>
     <div class="modal-footer">
@@ -3885,10 +5727,10 @@
       save();
     }
 
-    // ΓöÇΓöÇΓöÇ INIT ΓöÇΓöÇΓöÇ
+    // ─── INIT ───
     render();
 
-    // ΓöÇΓöÇΓöÇ LIVE CLOCK (updates every second without re-rendering) ΓöÇΓöÇΓöÇ
+    // ─── LIVE CLOCK (updates every second without re-rendering) ───
     setInterval(() => {
       const el = document.getElementById('live-clock');
       if (el) el.textContent = formatDate(nowFull());
@@ -3909,13 +5751,13 @@
           let greeting = 'Good Night';
           let greetIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
 
-          if (rawHour >= 5 && rawHour <12) {
+          if (rawHour >= 5 && rawHour < 12) {
             greeting = 'Good Morning';
             greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-          } else if (rawHour >= 12 && rawHour <17) {
+          } else if (rawHour >= 12 && rawHour < 17) {
             greeting = 'Good Afternoon';
             greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-          } else if (rawHour >= 17 && rawHour <21) {
+          } else if (rawHour >= 17 && rawHour < 21) {
             greeting = 'Good Evening';
             greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line><polyline points="16 5 12 9 8 5"></polyline></svg>';
           }
@@ -3928,4 +5770,7 @@
         fcS.textContent = s;
       }
     }, 1000);
-  
+  </script>
+</body>
+
+</html>
