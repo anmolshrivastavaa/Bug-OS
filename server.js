@@ -79,6 +79,7 @@ const testCaseSchema = new mongoose.Schema({
   status: { type: String, required: true, enum: ['Pass', 'Fail', 'Hold'] },
   severity: { type: String, required: true, enum: ['High', 'Medium', 'Low'] },
   evidence: String,
+  evidence2: String,
   notes: String,
   createdAt: { type: String, required: true },
   createdBy: { type: String, required: true },
@@ -297,6 +298,7 @@ actual = ${safeStr(testCase.actual)}
 status = ${safeStr(testCase.status)}
 severity = ${safeStr(testCase.severity)}
 evidence = ${safeStr(testCase.evidence)}
+evidence2 = ${safeStr(testCase.evidence2)}
 notes = ${safeStr(testCase.notes)}
 
 ${script}
@@ -319,6 +321,7 @@ const actual = ${safeStr(testCase.actual)};
 const status = ${safeStr(testCase.status)};
 const severity = ${safeStr(testCase.severity)};
 const evidence = ${safeStr(testCase.evidence)};
+const evidence2 = ${safeStr(testCase.evidence2)};
 const notes = ${safeStr(testCase.notes)};
 
 ${script}
@@ -344,6 +347,7 @@ public class AutomationScript {
         String status = ${safeStr(testCase.status)};
         String severity = ${safeStr(testCase.severity)};
         String evidence = ${safeStr(testCase.evidence)};
+        String evidence2 = ${safeStr(testCase.evidence2)};
         String notes = ${safeStr(testCase.notes)};
         ${script.replace(/\n/g, '\n        ')}
     }

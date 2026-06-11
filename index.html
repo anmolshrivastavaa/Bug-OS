@@ -2455,7 +2455,7 @@
         </svg>
         <span class="login-header-text">LOGIN</span>
       </div>
-      <div class="login-title">Bug OS - Unified QA Management Platform</div>
+      <div class="login-title">Bug-OS - Unified QA Management Platform</div>
       <div class="field">
         <label>Username</label>
         <input id="login-user" placeholder="Enter username" autocomplete="username">
@@ -3687,11 +3687,8 @@
         const idArg = encodeURIComponent(tc.id || '');
         const modArg = encodeURIComponent(tc.module || '');
         const hasScript = S.automationScripts.some(s => s.testCaseId == tc.id && s.module === tc.module);
-        const scriptObj = S.automationScripts.find(s => s.testCaseId == tc.id && s.module === tc.module);
         let iconSvg = '';
-        if (hasScript && scriptObj.language) {
-          iconSvg = getLangSvg(scriptObj.language).replace('width="16"', 'width="18"').replace('height="16"', 'height="18"');
-        } else if (hasScript) {
+        if (hasScript) {
           iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#10b981" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
         }
 
@@ -3710,7 +3707,7 @@
       <td class="td-truncate">${tc.actual || ''}</td>
       <td>${statusBadge(tc.status)}</td>
       <td>${sevBadge(tc.severity)}</td>
-      <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td>
+      <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2)}</td>
       <td class="td-truncate">${tc.notes || '—'}</td>
       <td style="text-align:center;">${autoStatusHtml}</td>
       <td style="white-space:nowrap;">
@@ -3762,7 +3759,7 @@
       </select>
     </div>
     <div class="tbl-wrap scrollable"><table>
-      <thead><tr><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Evidence</th><th>Notes</th><th>Automation Status</th><th>Actions</th></tr></thead>
+      <thead><tr><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Automation Status</th><th>Actions</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="14" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg></div>No test cases matches filters</td></tr>'}</tbody>
     </table></div>
   </div>`;
@@ -3820,7 +3817,7 @@
       <td>${statusBadge(b.status)}</td>
       <td>${statusBadge(linkedTc?.status)}</td>
       <td>${sevBadge(b.severity)}</td>
-      <td class="td-truncate">${renderEvidenceCell(linkedTc?.evidence)}</td>
+      <td class="td-truncate">${renderEvidenceCell(linkedTc?.evidence)}</td><td class="td-truncate">${renderEvidenceCell(linkedTc?.evidence2)}</td>
       <td class="td-truncate">${linkedTc?.notes || '—'}</td>
       <td><div style="display:flex; gap:6px; align-items:center; justify-content:flex-end; min-width:max-content;">${actions}</div></td>
     </tr>`;
@@ -3881,7 +3878,7 @@
       </div>
     </div>
     <div class="tbl-wrap scrollable"><table>
-      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Bug Status</th><th>Status</th><th>Severity</th><th>Evidence</th><th>Notes</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Bug Status</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Actions</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="15" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg></div>No bugs matches filters</td></tr>'}</tbody>
     </table></div>
   </div>`;
@@ -4020,7 +4017,7 @@
             <td class="td-truncate">${tc.actual || '—'}</td>
             <td>${statusBadge(tc.status)}</td>
             <td>${sevBadge(tc.severity)}</td>
-            <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td>
+            <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2)}</td>
             <td class="td-truncate">${tc.notes || '—'}</td>
           </tr>`;
         }
@@ -4113,58 +4110,105 @@
     .tech-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
+      gap: 8px;
+      padding: 6px 14px;
       border-radius: 12px;
-      font-size: 11px;
-      font-weight: 700;
-      background: var(--bg2);
-      color: var(--text2);
-      border: 1px solid var(--border);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      transition: transform 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
-      cursor: default;
-    }
-    .tech-badge:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-      background: var(--bg3);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font);
+      background: linear-gradient(180deg, var(--bg3) 0%, var(--bg2) 100%);
       color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      cursor: default;
+      position: relative;
+    }
+    [data-theme='light'] .tech-badge {
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    }
+    .tech-stack-container {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      margin-bottom: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 14px 18px;
+      background: linear-gradient(90deg, var(--bg3), transparent);
+      border-left: 3px solid var(--border2);
+      border-radius: 6px 12px 12px 6px;
+    }
+    [data-theme='light'] .tech-stack-container {
+      background: linear-gradient(90deg, var(--bg3), transparent);
+    }
+    .tech-stack-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text3);
+      margin-right: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
   </style>
+
+  <div style="margin-bottom: 24px;">
+    <div class="tech-stack-container" style="margin: 0; border-radius: 12px;">
+      <span class="tech-stack-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        Supported Tech Stack
+      </span>
+      
+      <div class="tech-badge" title="Python">
+        <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><linearGradient id="python-original-a" gradientUnits="userSpaceOnUse" x1="70.252" y1="1237.476" x2="170.659" y2="1151.089" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#5A9FD4"/><stop offset="1" stop-color="#306998"/></linearGradient><linearGradient id="python-original-b" gradientUnits="userSpaceOnUse" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#FFD43B"/><stop offset="1" stop-color="#FFE873"/></linearGradient><path fill="url(#python-original-a)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z" transform="translate(0 10.26)"/><path fill="url(#python-original-b)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z" transform="translate(0 10.26)"/></svg>
+        Python
+      </div>
+
+      <div class="tech-badge" title="JavaScript">
+        <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.508-15.672-14.981-3.832-1.761-8.104-3.022-9.377-5.926-.452-1.69-.512-2.642-.226-3.665.821-3.32 4.784-4.355 7.925-3.403 2.023.678 3.938 2.237 5.093 4.724 5.402-3.498 5.391-3.475 9.163-5.879-1.381-2.141-2.118-3.129-3.022-4.045-3.249-3.629-7.676-5.498-14.756-5.355l-3.688.477c-3.534.893-6.902 2.748-8.877 5.235-5.926 6.724-4.236 18.492 2.975 23.335 7.104 5.332 17.54 6.545 18.873 11.531 1.297 6.104-4.486 8.08-10.234 7.378-4.236-.881-6.592-3.034-9.139-6.949-4.688 2.713-4.688 2.713-9.508 5.485 1.143 2.499 2.344 3.63 4.26 5.795 9.068 9.198 31.76 8.746 35.83-5.176.165-.478 1.261-3.666.38-8.581zM69.462 58.943H57.753l-.048 30.272c0 6.438.333 12.34-.714 14.149-1.713 3.558-6.152 3.117-8.175 2.427-2.059-1.012-3.106-2.451-4.319-4.485-.333-.584-.583-1.036-.667-1.071l-9.52 5.83c1.583 3.249 3.915 6.069 6.902 7.901 4.462 2.678 10.459 3.499 16.731 2.059 4.082-1.189 7.604-3.652 9.448-7.401 2.666-4.915 2.094-10.864 2.07-17.444.06-10.735.001-21.468.001-32.237z"/></svg>
+        JavaScript
+      </div>
+
+      <div class="tech-badge" title="Java">
+        <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#0074BD" d="M47.617 98.12s-4.767 2.774 3.397 3.71c9.892 1.13 14.947.968 25.845-1.092 0 0 2.871 1.795 6.873 3.351-24.439 10.47-55.308-.607-36.115-5.969zm-2.988-13.665s-5.348 3.959 2.823 4.805c10.567 1.091 18.91 1.18 33.354-1.6 0 0 1.993 2.025 5.132 3.131-29.542 8.64-62.446.68-41.309-6.336z"/><path fill="#EA2D2E" d="M69.802 61.271c6.025 6.935-1.58 13.17-1.58 13.17s15.289-7.891 8.269-17.777c-6.559-9.215-11.587-13.792 15.635-29.58 0 .001-42.731 10.67-22.324 34.187z"/><path fill="#0074BD" d="M102.123 108.229s3.529 2.91-3.888 5.159c-14.102 4.272-58.706 5.56-71.094.171-4.451-1.938 3.899-4.625 6.526-5.192 2.739-.593 4.303-.485 4.303-.485-4.953-3.487-32.013 6.85-13.743 9.815 49.821 8.076 90.817-3.637 77.896-9.468zM49.912 70.294s-22.686 5.389-8.033 7.348c6.188.828 18.518.638 30.011-.326 9.39-.789 18.813-2.474 18.813-2.474s-3.308 1.419-5.704 3.053c-23.042 6.061-67.544 3.238-54.731-2.958 10.832-5.239 19.644-4.643 19.644-4.643zm40.697 22.747c23.421-12.167 12.591-23.86 5.032-22.285-1.848.385-2.677.72-2.677.72s.688-1.079 2-1.543c14.953-5.255 26.451 15.503-4.823 23.725 0-.002.359-.327.468-.617z"/><path fill="#EA2D2E" d="M76.491 1.587S89.459 14.563 64.188 34.51c-20.266 16.006-4.621 25.13-.007 35.559-11.831-10.673-20.509-20.07-14.688-28.815C58.041 28.42 81.722 22.195 76.491 1.587z"/><path fill="#0074BD" d="M52.214 126.021c22.476 1.437 57-.8 57.817-11.436 0 0-1.571 4.032-18.577 7.231-19.186 3.612-42.854 3.191-56.887.874 0 .001 2.875 2.381 17.647 3.331z"/></svg>
+        Java
+      </div>
+
+      <div class="tech-badge" title="Selenium">
+        <svg style="width:16px; height:16px;" viewBox="-6.5 0 269 269" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+          <g>
+            <path d="M234.152874,0.00343857381 C234.808025,-0.0379575263 235.429647,0.297028821 235.755341,0.866994098 C236.081036,1.43695938 236.054047,2.14258032 235.685767,2.68600216 L235.685767,2.68600216 L169.388124,92.7434941 C168.902258,93.2919104 168.204691,93.6058549 167.472007,93.6058549 C166.739323,93.6058549 166.041756,93.2919104 165.55589,92.7434941 L165.55589,92.7434941 L142.179265,66.684305 C141.608302,66.0916135 140.79919,65.7901017 139.979599,65.86461 C139.160008,65.9391182 138.418531,66.3815927 137.963808,67.0675283 L137.963808,67.0675283 L123.784543,85.0790267 C123.335922,86.0932522 123.483294,87.2722249 124.167766,88.1448137 L124.167766,88.1448137 L166.322337,131.832278 C166.808203,132.380694 167.50577,132.694639 168.238454,132.694639 C168.971138,132.694639 169.668705,132.380694 170.154571,131.832278 L170.154571,131.832278 L252.930819,38.708999 C253.419531,38.1837537 254.176911,38.0053627 254.848672,38.2572733 C255.520434,38.5091839 255.973764,39.1415911 255.996606,39.8586691 L255.996606,39.8586691 L255.996606,266.343681 C256.028319,266.860939 255.83665,267.366955 255.470206,267.733398 C255.103763,268.099842 254.597747,268.291511 254.080489,268.259798 L254.080489,268.259798 L1.91951123,268.259798 C1.40225345,268.291511 0.896236952,268.099842 0.529793658,267.733398 C0.163350364,267.366955 -0.0283193115,266.860939 0.00339438157,266.343681 L0.00339438157,266.343681 L0.00339438157,1.91955542 C-0.0283193115,1.40229764 0.163350364,0.896281144 0.529793658,0.52983785 C0.896236952,0.163394556 1.40225345,-0.0282751193 1.91951123,0.00343857381 L1.91951123,0.00343857381 Z M169.004901,152.909563 C157.595908,152.708949 146.600443,157.179283 138.568082,165.284007 C130.535722,173.388731 126.164179,184.423846 126.467107,195.830581 C126.467107,222.272993 145.628275,239.134822 170.537794,239.134822 C182.068736,239.421769 193.375993,235.921903 202.728557,229.171014 C203.595534,228.383773 203.758299,227.081655 203.111781,226.105227 L203.111781,226.105227 L196.21376,215.758196 C195.438224,214.868953 194.118537,214.703992 193.147973,215.374973 C187.152367,219.469543 180.095799,221.73297 172.837134,221.88977 C159.424316,221.88977 150.993402,213.458856 149.460509,203.495048 C149.488325,203.083823 149.815731,202.756417 150.226955,202.728601 L150.226955,202.728601 L208.093684,202.728601 C209.327358,202.645153 210.309577,201.662935 210.393025,200.429261 L210.393025,200.429261 L210.393025,198.129921 C210.393025,171.304285 193.531196,152.909563 169.004901,152.909563 Z M111.904618,138.347075 C100.26487,128.832771 85.5368757,123.923439 70.5164945,124.551034 C44.4573053,124.551034 28.3619238,139.879969 28.3619238,158.27469 C28.3619238,200.046038 91.9770032,186.63322 91.9770032,206.177612 C91.9770032,212.309186 85.8454293,218.44076 72.8158347,218.44076 C60.4410031,218.54287 48.5018438,213.876992 39.4754015,205.411165 C38.9365113,204.907341 38.2064628,204.660494 37.4723971,204.733901 C36.7383313,204.807307 36.0716199,205.19383 35.6431678,205.794388 L35.6431678,205.794388 L25.6793602,219.59043 C25.0328421,220.566858 25.1956068,221.868976 26.0625835,222.656217 C36.4096145,232.236801 50.9721026,238.751598 71.2829412,238.751598 C101.174364,238.751598 115.736852,223.422663 116.503299,203.495048 C116.503299,162.106924 52.8882195,173.986849 52.8882195,156.358574 C52.8882195,149.843776 58.63657,145.245096 68.6003776,145.245096 C79.5839899,145.094583 90.2811092,148.750561 98.8750239,155.592127 C99.3802624,156.006036 100.031063,156.198722 100.680205,156.126595 C101.329346,156.054468 101.921977,155.723624 102.324034,155.208903 L102.324034,155.208903 L112.287842,141.796086 C112.701751,141.290847 112.894437,140.640046 112.82231,139.990905 C112.750183,139.341763 112.419339,138.749133 111.904618,138.347075 Z M169.388124,169.771392 C179.811439,169.188344 188.809537,176.998014 189.698963,187.399667 C189.671147,187.810891 189.34374,188.138297 188.932516,188.166113 L188.932516,188.166113 L149.843732,188.166113 C149.432507,188.138297 149.105101,187.810891 149.077285,187.399667 C150.358676,177.20234 159.111948,169.60516 169.388124,169.771392 Z" fill="#2CB134"></path>
+          </g>
+        </svg>
+        Selenium
+      </div>
+
+      <div class="tech-badge" title="Playwright">
+        <svg style="width:16px; height:16px;" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 508 508" xml:space="preserve">
+          <circle style="fill:#FD8469;" cx="254" cy="254" r="254"/>
+          <path style="fill:#324A5E;" d="M405.6,163.2c-26.8,15.2-60,29.6-96.8,41.6c-36.8,12-72,19.2-102.8,22.8c2,16.4,5.6,33.6,11.2,50.8
+            c29.2,90,99.6,148,157.2,129.6c57.6-18.8,81.2-106.8,52-196.8C420.8,194,413.6,178,405.6,163.2z M236,267.6
+            c26-14.4,58.8-5.2,73.6,20.8l0,0C283.2,303.2,250.4,293.6,236,267.6z M360.8,366c-33.2,10.8-68.8-5.6-82.8-36.4
+            c19.6,11.2,46.4,14,73.2,5.6c26.4-8.4,46.4-26.4,56-47.2C413.6,321.6,394,355.2,360.8,366z M357.2,273.2L357.2,273.2
+            c-3.6-29.6,17.6-56.4,47.2-60C408,242.8,386.8,269.6,357.2,273.2z"/>
+          <path style="fill:#FFFFFF;" d="M322.4,155.2c-34-2-73.6-8-114.8-18.8s-78.4-24.8-109.2-40c-8,16.4-14.8,34.4-20,54
+            C52,251.6,83.2,347.6,148,364.4c64.8,16.8,138.8-51.2,165.2-152.4C318.4,192.4,321.6,173.6,322.4,155.2z M102.4,151.6
+            c32.8,2,58,30.4,56,63.2l0,0C125.6,212.8,100.4,184.4,102.4,151.6z M160.4,317.2c-37.2-9.6-60.8-45.6-55.6-83.2
+            c11.6,22.4,35.2,40.8,64.8,48.4s59.2,2.8,80.4-10.8C236,307.2,197.6,327.2,160.4,317.2z M212.4,228.8L212.4,228.8
+            c14.4-29.6,50-42,79.6-27.6C277.6,230.8,242,243.2,212.4,228.8z"/>
+        </svg>
+        Playwright
+      </div>
+    </div>
+  </div>
+
   <div class="section">
     <div class="section-hdr">
       <div style="width: 100%;">
         <div class="section-title">Test Case Automation</div>
-        <div style="display:flex; gap:10px; margin-top:16px; margin-bottom: 8px; align-items:center; flex-wrap:wrap;">
-          <span style="font-size:12px; font-weight:700; color:var(--text3); margin-right:4px; text-transform:uppercase; letter-spacing:0.05em;">Supported Tech Stack:</span>
-          
-          <div class="tech-badge" style="padding:6px 12px; gap:8px;" title="Python">
-            <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><linearGradient id="python-original-a" gradientUnits="userSpaceOnUse" x1="70.252" y1="1237.476" x2="170.659" y2="1151.089" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#5A9FD4"/><stop offset="1" stop-color="#306998"/></linearGradient><linearGradient id="python-original-b" gradientUnits="userSpaceOnUse" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#FFD43B"/><stop offset="1" stop-color="#FFE873"/></linearGradient><path fill="url(#python-original-a)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z" transform="translate(0 10.26)"/><path fill="url(#python-original-b)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z" transform="translate(0 10.26)"/></svg>
-            Python
-          </div>
-
-          <div class="tech-badge" style="padding:6px 12px; gap:8px;" title="JavaScript">
-            <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.508-15.672-14.981-3.832-1.761-8.104-3.022-9.377-5.926-.452-1.69-.512-2.642-.226-3.665.821-3.32 4.784-4.355 7.925-3.403 2.023.678 3.938 2.237 5.093 4.724 5.402-3.498 5.391-3.475 9.163-5.879-1.381-2.141-2.118-3.129-3.022-4.045-3.249-3.629-7.676-5.498-14.756-5.355l-3.688.477c-3.534.893-6.902 2.748-8.877 5.235-5.926 6.724-4.236 18.492 2.975 23.335 7.104 5.332 17.54 6.545 18.873 11.531 1.297 6.104-4.486 8.08-10.234 7.378-4.236-.881-6.592-3.034-9.139-6.949-4.688 2.713-4.688 2.713-9.508 5.485 1.143 2.499 2.344 3.63 4.26 5.795 9.068 9.198 31.76 8.746 35.83-5.176.165-.478 1.261-3.666.38-8.581zM69.462 58.943H57.753l-.048 30.272c0 6.438.333 12.34-.714 14.149-1.713 3.558-6.152 3.117-8.175 2.427-2.059-1.012-3.106-2.451-4.319-4.485-.333-.584-.583-1.036-.667-1.071l-9.52 5.83c1.583 3.249 3.915 6.069 6.902 7.901 4.462 2.678 10.459 3.499 16.731 2.059 4.082-1.189 7.604-3.652 9.448-7.401 2.666-4.915 2.094-10.864 2.07-17.444.06-10.735.001-21.468.001-32.237z"/></svg>
-            JavaScript
-          </div>
-
-          <div class="tech-badge" style="padding:6px 12px; gap:8px;" title="Java">
-            <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#0074BD" d="M47.617 98.12s-4.767 2.774 3.397 3.71c9.892 1.13 14.947.968 25.845-1.092 0 0 2.871 1.795 6.873 3.351-24.439 10.47-55.308-.607-36.115-5.969zm-2.988-13.665s-5.348 3.959 2.823 4.805c10.567 1.091 18.91 1.18 33.354-1.6 0 0 1.993 2.025 5.132 3.131-29.542 8.64-62.446.68-41.309-6.336z"/><path fill="#EA2D2E" d="M69.802 61.271c6.025 6.935-1.58 13.17-1.58 13.17s15.289-7.891 8.269-17.777c-6.559-9.215-11.587-13.792 15.635-29.58 0 .001-42.731 10.67-22.324 34.187z"/><path fill="#0074BD" d="M102.123 108.229s3.529 2.91-3.888 5.159c-14.102 4.272-58.706 5.56-71.094.171-4.451-1.938 3.899-4.625 6.526-5.192 2.739-.593 4.303-.485 4.303-.485-4.953-3.487-32.013 6.85-13.743 9.815 49.821 8.076 90.817-3.637 77.896-9.468zM49.912 70.294s-22.686 5.389-8.033 7.348c6.188.828 18.518.638 30.011-.326 9.39-.789 18.813-2.474 18.813-2.474s-3.308 1.419-5.704 3.053c-23.042 6.061-67.544 3.238-54.731-2.958 10.832-5.239 19.644-4.643 19.644-4.643zm40.697 22.747c23.421-12.167 12.591-23.86 5.032-22.285-1.848.385-2.677.72-2.677.72s.688-1.079 2-1.543c14.953-5.255 26.451 15.503-4.823 23.725 0-.002.359-.327.468-.617z"/><path fill="#EA2D2E" d="M76.491 1.587S89.459 14.563 64.188 34.51c-20.266 16.006-4.621 25.13-.007 35.559-11.831-10.673-20.509-20.07-14.688-28.815C58.041 28.42 81.722 22.195 76.491 1.587z"/><path fill="#0074BD" d="M52.214 126.021c22.476 1.437 57-.8 57.817-11.436 0 0-1.571 4.032-18.577 7.231-19.186 3.612-42.854 3.191-56.887.874 0 .001 2.875 2.381 17.647 3.331z"/></svg>
-            Java
-          </div>
-
-          <div class="tech-badge" style="padding:6px 12px; gap:8px;" title="Selenium">
-            <svg style="width:16px; height:16px;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.012 12C22.012 6.474 17.527 1.988 12 1.988C6.474 1.988 1.988 6.474 1.988 12C1.988 17.526 6.474 22.012 12 22.012C17.527 22.012 22.012 17.526 22.012 12Z" fill="#43B02A"/><path d="M15.585 13.916C15.012 13.565 14.542 14.156 14.207 14.582C13.682 15.253 12.83 15.508 11.954 15.258C11.187 15.039 10.635 14.407 10.354 13.61C10.05 12.752 10.347 11.666 11.127 11.133L12.167 10.5C12.74 10.851 13.21 10.26 13.545 9.834C14.07 9.163 14.922 8.908 15.798 9.158C16.565 9.377 17.117 10.009 17.398 10.806C17.702 11.664 17.405 12.75 16.625 13.283L15.585 13.916Z" fill="#FFF"/></svg>
-            Selenium
-          </div>
-
-          <div class="tech-badge" style="padding:6px 12px; gap:8px;" title="Playwright">
-            <svg style="width:16px; height:16px;" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="#2ead33" d="M75.1 26.2c71.2-44.4 155-32.1 217.1 21.2 47.9 41.2 62.7 100.4 40.5 154.5-16.5 40.5-50.8 70-89.2 91.2-152.4 84.1-232.3 122.2-305.8 169.1-7.1 4.5-14.3 8.3-14.3 8.3V77.8S120.3 54.4 175.4 26.2z"/><path fill="#ff4400" d="M427.3 1024V596.8s20-24 75.1-51.5c71.2-44.4 155-32.1 217.1 21.2 47.9 41.2 62.7 100.4 40.5 154.5-16.5 40.5-50.8 70-89.2 91.2-152.4 84.1-232.3 122.2-305.8 169.1-7.1 4.5-14.3 8.3-14.3 8.3v349.5s20-24 75.1-51.5c71.2-44.4 155-32.1 217.1 21.2 47.9 41.2 62.7 100.4 40.5 154.5-16.5 40.5-50.8 70-89.2 91.2 75.5 37.3 155.5 75.2 229.1 121.9 7.1 4.5 14.3 8.3 14.3 8.3z"/><path fill="#45ba4b" d="M427.3 596.8s-79.9-37.9-155.4-84.1l155.4-86v170.1z"/></svg>
-            Playwright
-          </div>
-        </div>
-        </div>
       </div>
     </div>
     <div style="padding: 20px;">
@@ -4323,7 +4367,7 @@
                 <td class="td-truncate">${tc.actual || '—'}</td>
                 <td>${statusBadge(tc.status)}</td>
                 <td>${sevBadge(tc.severity)}</td>
-                <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td>
+                <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2)}</td>
                 <td class="td-truncate">${tc.notes || '—'}</td>
               </tr>
             </tbody>
@@ -5021,9 +5065,12 @@
           <select id="f-status"><option>Pass</option><option>Fail</option><option>Hold</option></select>
         </div>
         <div class="field">
-          <label>Evidence (URL/filename) <span class="required">*</span></label>
+          <label>Evidence-1 (URL/filename) <span class="required">*</span></label>
           <input id="f-evidence" placeholder="Paste evidence URL" oninput="onEvidenceTextChange('f-evidence','f-evidence-file','f-evidence-preview')">
           <div id="f-evidence-preview"></div>
+          <label style="margin-top:12px;">Evidence-2 (URL/filename)</label>
+          <input id="f-evidence2" placeholder="Paste evidence 2 URL" oninput="onEvidenceTextChange('f-evidence2','f-evidence2-file','f-evidence2-preview')">
+          <div id="f-evidence2-preview"></div>
         </div>
         <div class="field form-full">
           <label>Notes</label>
@@ -5049,6 +5096,7 @@
       const status = document.getElementById('f-status').value;
       const steps = document.getElementById('f-steps').value.trim();
       const evidenceText = (document.getElementById('f-evidence') || { value: '' }).value.trim();
+      const evidence2Text = (document.getElementById('f-evidence2') || { value: '' }).value.trim();
 
       if (!id || !tc || !mod || !actual || !expected || !steps || !scenario || !screen || !evidenceText) {
         toast('Please fill all required fields', 'error'); return;
@@ -5063,6 +5111,7 @@
         steps, expected, actual, status,
         severity: document.getElementById('f-sev').value,
         evidence: evidenceText,
+        evidence2: evidence2Text,
         notes: document.getElementById('f-notes').value.trim(),
         createdAt: now(), createdBy: S.auth.user, updatedAt: now(), history: []
       };
@@ -5162,8 +5211,10 @@
         </div>
         ${tc.evidence ? `
         <div>
-          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Evidence</div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Evidence-1</div>
           <div><a href="${tc.evidence}" target="_blank" class="attachment-pill" style="display:inline-flex;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> View Attachment</a></div>
+          ${tc.evidence2 ? `<div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-top:8px; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Evidence-2</div>
+          <div><a href="${tc.evidence2}" target="_blank" class="attachment-pill" style="display:inline-flex;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> View Attachment</a></div>` : ''}
         </div>` : ''}
         ${tc.notes ? `
         <div>
@@ -5224,7 +5275,8 @@
       </div>
       
       <div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);">
-        <div class="detail-item" style="margin-bottom:12px;"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Evidence</div><div style="font-size:13px;color:var(--text2)">${renderEvidenceCell(linkedTc?.evidence)}</div></div>
+        <div class="detail-item" style="margin-bottom:12px;"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Evidence-1</div><div style="font-size:13px;color:var(--text2)">${renderEvidenceCell(linkedTc?.evidence)}</div></div>
+        <div class="detail-item" style="margin-bottom:12px;"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Evidence-2</div><div style="font-size:13px;color:var(--text2)">${renderEvidenceCell(linkedTc?.evidence2)}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Notes</div><div style="font-size:13px;color:var(--text2); background:var(--bg3); padding:10px; border-radius:6px; margin-top:4px;">${linkedTc?.notes || '—'}</div></div>
       </div>
     </div>
@@ -5442,11 +5494,11 @@
     }
 
     function exportCSV() {
-      let csv = 'Module,Total Tests,Pass,Fail,Total Bugs,Open Bugs,High Severity';
+      let csv = 'Module,Total Tests,Pass,Fail,Total Bugs,Open Bugs,High Severity\n';
       S.modules.forEach(mod => {
         const tcs = S.testCases.filter(t => t.module === mod);
         const bugs = S.bugs.filter(b => b.module === mod);
-        csv += `${mod},${tcs.length},${tcs.filter(t => t.status === 'Pass').length},${tcs.filter(t => t.status === 'Fail').length},${bugs.length},${bugs.filter(b => b.status === 'Open').length},${bugs.filter(b => b.severity === 'High').length}`;
+        csv += `${mod},${tcs.length},${tcs.filter(t => t.status === 'Pass').length},${tcs.filter(t => t.status === 'Fail').length},${bugs.length},${bugs.filter(b => b.status === 'Open').length},${bugs.filter(b => b.severity === 'High').length}\n`;
       });
       const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
       a.download = `qa-report-${now()}.csv`; a.click();
@@ -5460,6 +5512,7 @@
       const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module }));
       if (!tc) return;
       const evidenceInputValue = /^data:image\//i.test(tc.evidence || '') ? '' : (tc.evidence || '');
+      const evidence2InputValue = /^data:image\//i.test(tc.evidence2 || '') ? '' : (tc.evidence2 || '');
       const mods = S.modules.map(m => `<option${m === tc.module ? ' selected' : ''}>${m}</option>`).join('');
       showModal('<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit Mode</div>', `
   <div style="margin-bottom:24px;font-size:13px;color:var(--text3);display:flex;align-items:center;gap:8px;">
@@ -5516,10 +5569,15 @@
       </select>
     </div>
     <div class="field">
-      <label>Evidence (URL/filename) <span class="required">*</span></label>
+      <label>Evidence-1 (URL/filename) <span class="required">*</span></label>
       <input id="e-evidence" value="${evidenceInputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence','e-evidence-file','e-evidence-preview')">
       <input id="e-evidence-file" type="hidden">
       <div id="e-evidence-preview"></div>
+      
+      <label style="margin-top:12px;">Evidence-2 (URL/filename)</label>
+      <input id="e-evidence2" value="${evidence2InputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence2','e-evidence2-file','e-evidence2-preview')">
+      <input id="e-evidence2-file" type="hidden">
+      <div id="e-evidence2-preview"></div>
     </div>
     <div class="field form-full">
       <label>Notes</label>
@@ -5532,6 +5590,10 @@
       const eHidden = document.getElementById('e-evidence-file');
       if (eHidden && /^data:image\//i.test(tc.evidence || '')) eHidden.value = tc.evidence;
       renderEvidencePreview('e-evidence-preview', tc.evidence || '');
+
+      const e2Hidden = document.getElementById('e-evidence2-file');
+      if (e2Hidden && /^data:image\//i.test(tc.evidence2 || '')) e2Hidden.value = tc.evidence2;
+      renderEvidencePreview('e-evidence2-preview', tc.evidence2 || '');
     }
 
     function submitEditTC() {
@@ -5568,7 +5630,9 @@
       tc.actual = actual;
       tc.status = status;
       const evidenceText = (document.getElementById('e-evidence') || { value: '' }).value.trim();
+      const evidence2Text = (document.getElementById('e-evidence2') || { value: '' }).value.trim();
       tc.evidence = evidenceText;
+      tc.evidence2 = evidence2Text;
       tc.notes = (document.getElementById('e-notes') || { value: '' }).value.trim();
       tc.updatedAt = now();
       tc.history = tc.history || [];
@@ -5670,9 +5734,9 @@
 
     // ─────────────────────────── DOWNLOAD TEST CASES CSV ───────────────────────────
     function downloadImportTemplate() {
-      const headers = 'Test Case ID,Test Case,Scenario,Module Name,Screen Name,Test Step,Test Data,Expected Results,Actual Results,Status,Severity,Evidence,Notes';
-      const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page2. Enter credentials3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,';
-      const csv = headers + '' + example;
+      const headers = 'Test Case ID,Test Case,Scenario,Module Name,Screen Name,Test Step,Test Data,Expected Results,Actual Results,Status,Severity,Evidence-1,Evidence-2,Notes';
+      const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page2. Enter credentials3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,,';
+      const csv = headers + '\n' + example;
       const a = document.createElement('a');
       a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
       a.download = 'bugos-test-case-template.csv';
@@ -5688,9 +5752,9 @@
       if (dlSt) data = data.filter(t => t.status === dlSt);
       if (!data.length) { toast('No test cases match selected filters', 'error'); return; }
       const esc = v => `"${(v || '').replace(/"/g, '""')}"`;
-      let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Expected Results,Actual Results,Status,Severity,Evidence,Notes,Created,Updated';
+      let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Expected Results,Actual Results,Status,Severity,Evidence-1,Evidence-2,Notes,Created,Updated\n';
       data.forEach(tc => {
-        csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.notes)},${formatDate(tc.createdAt)},${formatDate(tc.updatedAt)}`;
+        csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.evidence2)},${esc(tc.notes)},${formatDate(tc.createdAt)},${formatDate(tc.updatedAt)}\n`;
       });
       const fname = `test-cases${dlMod ? '-' + dlMod : ''}${dlSt ? '-' + dlSt : ''}-${now()}.csv`;
       const a = document.createElement('a');
@@ -5870,7 +5934,8 @@
             actual: col(['actual results', 'actual result']),
             status: col(['status']),
             severity: col(['severity']),
-            evidence: col(['evidence']),
+            evidence: col(['evidence-1', 'evidence']),
+            evidence2: col(['evidence-2', 'evidence 2']),
             notes: col(['notes']),
           };
 
@@ -5924,6 +5989,7 @@
               actual: get('actual'),
               status, severity,
               evidence: get('evidence'),
+              evidence2: get('evidence2'),
               notes: get('notes'),
               _rowNum: i + 1,
             });

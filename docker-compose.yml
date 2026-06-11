@@ -10,8 +10,13 @@ services:
       - PORT=3000
     depends_on:
       - mongodb
-    # We do not map /app/temp or /app/public/videos to host volumes
-    # to ensure they remain ephemeral and contained inside the container.
+    volumes:
+      - ./:/app
+      - /app/node_modules
+      - /app/temp
+      - /app/public/videos
+    # Use node --watch so the backend auto-restarts on file changes
+    command: node --watch server.js
 
   mongodb:
     image: mongo:6
