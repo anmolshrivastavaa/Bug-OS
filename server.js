@@ -115,7 +115,9 @@ const auditLogSchema = new mongoose.Schema({
 });
 
 const moduleSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true }
+  name: { type: String, required: true, unique: true },
+  pendingDelete: { type: Boolean, default: false },
+  deleteRequestedBy: { type: String }
 });
 
 const counterSchema = new mongoose.Schema({
@@ -392,11 +394,13 @@ async function sendInitialData(socket) {
       User.find({})
     ]);
 
-    const moduleNames = modules.map(m => m.name);
-
+    const modulesObj = modules.map(m => m.toObject());
+    const moduleNames = modulesObj.map(m => m.name);
+    const modulesPendingDelete = modulesObj.filter(m => m.pendingDelete);
 
     const dataStore = {
       modules: moduleNames,
+      modulesPendingDelete: modulesPendingDelete,
       testCases: testCases.map((tc) => {
         const o = tc.toObject();
         return {
@@ -564,6 +568,15 @@ async function handleModuleUpdate(data) {
   try {
     if (data.deleted) {
       await Module.deleteOne({ name: data.name });
+      return;
+    }
+
+    if (data.pendingDelete !== undefined) {
+      await Module.findOneAndUpdate(
+        { name: data.name },
+        { pendingDelete: data.pendingDelete, deleteRequestedBy: data.deleteRequestedBy },
+        { upsert: true, new: true }
+      );
       return;
     }
 
