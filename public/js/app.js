@@ -22,6 +22,8 @@ import * as screenshotsModule from './screenshots.js';
 Object.assign(window, screenshotsModule);
 import * as utilsModule from './utils.js';
 Object.assign(window, utilsModule);
+import * as appModule from './app.js';
+Object.assign(window, appModule);
 
 window.toggleSidebar = function () {
   S.sidebarCollapsed = !S.sidebarCollapsed;
