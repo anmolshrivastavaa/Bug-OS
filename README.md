@@ -158,34 +158,6 @@ graph TD
 
 ---
 
-## ⚙️ Setup & Installation
-
-### Option 1: Docker (Recommended)
-
-The easiest way to get BugOS running is via Docker, which automatically provisions both the Node application and MongoDB.
-
-1. Clone the repository.
-2. Run the following command:
-   ```bash
-   docker-compose up --build
-   ```
-3. Access the application at `http://localhost:3000`.
-
-### Option 2: Manual Local Setup
-
-1. Ensure **Node.js** (v16+) and **MongoDB** are installed on your machine.
-2. Clone the repository and install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start your local MongoDB server (or run `dev_tools/start-mongo.bat` if available).
-4. Start the application:
-   ```bash
-   npm start
-   ```
-5. Navigate to `http://localhost:3000` in your browser.
-
----
 
 Application will be available at:
 
