@@ -1,5 +1,5 @@
 import { normalizeTcRowId, normalizeTcModule, now, toast, showBannedModal } from './utils.js';
-import { testcaseKeysMatch, switchTestCasesTab, _importRows, _importTargetModule } from './testcases.js';
+import { testcaseKeysMatch, switchTestCasesTab } from './testcases.js';
 import { S } from './state.js';
 import { save, renderImpPreview } from './app.js';
 import { audit } from './auth.js';
@@ -38,9 +38,9 @@ export function parseImpFile(file) {
   }).value;
   if (status) status.textContent = `Reading "${file.name}"...`;
   if (preview) preview.innerHTML = '';
-  _importRows = [];
-  _importTargetModule = selectedModule || _importTargetModule;
-  if (!_importTargetModule) {
+  S._importRows = [];
+  S._importTargetModule = selectedModule || S._importTargetModule;
+  if (!S._importTargetModule) {
     if (status) status.innerHTML = `<span style="color:var(--red)">❌ Please select a module before importing.</span>`;
     return;
   }
@@ -133,7 +133,7 @@ export function parseImpFile(file) {
 
         // Use module from CSV if available, otherwise fall back to dropdown selection (same TC# can repeat in other modules).
         const csvModule = normalizeTcModule(get('module', ''));
-        const modVal = csvModule || normalizeTcModule(_importTargetModule);
+        const modVal = csvModule || normalizeTcModule(S._importTargetModule);
 
         // Generate ID if missing
         let rowId = normalizeTcRowId(get('id', ''));
@@ -145,7 +145,7 @@ export function parseImpFile(file) {
           id: rowId,
           testCase: get('testCase') || `Imported TC ${i}`,
           scenario: get('scenario'),
-          module: modVal || normalizeTcModule(_importTargetModule),
+          module: modVal || normalizeTcModule(S._importTargetModule),
           screen: get('screen'),
           steps: get('steps'),
           testData: get('testData'),
@@ -172,7 +172,7 @@ export function parseImpFile(file) {
       if (intraFileDupRows > 0) {
         warnings.unshift(`${intraFileDupRows} row(s) repeat the same Test Case ID within the same module — extras will be skipped on import`);
       }
-      _importRows = rows;
+      S._importRows = rows;
       renderImpPreview(rows, warnings, file.name);
     } catch (err) {
       console.error('Import parse error:', err);
@@ -222,7 +222,7 @@ export function doImport() {
     showBannedModal();
     return;
   }
-  if (!_importRows.length) {
+  if (!S._importRows.length) {
     toast('No data loaded — please select a CSV file first', 'error');
     return;
   }
@@ -230,7 +230,7 @@ export function doImport() {
     skipped = 0,
     bugs = 0,
     passed = 0;
-  _importRows.forEach(r => {
+  S._importRows.forEach(r => {
     if (S.testCases.find(t => testcaseKeysMatch(t, r))) {
       skipped++;
       return;
@@ -286,7 +286,7 @@ export function doImport() {
     }
   });
   audit(`Imported ${added} test cases from CSV (${skipped} duplicates skipped, ${bugs} bugs auto-created, ${passed} passed cases)`);
-  _importRows = [];
+  S._importRows = [];
   save();
   toast(`✓ Imported ${added} test cases${skipped ? `, ${skipped} skipped` : ''}${bugs ? `, ${bugs} bugs created` : ''}`, 'success');
   switchTestCasesTab('all');

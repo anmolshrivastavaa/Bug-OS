@@ -826,8 +826,8 @@ export function downloadTestCasesCSV() {
 }
 
 // ─────────────────────────── IMPORT CSV ───────────────────────────
-export let _importRows = [];
-export let _importTargetModule = '';
+
+
 export function buildImportTestCaseTab() {
   if (!S.initialDataReceived) {
     return `<div class="empty">Waiting for server data...</div>`;
@@ -835,9 +835,9 @@ export function buildImportTestCaseTab() {
   if (!S.modules.length) {
     return `<div class="empty">Please add a module before importing test cases</div>`;
   }
-  if (!_importTargetModule) {
-    _importRows = [];
-    _importTargetModule = S.modules[0] || '';
+  if (!S._importTargetModule) {
+    S._importRows = [];
+    S._importTargetModule = S.modules[0] || '';
   }
   const moduleOptions = S.modules.map(m => `<option value="${m.replace(/"/g, '&quot;')}">${m}</option>`).join('');
   return `
@@ -851,7 +851,7 @@ export function buildImportTestCaseTab() {
         <div>
           <div class="field" style="margin-bottom:24px;">
             <label>Import To Module</label>
-            <select id="imp-module" class="${_importTargetModule ? 'filter-active' : ''}" style="width:100%; transition:all 0.2s ease;" onmouseover="this.classList.add('filter-active')" onmouseout="if(!this.value) this.classList.remove('filter-active')" onchange="setImportModule(this.value); if(this.value) this.classList.add('filter-active'); else this.classList.remove('filter-active');">${moduleOptions}</select>
+            <select id="imp-module" class="${S._importTargetModule ? 'filter-active' : ''}" style="width:100%; transition:all 0.2s ease;" onmouseover="this.classList.add('filter-active')" onmouseout="if(!this.value) this.classList.remove('filter-active')" onchange="setImportModule(this.value); if(this.value) this.classList.add('filter-active'); else this.classList.remove('filter-active');">${moduleOptions}</select>
             <div style="margin-top:8px;font-size:12px;color:var(--text3);line-height:1.5;">
               Used when a row has no <strong>Module Name</strong> column value. Uniqueness is enforced per module.
             </div>
@@ -896,7 +896,7 @@ export function buildImportTestCaseTab() {
         </div>
 
         <div class="form-full" style="display:flex; flex-direction:row; justify-content:flex-end; align-items:center; gap:12px; margin-top:40px;">
-          <button class="btn btn-ghost" onclick="if(S.role !== 'qa') { showBannedModal(); return; } _importRows=[]; _importTargetModule=''; switchTestCasesTab('import')">Cancel</button>
+          <button class="btn btn-ghost" onclick="if(S.role !== 'qa') { showBannedModal(); return; } S._importRows=[]; S._importTargetModule=''; switchTestCasesTab('import')">Cancel</button>
           <button class="btn btn-ghost" id="imp-btn" onclick="doImport()" style="padding:7px 20px; opacity:0.5; pointer-events:none;">Run Import</button>
         </div>
       </div>
@@ -904,5 +904,5 @@ export function buildImportTestCaseTab() {
   </div>`;
 }
 export function setImportModule(moduleName) {
-  _importTargetModule = moduleName || '';
+  S._importTargetModule = moduleName || '';
 }

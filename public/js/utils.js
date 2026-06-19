@@ -1,5 +1,5 @@
 import { S } from './state.js';
-import { save, render, getLangSvg, _submitCb } from './app.js';
+import { save, render, getLangSvg } from './app.js';
 
 export /** Business key fields for test cases: same TC number must be allowed across different modules. */
 function normalizeTcRowId(v) {
@@ -63,6 +63,7 @@ function toast(msg, type = 'info') {
 
 // ─────────────────────────── CONFIRM ───────────────────────────
 export let _confirmCb = null;
+let _submitCb = null;
 export function openConfirm(title, msg, cb, btnText = 'Delete permanently', btnClass = 'btn-danger', type = 'red') {
   const box = document.querySelector('.confirm-box');
   const titleEl = document.getElementById('confirm-title');

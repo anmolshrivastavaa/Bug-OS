@@ -97,7 +97,7 @@ applyTheme();
 
 // Socket.IO event handlers
 socket.on('initialData', serverData => {
-  S = {
+  Object.assign(S, {
     auth: S.auth,
     role: S.role,
     view: S.view,
@@ -118,7 +118,7 @@ socket.on('initialData', serverData => {
     hmModDropdownOpen: S.hmModDropdownOpen || false,
     dashModFilter: S.dashModFilter || [],
     dashModDropdownOpen: S.dashModDropdownOpen || false
-  };
+  });
   S.initialDataReceived = true;
   render();
 });
