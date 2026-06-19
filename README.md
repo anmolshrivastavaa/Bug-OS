@@ -1,106 +1,122 @@
-﻿# Bug OS
+# BugOS 🐞
 
-`bugOS` is a QA and bug tracking platform with a compact real-time architecture for test and defect management.
+**BugOS** is a comprehensive, real-time Bug Tracking and Test Case Management platform designed for modern software teams. It provides a centralized dashboard to track software defects, map them directly to test cases, execute automated tests, and seamlessly manage QA workflows.
 
-## Overview
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
 
-This project is implemented as a single-page application backed by a Node.js/Express server and MongoDB persistence. It tracks test cases, bugs, backend escalations, audit history, and Java automation scripts.
+## 🚀 Features
 
-## Architecture
+- **Real-Time Collaboration**: Powered by WebSockets to ensure all team members see bug updates and test case changes instantly.
+- **Test Case Management**: Import, export, and maintain thousands of test cases, linking them to specific modules and execution states.
+- **Bug Escalation Workflows**: Track bugs from discovery to resolution with built-in escalation matrices for backend intervention.
+- **Automation Execution Engine**: Write and execute automated scripts (Playwright, Selenium) directly in the browser via an embedded CodeMirror editor.
+- **Evidence Management**: Upload screenshots and logs as evidence for bug reports, complete with image preview modals.
+- **Dynamic Dashboards**: Visualize module health, bug severity distribution, and test case coverage with responsive SVGs and data cards.
 
-- Frontend: `index.html` with vanilla JavaScript, CSS, client-side state management, and Socket.IO synchronization.
-- Backend: `server.js` runs Express for HTTP serving, Socket.IO for real-time updates, MongoDB persistence, and a Java automation endpoint.
-- Database: MongoDB with Mongoose models for test cases, bugs, modules, audit logs, counters, and automation scripts.
-- Automation: Test case data is injected into generated Java source, compiled using `javac`, and executed with `java` to determine pass/fail outcomes.
+---
 
-## Core Features
+## 🏗️ Architecture
 
-- Live sync across connected clients using Socket.IO
-- Persistent test case and bug tracking in MongoDB
-- Module-based test organization with duplicate test case IDs allowed across modules
-- Bug lifecycle workflow including `Open`, `Escalated`, `Fixed`, `Verified`, and `Retest Failed`
-- Backend escalation board for issues that need deeper investigation
-- Retest queue for QA verification after developer fixes
-- Audit log capture of user actions with a 200-entry retention window
-- Role-aware UI for QA, Developer, and Admin personas
-- Automation script storage tied to specific test case + module pairs
+BugOS uses a decoupled architecture allowing a lightweight frontend to communicate asynchronously with a robust Node.js backend.
 
-## Role Capabilities
+```mermaid
+graph TD
+    subgraph Frontend Layer
+        UI[Frontend UI <br/> HTML5 / CSS3 / ES Modules]
+        WS_Client[Socket.IO Client]
+        UI <--> WS_Client
+    end
 
-### QA
+    subgraph Backend Layer
+        Node[Node.js Backend <br/> Express Server]
+        WS_Server[Socket.IO Server]
+        Node <--> WS_Server
+    end
 
-- Create, edit, and delete test cases
-- Manage modules and organize test coverage
-- Save and run automation scripts for linked test cases
-- Verify fixed bugs through the retest queue
-- Remove outdated bug records when appropriate
+    subgraph Database Layer
+        Mongo[(MongoDB <br/> Primary Database)]
+    end
 
-### Developer
+    subgraph Automation Engines
+        Playwright[Playwright Engine]
+        Selenium[Selenium Engine]
+    end
 
-- Review open and retest-failed bug reports
-- Mark bugs as fixed once changes are ready
-- Escalate issues to backend status for deeper investigation
-- Work from the escalation board and add developer notes
+    UI -->|HTTP / REST APIs| Node
+    WS_Client <-->|Real-time Events| WS_Server
+    Node <-->|Mongoose ODM| Mongo
+    Node -->|Child Processes| Playwright
+    Node -->|Child Processes| Selenium
+```
 
-### Admin
+---
 
-- Monitor system state and audit history
-- Oversee overall QA activity and bug trends
-- Act as a supervision role with visibility across the app
-- Note: current admin capabilities are primarily visibility-focused, not separate CRUD restrictions
+## 💻 Tech Stack
 
-## QA Workflow
+- **Frontend**: Vanilla JavaScript (ES6+ Modules), HTML5, CSS3
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB (via Mongoose)
+- **Real-time**: Socket.IO
+- **Automation Integration**: Playwright, Selenium
+- **Code Editor**: CodeMirror 6
 
-1. QA creates and updates test cases by module.
-2. Failed or held tests create or update bug records.
-3. Developers review bugs and either fix them or escalate them for backend work.
-4. Fixed bugs enter the retest queue for QA verification.
-5. QA verifies the fix by marking the bug pass or fail.
-6. Escalated bugs are tracked separately until resolved.
-7. All actions generate audit log entries for review.
+---
 
-## Tech Stack
+## 📁 Folder Structure
 
-- Node.js
-- Express
-- Socket.IO
-- MongoDB
-- Mongoose
-- HTML/CSS
-- Vanilla JavaScript
-- Java runtime for automation execution
+The repository is modular and organized for scalability:
 
-## Repository Structure
+```text
+BugOS/
+├── public/                 # Static assets served to the client
+│   ├── css/                # Component-based stylesheets (main.css, dashboard.css, etc.)
+│   ├── js/                 # ES6 Module JavaScript (api.js, bugs.js, state.js, etc.)
+│   ├── assets/             # Images and SVG icons
+│   └── index.html          # Main application entry point
+├── server.js               # Node.js / Express backend entry point
+├── docker-compose.yml      # Container orchestration
+├── Dockerfile              # Docker image specification
+└── package.json            # Dependencies and scripts
+```
 
-- `index.html` — frontend UI, role handling, data views, and live sync client logic
-- `server.js` — backend server, Socket.IO handlers, MongoDB models, and automation endpoint
-- `package.json` — dependencies and application start script
-- `start-mongo.bat` — Windows helper for local MongoDB startup
+---
 
-## Implementation Notes
+## ⚙️ Setup & Installation
 
-- Authentication is frontend-only and hardcoded in `index.html`.
-- Test cases are keyed by `id + module` so the same numeric ID can exist in different modules.
-- Audit logs are limited to the newest 200 entries.
-- Java automation depends on `PASS` or `FAIL` being printed by the script.
-- Bug IDs are auto-generated as `BUG-001`, `BUG-002`, etc.
+### Option 1: Docker (Recommended)
 
-> Note: login is implemented in frontend code only and is intended for demo/testing.
+The easiest way to get BugOS running is via Docker, which automatically provisions both the Node application and MongoDB.
 
-## What This App Is About
+1. Clone the repository.
+2. Run the following command:
+   ```bash
+   docker-compose up --build
+   ```
+3. Access the application at `http://localhost:3000`.
 
-`bugOS` is designed to support QA and development teams by tracking test cases, logging defects, and keeping everyone in sync. The app is useful for:
+### Option 2: Manual Local Setup
 
-- capturing and updating test case information
-- logging bug reports linked to failed tests
-- escalating issues to backend teams
-- reviewing audit history of changes
-- running simple Java automation scripts against test case data
+1. Ensure **Node.js** (v16+) and **MongoDB** are installed on your machine.
+2. Clone the repository and install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start your local MongoDB server (or run `dev_tools/start-mongo.bat` if available).
+4. Start the application:
+   ```bash
+   npm start
+   ```
+5. Navigate to `http://localhost:3000` in your browser.
 
-## Architecture
+---
 
-- Frontend: `index.html` with vanilla JavaScript, CSS, and Socket.IO client
-- Backend: `server.js` with `Express`, `Socket.IO`, and `Mongoose`
-- Database: MongoDB collections for test cases, bugs, modules, counters, audit logs, and automation scripts
+## 🧪 Automation Features
 
+BugOS goes beyond standard bug tracking by embedding a **Live Automation Engine**:
+- **Syntax Highlighting**: Built-in CodeMirror editor supports JavaScript and Python.
+- **Execution**: Trigger Playwright or Selenium scripts directly from the UI.
+- **Logs**: View real-time console output and execution results streamed back via WebSockets.
 
+---
+*Developed with a focus on code quality, modularity, and seamless user experience.*
