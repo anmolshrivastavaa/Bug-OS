@@ -248,19 +248,16 @@ app.post('/api/run-automation', express.json(), async (req, res) => {
       let videoUrl = null;
       try {
         const files = fs.readdirSync(tempDir);
-        fs.appendFileSync(path.join(__dirname, 'video_harvest.log'), `[${new Date().toISOString()}] execId: ${execId}, files in tempDir: ${JSON.stringify(files)}\n`);
         for (const file of files) {
           if (file.endsWith('.webm') || file.endsWith('.mp4')) {
             const newFilename = `video_${execId}_${file}`;
             fs.renameSync(path.join(tempDir, file), path.join(publicVideosDir, newFilename));
             videoUrl = `/videos/${newFilename}`;
-            fs.appendFileSync(path.join(__dirname, 'video_harvest.log'), `[${new Date().toISOString()}] Harvested video: ${videoUrl}\n`);
             break;
           }
         }
       } catch (e) {
         console.error("Error harvesting video:", e);
-        fs.appendFileSync(path.join(__dirname, 'video_harvest.log'), `[${new Date().toISOString()}] Error: ${e.message}\n`);
       }
 
       try {
