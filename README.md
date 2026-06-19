@@ -1,41 +1,107 @@
 # BugOS 🐞
 
-**BugOS** is a comprehensive, real-time Bug Tracking and Test Case Management platform designed for modern software teams. It provides a centralized dashboard to track software defects, map them directly to test cases, execute automated tests, and seamlessly manage QA workflows.
+**BugOS** is a comprehensive, real-time Bug Tracking and Test Case Management platform designed to streamline software quality assurance workflows. It combines bug tracking, test case management, evidence collection, real-time collaboration, and automation execution into a single centralized dashboard.
 
-![License](https://img.shields.io/badge/license-MIT-blue)
+Developed to simplify QA operations, BugOS enables testers and developers to collaborate efficiently while maintaining complete visibility across the software testing lifecycle.
+
 ![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)
-
-## 🚀 Features
-
-- **Real-Time Collaboration**: Powered by WebSockets to ensure all team members see bug updates and test case changes instantly.
-- **Test Case Management**: Import, export, and maintain thousands of test cases, linking them to specific modules and execution states.
-- **Bug Escalation Workflows**: Track bugs from discovery to resolution with built-in escalation matrices for backend intervention.
-- **Automation Execution Engine**: Write and execute automated scripts (Playwright, Selenium) directly in the browser via an embedded CodeMirror editor.
-- **Evidence Management**: Upload screenshots and logs as evidence for bug reports, complete with image preview modals.
-- **Dynamic Dashboards**: Visualize module health, bug severity distribution, and test case coverage with responsive SVGs and data cards.
+![Node.js](https://img.shields.io/badge/Node.js-Backend-green)
+![MongoDB](https://img.shields.io/badge/MongoDB-Database-success)
+![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
 
 ---
 
-## 🏗️ Architecture
+## 🚀 Project Highlights
 
-BugOS uses a decoupled architecture allowing a lightweight frontend to communicate asynchronously with a robust Node.js backend.
+* Real-time collaboration using Socket.IO
+* Centralized bug tracking and management
+* Comprehensive test case management system
+* Playwright automation execution
+* Selenium automation execution
+* Screenshot and evidence management
+* Live execution logs and reporting
+* Dockerized deployment architecture
+* MongoDB-backed persistence layer
+* Modular frontend architecture using ES6 modules
+
+---
+
+## ✨ Features
+
+### 🔄 Real-Time Collaboration
+
+BugOS uses Socket.IO to synchronize updates instantly across connected users. Bug status changes, test case updates, and execution results are reflected in real time without requiring page refreshes.
+
+### 🐞 Bug Management
+
+* Create and manage software defects
+* Track bug lifecycle from creation to resolution
+* Assign severity and priority levels
+* Maintain evidence and supporting documentation
+* Monitor module-wise bug distribution
+
+### 🧪 Test Case Management
+
+* Create and organize test cases
+* Import and export test repositories
+* Categorize test cases by module
+* Track execution status
+* Link bugs directly to related test cases
+
+### ⚙️ Automation Execution Engine
+
+Execute automated tests directly from the platform.
+
+Supported frameworks:
+
+* Playwright
+* Selenium
+
+Capabilities:
+
+* Browser-based script editing
+* Execution monitoring
+* Real-time logs
+* Result tracking
+
+### 📷 Evidence Management
+
+* Upload screenshots for bug reports
+* Store supporting artifacts
+* Image preview support
+* Centralized evidence repository
+
+### 📊 Dynamic Dashboards
+
+Visualize:
+
+* Bug severity distribution
+* Test execution metrics
+* Module health
+* QA progress
+* Testing coverage
+
+---
+
+## 🏗️ System Architecture
 
 ```mermaid
 graph TD
+
     subgraph Frontend Layer
-        UI[Frontend UI <br/> HTML5 / CSS3 / ES Modules]
+        UI[Frontend UI<br/>HTML5 / CSS3 / ES6 Modules]
         WS_Client[Socket.IO Client]
         UI <--> WS_Client
     end
 
     subgraph Backend Layer
-        Node[Node.js Backend <br/> Express Server]
+        Node[Node.js Backend<br/>Express Server]
         WS_Server[Socket.IO Server]
         Node <--> WS_Server
     end
 
     subgraph Database Layer
-        Mongo[(MongoDB <br/> Primary Database)]
+        Mongo[(MongoDB)]
     end
 
     subgraph Automation Engines
@@ -43,42 +109,52 @@ graph TD
         Selenium[Selenium Engine]
     end
 
-    UI -->|HTTP / REST APIs| Node
+    UI -->|REST APIs| Node
     WS_Client <-->|Real-time Events| WS_Server
+
     Node <-->|Mongoose ODM| Mongo
-    Node -->|Child Processes| Playwright
-    Node -->|Child Processes| Selenium
+
+    Node -->|Automation Jobs| Playwright
+    Node -->|Automation Jobs| Selenium
 ```
 
 ---
 
 ## 💻 Tech Stack
 
-- **Frontend**: Vanilla JavaScript (ES6+ Modules), HTML5, CSS3
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB (via Mongoose)
-- **Real-time**: Socket.IO
-- **Automation Integration**: Playwright, Selenium
-- **Code Editor**: CodeMirror 6
+### Frontend
 
----
+* HTML5
+* CSS3
+* Vanilla JavaScript (ES6 Modules)
 
-## 📁 Folder Structure
+### Backend
 
-The repository is modular and organized for scalability:
+* Node.js
+* Express.js
 
-```text
-BugOS/
-├── public/                 # Static assets served to the client
-│   ├── css/                # Component-based stylesheets (main.css, dashboard.css, etc.)
-│   ├── js/                 # ES6 Module JavaScript (api.js, bugs.js, state.js, etc.)
-│   ├── assets/             # Images and SVG icons
-│   └── index.html          # Main application entry point
-├── server.js               # Node.js / Express backend entry point
-├── docker-compose.yml      # Container orchestration
-├── Dockerfile              # Docker image specification
-└── package.json            # Dependencies and scripts
-```
+### Database
+
+* MongoDB
+* Mongoose
+
+### Real-Time Communication
+
+* Socket.IO
+
+### Automation
+
+* Playwright
+* Selenium
+
+### Editor
+
+* CodeMirror 6
+
+### DevOps
+
+* Docker
+* Docker Compose
 
 ---
 
@@ -111,12 +187,56 @@ The easiest way to get BugOS running is via Docker, which automatically provisio
 
 ---
 
-## 🧪 Automation Features
+Application will be available at:
 
-BugOS goes beyond standard bug tracking by embedding a **Live Automation Engine**:
-- **Syntax Highlighting**: Built-in CodeMirror editor supports JavaScript and Python.
-- **Execution**: Trigger Playwright or Selenium scripts directly from the UI.
-- **Logs**: View real-time console output and execution results streamed back via WebSockets.
+```text
+https://www.bugos.app/
+```
 
 ---
-*Developed with a focus on code quality, modularity, and seamless user experience.*
+
+## 🧪 Automation Features
+
+### Playwright Integration
+
+* Browser automation execution
+* Screenshot generation
+* Automated testing workflows
+* Execution result tracking
+
+### Selenium Integration
+
+* Web automation support
+* Cross-browser testing
+* Script execution from dashboard
+* Real-time execution logs
+
+### Live Logs
+
+Execution logs are streamed back to the frontend using WebSockets for immediate visibility.
+
+---
+
+## 🎯 Why BugOS?
+
+Most bug tracking tools focus solely on issue management, while automation platforms focus only on test execution.
+
+BugOS bridges both worlds by providing:
+
+* Bug Tracking
+* Test Case Management
+* Automation Execution
+* Evidence Collection
+* Real-Time Collaboration
+
+inside a single unified platform.
+
+---
+
+## 👨‍💻 Author
+
+**Anmol Shrivastava**
+
+GitHub: https://github.com/anmolshrivastavaa
+
+---
