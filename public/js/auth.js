@@ -1,5 +1,5 @@
 import { socket } from './api.js';
-import { S.S } from './state.js';
+import { S } from './state.js';
 import { toggleTheme, formatDate, nowFull, toast, openConfirm, escHtml } from './utils.js';
 import { save, textMatchesQuery, liveFilter, render, openChangePassword } from './app.js';
 

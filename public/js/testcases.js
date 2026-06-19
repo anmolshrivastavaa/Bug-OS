@@ -1,6 +1,6 @@
 import { socket, doImport } from './api.js';
 import { normalizeTcRowId, normalizeTcModule, formatDate, now, toast, openConfirm, statusBadge, sevBadge, showBannedModal, showModal, closeModal, viewScriptModal } from './utils.js';
-import { S.S } from './state.js';
+import { S } from './state.js';
 import { save, textMatchesQuery, liveFilter, render, handleImpDrop, handleImpFile } from './app.js';
 import { audit } from './auth.js';
 import { onAutoLangChange, updateAutoTcId } from './automation.js';

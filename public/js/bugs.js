@@ -1,7 +1,7 @@
 import { socket } from './api.js';
 import { normalizeStatus, formatDate, now, toast, openConfirm, statusBadge, sevBadge, showModal, closeModal } from './utils.js';
 import { testcaseKeysMatch } from './testcases.js';
-import { S.S } from './state.js';
+import { S } from './state.js';
 import { save, textMatchesQuery, liveFilter, render, switchEscTab, generateUniqueBugId } from './app.js';
 import { audit } from './auth.js';
 import { renderEvidenceCell } from './screenshots.js';

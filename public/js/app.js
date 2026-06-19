@@ -1,7 +1,7 @@
 import { socket, refreshData, parseImpFile } from './api.js';
 import { normalizeTcRowId, normalizeTcModule, normalizeStatus, applyTheme, toggleTheme, formatDate, now, nowFull, toast, openConfirm, upgradeSelects, buildLoading, topNavItem, statusBadge, sevBadge, escHtml, showBannedModal, showModal, closeModal, nav } from './utils.js';
 import { testcaseKeysMatch, buildTestCases } from './testcases.js';
-import { S.S.S } from './state.js';
+import { S } from './state.js';
 import { audit, buildLogin, buildUserRing, buildUsers, buildAudit } from './auth.js';
 import { buildEscalations, buildBugs, buildRetest } from './bugs.js';
 import { buildDashboard } from './dashboard.js';

@@ -1,6 +1,6 @@
 import { normalizeTcRowId, normalizeTcModule, now, toast, showBannedModal } from './utils.js';
 import { testcaseKeysMatch, switchTestCasesTab, _importRows, _importTargetModule } from './testcases.js';
-import { S.S } from './state.js';
+import { S } from './state.js';
 import { save, renderImpPreview } from './app.js';
 import { audit } from './auth.js';
 import { autoCreateBug } from './bugs.js';

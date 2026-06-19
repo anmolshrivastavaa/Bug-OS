@@ -1,4 +1,4 @@
-import { S.S } from './state.js';
+import { S } from './state.js';
 import { save, render, getLangSvg, _submitCb } from './app.js';
 
 export /** Business key fields for test cases: same TC number must be allowed across different modules. */

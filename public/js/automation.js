@@ -1,6 +1,6 @@
 import { socket } from './api.js';
 import { bugRefsTestCaseKeys, updateTestCaseOptions, loadTestCaseScript } from './testcases.js';
-import { S.S } from './state.js';
+import { S } from './state.js';
 import { now, toast, statusBadge, sevBadge } from './utils.js';
 import { audit } from './auth.js';
 import { render } from './app.js';
