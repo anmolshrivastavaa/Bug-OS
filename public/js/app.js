@@ -22,8 +22,6 @@ import * as screenshotsModule from './screenshots.js';
 Object.assign(window, screenshotsModule);
 import * as utilsModule from './utils.js';
 Object.assign(window, utilsModule);
-import * as appModule from './app.js';
-Object.assign(window, appModule);
 
 window.toggleSidebar = function () {
   S.sidebarCollapsed = !S.sidebarCollapsed;
@@ -1007,3 +1005,5 @@ setInterval(() => {
     fcS.textContent = s;
   }
 }, 1000);
+import * as appModule from './app.js';
+Object.assign(window, appModule);
