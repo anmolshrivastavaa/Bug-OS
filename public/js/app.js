@@ -1,5 +1,4 @@
-
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ STATE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+// ─────────────────────────── STATE ───────────────────────────
 
 
     // Socket.IO connection
@@ -65,10 +64,10 @@
       if (app && !document.getElementById('refresh-overlay')) {
         const isLight = currentTheme === 'light';
         const bg = 'color-mix(in srgb, var(--text) 5%, var(--bg2))';
-        const imgSrc = isLight ? 'draft light.png' : 'draft.png';
+        const imgSrc = isLight ? 'assets/draft light.png' : 'assets/draft.png';
         const overlay = document.createElement('div');
         overlay.id = 'refresh-overlay';
-        overlay.style.cssText = `position:fixed;top:0;left:0;width:100vw;height:100vh;background:${bg};backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+        overlay.style.cssText = `position:fixed;top:0;left:0;width:100%;height:100%;background:${bg};backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:9999;`;
         overlay.innerHTML = `<div class="loader-wrapper"><div class="loader-ring"></div><img src="${imgSrc}" class="loader-image" alt="Loading" /></div>`;
         app.appendChild(overlay);
       }
@@ -154,6 +153,7 @@
         role: S.role,
         view: S.view,
         modules: serverData.modules || [],
+        modulesPendingDelete: serverData.modulesPendingDelete || [],
         testCases: (serverData.testCases || []).map(tc => ({
           ...tc,
           id: normalizeTcRowId(tc.id),
@@ -223,6 +223,13 @@
       } else if (update.type === 'module') {
         if (update.data.deleted) {
           S.modules = S.modules.filter(m => m !== update.data.name);
+          S.modulesPendingDelete = (S.modulesPendingDelete || []).filter(m => m.name !== update.data.name);
+        } else if (update.data.pendingDelete !== undefined) {
+          S.modulesPendingDelete = S.modulesPendingDelete || [];
+          S.modulesPendingDelete = S.modulesPendingDelete.filter(m => m.name !== update.data.name);
+          if (update.data.pendingDelete) {
+            S.modulesPendingDelete.push({ name: update.data.name, pendingDelete: true, deleteRequestedBy: update.data.deleteRequestedBy });
+          }
         } else if (update.data.name && !S.modules.includes(update.data.name)) {
           S.modules.push(update.data.name);
         }
@@ -283,7 +290,7 @@
     }
 
     function formatDate(dStr) {
-      if (!dStr || dStr === 'ΓÇö') return 'ΓÇö';
+      if (!dStr || dStr === '—') return '—';
       let s = String(dStr);
       if (s.endsWith('Z')) {
         const d = new Date(s);
@@ -367,18 +374,18 @@
       socket.emit('updateData', { type: 'audit', data: auditEntry });
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ TOAST ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── TOAST ───────────────────────────
     function toast(msg, type = 'info') {
       const c = document.getElementById('toasts');
       const el = document.createElement('div');
       el.className = `toast toast-${type}`;
-      const icons = { success: 'Γ£ô', error: 'Γ£ò', info: 'Γä╣' };
+      const icons = { success: '✓', error: '✕', info: 'ℹ' };
       el.innerHTML = `<span style="color:${type === 'success' ? 'var(--green)' : type === 'error' ? 'var(--red)' : 'var(--accent)'}">${icons[type]}</span> ${msg}`;
       c.appendChild(el);
       setTimeout(() => el.remove(), 3000);
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ CONFIRM ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── CONFIRM ───────────────────────────
     let _confirmCb = null;
     function openConfirm(title, msg, cb, btnText = 'Delete permanently', btnClass = 'btn-danger', type = 'red') {
       const box = document.querySelector('.confirm-box');
@@ -453,6 +460,12 @@
         };
         updateOptions();
 
+        // Allow programmatic updates to trigger visual sync
+        select.addEventListener('custom-update', () => {
+          updateTrigger();
+          updateOptions();
+        });
+
         // Setup MutationObserver to watch for dynamic option changes
         const observer = new MutationObserver(updateOptions);
         observer.observe(select, { childList: true });
@@ -478,8 +491,14 @@
       document.querySelectorAll('.custom-select.open').forEach(el => el.classList.remove('open'));
     });
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ RENDER ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── RENDER ───────────────────────────
     function render() {
+      if (window.cmEditor) {
+        S.currentUnsavedScript = window.cmEditor.state.doc.toString();
+        window.cmEditor.destroy();
+        window.cmEditor = null;
+      }
+
       const app = document.getElementById('app');
       let scrollContent = 0;
       const contentEl = document.getElementById('content');
@@ -497,6 +516,10 @@
       attachHandlers();
       upgradeSelects(app);
 
+      if (S.view === 'automation') {
+        initCodeMirror();
+      }
+
       const newContentEl = document.getElementById('content');
       if (newContentEl) newContentEl.scrollTop = scrollContent;
     }
@@ -507,7 +530,7 @@
   <div style="flex: 1; width: 100%; display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(circle at top, rgba(59,130,246,0.15), transparent 40%), radial-gradient(circle at bottom right, rgba(34,197,94,0.08), transparent 30%), var(--bg);">
     <div class="loader-wrapper">
       <div class="loader-ring"></div>
-      <img src="${isLight ? 'draft light.png' : 'draft.png'}" class="loader-image" alt="Loading" />
+      <img src="${isLight ? 'assets/draft light.png' : 'assets/draft.png'}" class="loader-image" alt="Loading" />
     </div>
   </div>`;
     }
@@ -524,13 +547,13 @@
       let greeting = 'Good Night';
       let greetIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
 
-      if (rawHour >= 5 && rawHour <12) {
+      if (rawHour >= 5 && rawHour < 12) {
         greeting = 'Good Morning';
         greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-      } else if (rawHour >= 12 && rawHour <17) {
+      } else if (rawHour >= 12 && rawHour < 17) {
         greeting = 'Good Afternoon';
         greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-      } else if (rawHour >= 17 && rawHour <21) {
+      } else if (rawHour >= 17 && rawHour < 21) {
         greeting = 'Good Evening';
         greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line><polyline points="16 5 12 9 8 5"></polyline></svg>';
       }
@@ -570,7 +593,7 @@
     </div>
     ${flipClockHtml}
     <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-      <div class="login-icon"><img src="${currentTheme === 'light' ? 'login-icon light.png' : 'login-icon.png'}" alt="Login" /></div>
+      <div class="login-icon"><img src="${currentTheme === 'light' ? 'assets/login-icon light.png' : 'assets/login-icon.png'}" alt="Login" /></div>
     </div>
     <div class="login-card">
       <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
@@ -579,7 +602,7 @@
         </svg>
         <span class="login-header-text">LOGIN</span>
       </div>
-      <div class="login-title">Bug OS - Unified QA Management Platform</div>
+      <div class="login-title">Bug-OS - Unified QA Management Platform</div>
       <div class="field">
         <label>Username</label>
         <input id="login-user" placeholder="Enter username" autocomplete="username">
@@ -594,42 +617,7 @@
     }
 
     function buildApp() {
-      const openBugs = S.bugs.filter(b => normalizeStatus(b.status) === 'open').length;
-      const escalatedCount = S.bugs.filter(b => normalizeStatus(b.status) === 'escalated').length;
-      const retestPending = S.bugs.filter(b => normalizeStatus(b.status) === 'fixed').length;
       return `
-  <div class="sidebar ${S.sidebarCollapsed ? 'collapsed' : ''}">
-    <div class="sidebar-logo" style="display:flex; align-items:center; gap:12px; padding:20px 16px; border-bottom:1px solid var(--border); background: linear-gradient(180deg, var(--bg3) 0%, transparent 100%); margin-bottom: 8px;">
-      <div class="logo-icon" style="width:80px; height:80px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-        <img src="${currentTheme === 'light' ? 'sidebar icon light.png' : 'sidebar icon.png'}" alt="BUG OS" style="width:80px; height:80px; object-fit:contain;"/>
-      </div>
-      <div class="logo-text" style="display:flex; flex-direction:column; justify-content:center; overflow:hidden;">
-        <div style="display:flex;">
-          <div class="user-role-badge ${S.role === 'qa' ? 'role-qa' : S.role === 'dev' ? 'role-dev' : 'role-admin'}" style="font-size:12px; padding:4px 10px; letter-spacing:0.04em; border-radius:6px; font-weight:700; text-transform:uppercase; display:inline-flex; align-items:center; line-height:1;">${S.role === 'qa' ? 'QA PANEL' : S.role === 'dev' ? 'DEV PANEL' : 'ADMIN PANEL'}</div>
-        </div>
-      </div>
-      <button class="hamburger-btn" onclick="toggleSidebar()" style="background:transparent; border:none; cursor:pointer; color:var(--text2); margin-left:auto; display:flex; align-items:center; justify-content:center; padding:6px; border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background='transparent'" title="Toggle Sidebar">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-      </button>
-    </div>
-    <nav class="nav">
-      ${navItem('dashboard', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>`, 'Dashboard', 0)}
-      ${navItem('testcases', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg>`, 'Test Cases', 0)}
-      ${navItem('bugs', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>`, 'Bug Reports', openBugs, 'var(--red)')}
-      ${navItem('retest', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`, 'Retest Queue', retestPending, 'var(--yellow)')}
-      ${navItem('escalations', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>`, 'Backend Bugs', escalatedCount, 'var(--orange)')}
-      ${navItem('automation', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>`, 'Automation', 0)}
-      ${navItem('modules', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>`, 'Modules', 0)}
-      ${navItem('audit', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`, 'Audit Log', 0)}
-      ${navItem('report', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>`, 'Reports', 0)}
-      ${S.role === 'admin' ? navItem('users', `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`, 'User Management', 0) : ''}
-    </nav>
-    <div class="sidebar-switch" style="padding:12px 8px; border-top:1px solid var(--border);">
-      <div class="nav-item" onclick="logout()" style="color:var(--red);" onmouseover="this.style.background='var(--red-bg)'" onmouseout="this.style.background=''" title="Logout">
-        <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--red)"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span> <span class="nav-item-label">Logout</span>
-      </div>   
-    </div>
-  </div>
   <div class="main">
     ${buildTopbar()}
     <div class="content" id="content">
@@ -646,7 +634,14 @@
   </div>`;
     }
 
-    
+    function topNavItem(id, label, iconHtml, badge = 0, badgeColor = 'var(--red)') {
+      const isActive = S.view === id;
+      const badgeHtml = badge > 0 ? `<span style="background:${badgeColor}; color:#fff; border-radius:100px; padding:2px 6px; font-size:10px; margin-left:6px; font-weight:700;">${badge}</span>` : '';
+      const iconWrap = iconHtml ? `<span style="display:flex; align-items:center; width:14px; height:14px; margin-right:6px;">${iconHtml.replace('<svg', '<svg width="100%" height="100%"')}</span>` : '';
+      return `<div onclick="nav('${id}')" style="cursor:pointer; height:32px; padding:0 16px; border-radius:100px; font-size:13px; font-weight:600; transition:all 0.2s; display:inline-flex; align-items:center; justify-content:center; box-sizing:border-box; ${isActive ? 'background:var(--text); color:var(--bg); box-shadow:0 2px 8px rgba(0,0,0,0.1);' : 'color:var(--text2); background:transparent;'}" onmouseover="if(!${isActive}) { this.style.color='var(--text)'; this.style.background='var(--bg2)'; }" onmouseout="if(!${isActive}) { this.style.color='var(--text2)'; this.style.background='transparent'; }">${iconWrap}${label}${badgeHtml}</div>`;
+    }
+
+
     function buildUserRing() {
       const initial = (S.auth && S.auth.user ? S.auth.user[0] : 'U').toUpperCase();
       const username = S.auth && S.auth.user ? S.auth.user : 'User';
@@ -664,40 +659,58 @@
           ${S.auth && S.auth.user !== 'ADMIN' ? `<div onclick="openChangePassword(); document.getElementById('user-popup').style.display='none'" style="padding:8px 16px; font-size:13px; color:var(--text2); cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Change Password
           </div>` : ''}
+          <div onclick="logout(); document.getElementById('user-popup').style.display='none'" style="padding:8px 16px; font-size:13px; color:var(--red); cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.2s; border-top:1px solid var(--border);" onmouseover="this.style.background='var(--red-bg)'" onmouseout="this.style.background='transparent'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Logout
+          </div>
         </div>
       </div>`;
     }
 
     function buildTopbar() {
-      if (['dashboard', 'testcases', 'bugs', 'retest', 'escalations', 'automation', 'modules', 'audit', 'report', 'users'].includes(S.view)) return '';
       const titles = { dashboard: 'Dashboard', testcases: 'Test Cases', bugs: 'Bug Reports', retest: 'Retest Queue', escalations: 'Backend Escalations', automation: 'Automation', modules: 'Modules', audit: 'Audit Log', report: 'Reports', users: 'User Management' };
+      const openBugs = S.bugs.filter(b => normalizeStatus(b.status) === 'open').length;
+      const escalatedCount = S.bugs.filter(b => normalizeStatus(b.status) === 'escalated').length;
+      const retestPending = S.bugs.filter(b => normalizeStatus(b.status) === 'fixed').length;
       let actions = '';
-      if (S.view === 'testcases' && S.role === 'qa') {
-        actions = `<button class="btn btn-ghost btn-sm" onclick="openImportCSV()">Γåæ Import Test Cases</button><button class="btn btn-ghost btn-sm" onclick="openAddTC()">+ Add Test Case</button>`;
-      }
-      if (S.view === 'modules' && S.role === 'qa') {
-        actions = `<button class="btn btn-ghost btn-sm" onclick="openAddModule()">+ Add Module</button>`;
+      if (S.view === 'users' && S.role === 'admin') {
+        // Create User action removed from topbar in favor of tabs
       }
       return `<div class="topbar">
-    <div class="topbar-left">
-      <div class="page-title">${titles[S.view] || 'Dashboard'}</div>
-    </div>
-    <div class="topbar-right">
+    <div class="topbar-left" style="display:flex; align-items:center; gap:16px;">
+      <div style="display:flex; align-items:center; gap:12px; padding-right:16px; border-right:1px solid var(--border);">
+        <img src="${currentTheme === 'light' ? 'assets/sidebar icon light.png' : 'assets/sidebar icon.png'}" style="width:56px; height:56px; object-fit:contain;"/>
+        <div style="display:flex; flex-direction:column; justify-content:center;">
+          <div style="font-weight:800; font-size:16px; color:var(--text); letter-spacing:-0.02em; line-height:1.2; white-space:nowrap;">BUG OS</div>
+          <div class="user-role-badge ${S.role === 'qa' ? 'role-qa' : S.role === 'dev' ? 'role-dev' : 'role-admin'}" style="font-size:10px; padding:2px 6px; letter-spacing:0.04em; border-radius:4px; font-weight:700; text-transform:uppercase; display:inline-flex; align-items:center; line-height:1; margin-top:2px; width:fit-content; white-space:nowrap;">${S.role === 'qa' ? 'QA PANEL' : S.role === 'dev' ? 'DEV PANEL' : 'ADMIN PANEL'}</div>
+        </div>
+      </div>
+      <div class="topbar-nav" style="display:flex; align-items:center; gap:4px; background:var(--bg3); padding:6px; border-radius:100px; border:1px solid var(--border); box-shadow:inset 0 2px 4px rgba(0,0,0,0.02); height:44px; box-sizing:border-box;">
+        ${topNavItem('dashboard', 'Dashboard', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>')}
+        ${topNavItem('testcases', 'Tests', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg>')}
+        ${topNavItem('bugs', 'Bugs', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>', openBugs, 'var(--red)')}
+        ${topNavItem('retest', 'Retest', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>', retestPending, 'var(--yellow)')}
+        ${topNavItem('escalations', 'Escalations', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>', escalatedCount, 'var(--orange)')}
+        ${topNavItem('automation', 'Automation', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg>')}
+        ${topNavItem('modules', 'Modules', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>')}
+        ${topNavItem('audit', 'Audit', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>')}
+        ${topNavItem('report', 'Reports', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>')}
+        ${S.role === 'admin' ? topNavItem('users', 'Users', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>') : ''}
+      </div>
       <div class="topbar-actions">
         ${actions}
       </div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
+    </div>
+    <div class="topbar-right">
+      <div style="display:flex; align-items:center; gap:16px; margin-left:auto;">
+        <div style="display:flex; align-items:center; background:var(--bg3); border:1px solid var(--border); border-radius:100px; padding:6px; gap:4px; height:44px; box-sizing:border-box;">
+
         <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
         </button>
         <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
           ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
         </button>
+
       </div>
         ${buildUserRing()}
       </div>
@@ -719,136 +732,161 @@
       return '';
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ USER MANAGEMENT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── USER MANAGEMENT ───────────────────────────
+    function switchUsersTab(tab) {
+      S.usersTab = tab;
+      render();
+    }
+
+    function doCreateUserInline() {
+      const username = document.getElementById('u-name').value.trim();
+      const password = document.getElementById('u-pass').value.trim();
+      const role = document.getElementById('u-role').value;
+      if (!username || !password || !role) {
+        toast('Please fill all fields', 'error');
+        return;
+      }
+      if (S.users.find(u => u.username === username)) {
+        toast('Username already exists', 'error');
+        return;
+      }
+      const newUser = {
+        username,
+        password,
+        initialPassword: password,
+        role,
+        createdAt: nowFull()
+      };
+      socket.emit('updateData', { type: 'user', data: newUser });
+      audit(`Created user ${username} (${role})`);
+      toast('User created', 'success');
+      switchUsersTab('all');
+    }
+
     function buildUsers() {
       if (S.role !== 'admin') return '<div class="empty">Unauthorized</div>';
 
-      const usersQ = (document.getElementById('usersQ') || { value: '' }).value.toLowerCase();
+      const currentTab = S.usersTab || 'all';
 
-      let filteredUsers = S.users;
-      if (usersQ) {
-        filteredUsers = filteredUsers.filter(u => [u.username, u.role, u.initialPassword, u.createdAt].some(v => textMatchesQuery(v, usersQ)));
-      }
+      const tabStyle = (isActive) => isActive
+        ? `background:var(--text); color:var(--bg); border-color:var(--text); cursor:default; box-shadow:0 2px 8px rgba(0,0,0,0.1);`
+        : `background:transparent; color:var(--text2); border-color:transparent; cursor:pointer; opacity:0.8; transition:all 0.2s;`;
 
-      const rows = filteredUsers.map(u => {
-        let avatarBg = u.role === 'admin' ? 'color-mix(in srgb, var(--red) 10%, transparent)' : u.role === 'qa' ? 'color-mix(in srgb, var(--purple) 10%, transparent)' : 'color-mix(in srgb, var(--accent) 10%, transparent)';
-        let avatarColor = u.role === 'admin' ? 'var(--red)' : u.role === 'qa' ? 'var(--purple)' : 'var(--accent)';
-        let avatarText = u.username.substring(0, 2).toUpperCase();
+      const tabsHtml = `
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px; padding:4px; background:var(--bg2); border-radius:30px; display:inline-flex; border:1px solid var(--border);">
+          <div onclick="switchUsersTab('all')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(currentTab === 'all')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${currentTab === 'all' ? '1' : '0.8'}'">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            All Users
+          </div>
+          <div onclick="switchUsersTab('create')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(currentTab === 'create')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${currentTab === 'create' ? '1' : '0.8'}'">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create User
+          </div>
+        </div>
+      `;
 
-        return `
-        <tr style="transition: background 0.2s; cursor:default;" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
-          <td>
-            <div style="display:flex; align-items:center; gap:12px;">
-              <div style="display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:${avatarBg}; color:${avatarColor}; font-weight:800; font-size:12px; letter-spacing:0.5px; flex-shrink:0;">
-                ${avatarText}
-              </div>
-              <span style="font-weight:600; color:var(--text); letter-spacing:-0.01em;">${u.username}</span>
+      let contentHtml = '';
+
+      if (currentTab === 'create') {
+        contentHtml = `
+          <div class="section" style="overflow: visible;">
+            <div class="section-hdr">
+              <div class="section-title">Create New User</div>
             </div>
-          </td>
-          <td><div class="user-role-badge ${u.role === 'qa' ? 'role-qa' : u.role === 'dev' ? 'role-dev' : 'role-admin'}" style="box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-weight:700;">${u.role.toUpperCase()}</div></td>
-          <td><div style="font-family:var(--mono); font-size:12px; color:var(--text2); background:var(--bg3); padding:4px 10px; border-radius:6px; display:inline-block; font-weight:500;">${u.initialPassword || '<span style="opacity:0.5; font-style:italic;">Not Recorded</span>'}</div></td>
-          <td style="font-family: var(--mono); color:var(--text2); font-size:12px;">${formatDate(u.createdAt)}</td>
-          <td>
-            ${u.username === S.auth.user ? '<span class="badge" style="background:var(--bg2); color:var(--text2); border:1px solid var(--border); padding:4px 12px; border-radius:6px; font-size:11px; font-weight:700; box-shadow:0 2px 4px rgba(0,0,0,0.02); letter-spacing:0.5px;">YOU</span>' : (u.username === 'ADMIN' ? '<span class="badge" style="background:var(--bg3); color:var(--text2); padding:4px 12px; border-radius:6px; font-size:11px; font-weight:700; box-shadow:0 2px 4px rgba(0,0,0,0.02); letter-spacing:0.5px;">SYSTEM</span>' : `<button class="btn btn-danger btn-sm" style="border-radius:6px; padding:4px 12px; font-weight:600; box-shadow:0 2px 8px rgba(239, 68, 68, 0.2);" onclick="deleteUser('${u.username}')">Delete</button>`)}
-          </td>
-        </tr>
-      `}).join('');
+            <div style="padding: 24px;">
+              <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                <div class="field" style="flex: 1; min-width: 200px; max-width: 320px;">
+                  <label>Username <span class="required">*</span></label>
+                  <input id="u-name" placeholder="Enter username">
+                </div>
+                <div class="field" style="flex: 1; min-width: 200px; max-width: 320px;">
+                  <label>Password <span class="required">*</span></label>
+                  <input id="u-pass" type="password" placeholder="Enter password">
+                </div>
+                <div class="field" style="flex: 1; min-width: 200px; max-width: 320px;">
+                  <label>Role <span class="required">*</span></label>
+                  <select id="u-role">
+                    <option value="qa">QA</option>
+                    <option value="dev">Developer</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+              <div style="margin-top: 24px; display: flex; gap: 12px;">
+                <button class="btn btn-ghost" onclick="doCreateUserInline()" style="padding:7px 20px;">Create User</button>
+                <button class="btn btn-ghost" onclick="document.getElementById('u-name').value=''; document.getElementById('u-pass').value=''; document.getElementById('u-role').value='qa'; document.getElementById('u-role').dispatchEvent(new Event('custom-update'));" style="padding:7px 20px;">Cancel</button>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        const usersQ = (document.getElementById('usersQ') || { value: '' }).value.toLowerCase();
+
+        let filteredUsers = S.users;
+        if (usersQ) {
+          filteredUsers = filteredUsers.filter(u => [u.username, u.role, u.initialPassword, u.createdAt].some(v => textMatchesQuery(v, usersQ)));
+        }
+
+        const rows = filteredUsers.map(u => {
+          let avatarBg = u.role === 'admin' ? 'color-mix(in srgb, var(--red) 10%, transparent)' : u.role === 'qa' ? 'color-mix(in srgb, var(--purple) 10%, transparent)' : 'color-mix(in srgb, var(--accent) 10%, transparent)';
+          let avatarColor = u.role === 'admin' ? 'var(--red)' : u.role === 'qa' ? 'var(--purple)' : 'var(--accent)';
+          let avatarText = u.username.substring(0, 2).toUpperCase();
+
+          return `
+          <tr style="transition: background 0.2s; cursor:default;" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">
+            <td>
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:${avatarBg}; color:${avatarColor}; font-weight:800; font-size:12px; letter-spacing:0.5px; flex-shrink:0;">
+                  ${avatarText}
+                </div>
+                <span style="font-weight:600; color:var(--text); letter-spacing:-0.01em;">${u.username}</span>
+              </div>
+            </td>
+            <td><div class="user-role-badge ${u.role === 'qa' ? 'role-qa' : u.role === 'dev' ? 'role-dev' : 'role-admin'}" style="box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-weight:700;">${u.role.toUpperCase()}</div></td>
+            <td><div style="font-family:var(--mono); font-size:12px; color:var(--text2); background:var(--bg3); padding:4px 10px; border-radius:6px; display:inline-block; font-weight:500;">${u.initialPassword || '<span style="opacity:0.5; font-style:italic;">Not Recorded</span>'}</div></td>
+            <td style="font-family: var(--mono); color:var(--text2); font-size:12px;">${formatDate(u.createdAt)}</td>
+            <td>
+              ${u.username === S.auth.user ? '<span class="badge" style="background:var(--bg2); color:var(--text2); border:1px solid var(--border); padding:4px 12px; border-radius:6px; font-size:11px; font-weight:700; box-shadow:0 2px 4px rgba(0,0,0,0.02); letter-spacing:0.5px;">YOU</span>' : (u.username === 'ADMIN' ? '<span class="badge" style="background:var(--bg3); color:var(--text2); padding:4px 12px; border-radius:6px; font-size:11px; font-weight:700; box-shadow:0 2px 4px rgba(0,0,0,0.02); letter-spacing:0.5px;">SYSTEM</span>' : `<button class="btn btn-danger btn-sm" style="border-radius:6px; padding:4px 12px; font-weight:600; box-shadow:0 2px 8px rgba(239, 68, 68, 0.2);" onclick="deleteUser('${u.username}')">Delete</button>`)}
+            </td>
+          </tr>
+        `}).join('');
+
+        contentHtml = `
+            <div class="section">
+              <div class="section-hdr">
+                <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Users List</div><div class="section-meta">${filteredUsers.length} Shown · ${S.users.length} Total</div></div>
+                <div style="position:relative; width:220px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                  <input class="filter-select${usersQ ? ' filter-active' : ''}" id="usersQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search users..." value="${escHtml(usersQ).replace(/\"/g, '&quot;')}" oninput="liveFilter(this)">
+                </div>
+              </div>
+            <div class="tbl-wrap scrollable">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Initial Password</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows || `<tr><td colspan="5" class="empty"><div class="empty-icon">${S.users.length > 0 ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>'}</div>${S.users.length > 0 ? 'No users matches filters' : 'No users found.'}</td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }
 
       return `
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">User Management</div>
-    <div style="display:flex; align-items:center; gap:16px;">
-      <button class="btn btn-ghost" style="padding:6px 12px; font-size:12px; border-radius:6px; display:inline-flex; align-items:center; gap:6px;" onclick="openAddUser()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Create User</button>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
-    </div>
   </div>
-          <div class="section">
-            <div class="section-hdr">
-              <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">User Management</div><div class="section-meta">${filteredUsers.length} Shown ┬╖ ${S.users.length} Total</div></div>
-              <div style="position:relative; width:220px;">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <input class="filter-select${usersQ ? ' filter-active' : ''}" id="usersQ" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search users..." value="${escHtml(usersQ).replace(/\"/g, '&quot;')}" oninput="liveFilter(this)">
-              </div>
-            </div>
-          <div class="tbl-wrap scrollable">
-            <table>
-              <thead>
-                <tr>
-                  <th>Username</th>
-                  <th>Role</th>
-                  <th>Initial Password</th>
-                  <th>Created At</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${rows || `<tr><td colspan="5" class="empty"><div class="empty-icon">${S.users.length > 0 ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>'}</div>${S.users.length > 0 ? 'No users matches filters' : 'No users found.'}</td></tr>`}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    function openAddUser() {
-      const body = `
-        <div class="form-grid">
-          <div class="field">
-            <label>Username</label>
-            <input id="u-name" placeholder="Enter username">
-          </div>
-          <div class="field">
-            <label>Password</label>
-            <input id="u-pass" type="password" placeholder="Enter password">
-          </div>
-          <div class="field">
-            <label>Role</label>
-            <select id="u-role">
-              <option value="qa">QA</option>
-              <option value="dev">Developer</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-        </div>
-      `;
-      showModal('Create User', body, () => {
-        const username = document.getElementById('u-name').value.trim();
-        const password = document.getElementById('u-pass').value.trim();
-        const role = document.getElementById('u-role').value;
-        if (!username || !password || !role) {
-          toast('Please fill all fields', 'error');
-          return;
-        }
-        if (S.users.find(u => u.username === username)) {
-          toast('Username already exists', 'error');
-          return;
-        }
-        const newUser = {
-          username,
-          password,
-          initialPassword: password,
-          role,
-          createdAt: nowFull()
-        };
-        socket.emit('updateData', { type: 'user', data: newUser });
-        audit(`Created user ${username} (${role})`);
-        toast('User created', 'success');
-        closeModal();
-      });
+  ${tabsHtml}
+  ${contentHtml}
+  `;
     }
 
     function deleteUser(username) {
@@ -899,12 +937,44 @@
       });
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ BACKEND ESCALATIONS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── BACKEND ESCALATIONS ───────────────────────────
+    function switchEscTab(tabId) {
+      S.escTab = tabId;
+      render();
+    }
+
     function buildEscalations() {
+      S.escTab = S.escTab || 'all';
+      const tabStyle = (isActive) => isActive
+        ? `background:var(--text); color:var(--bg); border-color:var(--text); cursor:default; box-shadow:0 2px 8px rgba(0,0,0,0.1);`
+        : `background:transparent; color:var(--text2); border-color:transparent; cursor:pointer; opacity:0.8; transition:all 0.2s;`;
+
       const escModF = (document.getElementById('escModF') || { value: '' }).value;
       const escSevF = (document.getElementById('escSevF') || { value: '' }).value;
+      const escDevF = (document.getElementById('escDevF') || { value: '' }).value;
       const escQ = (document.getElementById('escQ') || { value: '' }).value.toLowerCase();
+      
+      const getDev = (b) => {
+        if (b.escalatedTo) return b.escalatedTo;
+        if (b.history) {
+          const escEvents = b.history.filter(h => h.event && h.event.startsWith('Escalated to '));
+          if (escEvents.length > 0) {
+            const last = escEvents[escEvents.length - 1];
+            const match = last.event.match(/^Escalated to (.*?)\. Reason:/);
+            if (match && match[1] !== 'Backend') return match[1];
+          }
+        }
+        return null;
+      };
+
       let bugs = S.bugs.filter(b => b.status === 'Escalated');
+      if (S.escTab === 'my' && S.role === 'dev') {
+        bugs = bugs.filter(b => getDev(b) === S.auth.user);
+      }
+      const tabTotal = bugs.length;
+      if (escDevF && S.role === 'admin') {
+        bugs = bugs.filter(b => getDev(b) === escDevF);
+      }
       if (escModF) bugs = bugs.filter(b => b.module === escModF);
       if (escSevF) bugs = bugs.filter(b => b.severity === escSevF);
       if (escQ) {
@@ -917,6 +987,8 @@
         });
       }
       const modOpts = S.modules.map(m => `<option value="${m}"${escModF === m ? ' selected' : ''}>${m}</option>`).join('');
+      const devUsers = S.users.filter(u => u.role === 'dev');
+      const escDevOpts = devUsers.map(u => `<option value="${u.username}"${escDevF === u.username ? ' selected' : ''}>${u.username}</option>`).join('');
       const isDev = S.role === 'dev';
       const rows = bugs.map(b => {
         const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
@@ -925,12 +997,12 @@
       <td class="td-id">${b.id}</td>
       <td class="td-id">${b.tcId}</td>
       <td><div class="td-title">${b.testCase}</div></td>
-      <td class="td-truncate">${linkedTc?.scenario || 'ΓÇö'}</td>
+      <td class="td-truncate">${linkedTc?.scenario || '—'}</td>
       <td>${b.module}</td>
-      <td>${b.screen || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.steps || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.expected || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.actual || 'ΓÇö'}</td>
+      <td>${b.screen || '—'}</td>
+      <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.expected || '—'}</td>
+      <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
       <td>${sevBadge(b.severity)}</td>
 
@@ -944,28 +1016,30 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Backend Escalations</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
     </div>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px; padding:4px; background:var(--bg2); border-radius:30px; display:inline-flex; border:1px solid var(--border);">
+    <div onclick="switchEscTab('all')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.escTab === 'all')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.escTab === 'all' ? '1' : '0.8'}'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+      All Backend Bugs
+    </div>
+    ${S.role === 'dev' ? `
+    <div onclick="switchEscTab('my')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.escTab === 'my')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.escTab === 'my' ? '1' : '0.8'}'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      My Backend Bugs
+    </div>
+    ` : ''}
   </div>
   <div class="section">
     <div class="section-hdr">
-      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Backend Escalations</div><div class="section-meta">${bugs.length} Shown ┬╖ ${S.bugs.filter(b => b.status === 'Escalated').length} Total</div></div>
+      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">${S.escTab === 'my' ? 'My Backend Bugs' : 'Backend Escalations'}</div><div class="section-meta">${bugs.length} Shown · ${tabTotal} Total</div></div>
       <div style="font-size:12px;color:var(--text);position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;">${isDev ? 'Escalated by Frontend Team' : 'Waiting for Backend Team to resolve'}</div>
       <div class="filters">
+        ${S.role === 'admin' ? `
+        <select class="filter-select${escDevF ? ' filter-active' : ''}" id="escDevF" onchange="render()">
+          <option value="">All Dev Users</option>${escDevOpts}
+        </select>
+        ` : ''}
         <select class="filter-select${escModF ? ' filter-active' : ''}" id="escModF" onchange="render()">
           <option value="">All Modules</option>${modOpts}
         </select>
@@ -992,7 +1066,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ MODULE-WISE TRACKER ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── MODULE-WISE TRACKER ───────────────────────────
     function buildModuleTracker() {
       // Collect all dates with data
       const allDates = new Set();
@@ -1131,21 +1205,21 @@
         let testHeight = (testCount / maxValue) * graphHeight;
         let testY = chartHeight - padding - testHeight;
         const testX1 = centerX - barWidth - barGap;
-        if (!testHeight || testHeight <2) { testHeight = 2; testY = chartHeight - padding - testHeight; chartSVG += `<rect x="${testX1}" y="${testY}" width="${barWidth}" height="${testHeight}" fill="var(--accent)" opacity="0.35" class="bar-test zero" data-date="${date}" data-metric="testCreated" data-count="${testCount}" style="cursor:pointer;"/>`; }
+        if (!testHeight || testHeight < 2) { testHeight = 2; testY = chartHeight - padding - testHeight; chartSVG += `<rect x="${testX1}" y="${testY}" width="${barWidth}" height="${testHeight}" fill="var(--accent)" opacity="0.35" class="bar-test zero" data-date="${date}" data-metric="testCreated" data-count="${testCount}" style="cursor:pointer;"/>`; }
         else { chartSVG += `<rect x="${testX1}" y="${testY}" width="${barWidth}" height="${testHeight}" fill="var(--accent)" opacity="0.85" class="bar-test" data-date="${date}" data-metric="testCreated" data-count="${testCount}" style="cursor:pointer;"/>`; }
 
         // Bar 2: Bug Fixed (Green)
         let fixHeight = (fixCount / maxValue) * graphHeight;
         let fixY = chartHeight - padding - fixHeight;
         const fixX = centerX;
-        if (!fixHeight || fixHeight <2) { fixHeight = 2; fixY = chartHeight - padding - fixHeight; chartSVG += `<rect x="${fixX}" y="${fixY}" width="${barWidth}" height="${fixHeight}" fill="var(--green)" opacity="0.35" class="bar-fix zero" data-date="${date}" data-metric="bugFixed" data-count="${fixCount}" style="cursor:pointer;"/>`; }
+        if (!fixHeight || fixHeight < 2) { fixHeight = 2; fixY = chartHeight - padding - fixHeight; chartSVG += `<rect x="${fixX}" y="${fixY}" width="${barWidth}" height="${fixHeight}" fill="var(--green)" opacity="0.35" class="bar-fix zero" data-date="${date}" data-metric="bugFixed" data-count="${fixCount}" style="cursor:pointer;"/>`; }
         else { chartSVG += `<rect x="${fixX}" y="${fixY}" width="${barWidth}" height="${fixHeight}" fill="var(--green)" opacity="0.85" class="bar-fix" data-date="${date}" data-metric="bugFixed" data-count="${fixCount}" style="cursor:pointer;"/>`; }
 
         // Bar 3: Retest Done (Orange)
         let retestHeight = (retestCount / maxValue) * graphHeight;
         let retestY = chartHeight - padding - retestHeight;
         const retestX = centerX + barWidth + barGap;
-        if (!retestHeight || retestHeight <2) { retestHeight = 2; retestY = chartHeight - padding - retestHeight; chartSVG += `<rect x="${retestX}" y="${retestY}" width="${barWidth}" height="${retestHeight}" fill="var(--orange)" opacity="0.35" class="bar-retest zero" data-date="${date}" data-metric="retestDone" data-count="${retestCount}" style="cursor:pointer;"/>`; }
+        if (!retestHeight || retestHeight < 2) { retestHeight = 2; retestY = chartHeight - padding - retestHeight; chartSVG += `<rect x="${retestX}" y="${retestY}" width="${barWidth}" height="${retestHeight}" fill="var(--orange)" opacity="0.35" class="bar-retest zero" data-date="${date}" data-metric="retestDone" data-count="${retestCount}" style="cursor:pointer;"/>`; }
         else { chartSVG += `<rect x="${retestX}" y="${retestY}" width="${barWidth}" height="${retestHeight}" fill="var(--orange)" opacity="0.85" class="bar-retest" data-date="${date}" data-metric="retestDone" data-count="${retestCount}" style="cursor:pointer;"/>`; }
 
         // Date label on X-axis
@@ -1263,7 +1337,7 @@
             let tooltipX = rect.left + rect.width / 2 - tooltip.offsetWidth / 2;
             let tooltipY = rect.top - tooltip.offsetHeight - 10;
 
-            if (tooltipY <10) {
+            if (tooltipY < 10) {
               tooltipY = rect.bottom + 10;
             }
 
@@ -1373,7 +1447,7 @@
       `;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ DASHBOARD ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── DASHBOARD ───────────────────────────
     function buildDashboard() {
       const dashModFilter = S.dashModFilter || [];
       const dashStF = (document.getElementById('dashStF') || { value: '' }).value;
@@ -1501,21 +1575,7 @@
       return `
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
       <div style="font-size:28px;font-weight:700;color:var(--text); letter-spacing:-0.02em;">BUG OS Dashboard</div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
+      
     </div>
   <div class="section" style="overflow:visible;">
     <div class="section-hdr" style="overflow:visible; align-items:center; border-bottom:none; padding-bottom:16px;">
@@ -1527,11 +1587,11 @@
           S.dashModFilter.map(m => `
               <div style="background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.3); color:var(--green); border-radius:4px; padding:2px 6px; display:flex; align-items:center; gap:6px;">
                 <span style="font-weight:600;">${m}</span>
-                <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeDashModFilter(event, '${m}')">├ù</span>
+                <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeDashModFilter(event, '${m}')">×</span>
               </div>
             `).join('')}
             <div style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:4px; align-items:center;">
-              ${(S.dashModFilter && S.dashModFilter.length > 0) ? `<span style="cursor:pointer; font-size:14px; color:var(--text3);" onclick="window.clearDashModFilter(event)">├ù</span> <span style="color:var(--border);">|</span>` : ''}
+              ${(S.dashModFilter && S.dashModFilter.length > 0) ? `<span style="cursor:pointer; font-size:14px; color:var(--text3);" onclick="window.clearDashModFilter(event)">×</span> <span style="color:var(--border);">|</span>` : ''}
               <svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; opacity:0.6;"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
           </div>
@@ -1628,7 +1688,7 @@
           <circle cx="100" cy="100" r="50" fill="var(--bg2)"/>
           <g>
             <text x="100" y="95" text-anchor="middle" font-size="24" font-weight="600" fill="var(--text)" font-family="var(--mono)" opacity="${animH ? '0' : '1'}">${modPassPct}%${animH ? '<animate attributeName="opacity" from="0" to="1" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" /><animate attributeName="y" from="105" to="95" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" />' : ''}</text>
-            <text x="100" y="115" text-anchor="middle" font-size="12" fill="var(--text3)" font-family="var(--mono)" opacity="${animH ? '0' : '1'}">Pass Rate${animH ? '<animate attributeName="opacity" from="0" to="1" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" /><animate attributeName="y" from="125" to="115" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" />' : ''}</text>
+            <text x="100" y="115" text-anchor="middle" font-size="12" font-weight="bold" fill="var(--text3)" font-family="var(--mono)" opacity="${animH ? '0' : '1'}">Pass Rate${animH ? '<animate attributeName="opacity" from="0" to="1" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" /><animate attributeName="y" from="125" to="115" dur="1s" fill="freeze" calcMode="spline" keyTimes="0;1" keySplines="0.4 0 0.2 1" />' : ''}</text>
           </g>
         </svg>
         <div style="margin-left:24px;font-size:13px;line-height:1.8;">
@@ -1682,11 +1742,11 @@
           S.hmModFilter.map(m => `
             <div style="background:rgba(34, 197, 94, 0.1); border:1px solid rgba(34, 197, 94, 0.3); color:var(--green); border-radius:4px; padding:2px 6px; display:flex; align-items:center; gap:6px;">
               <span style="font-weight:600;">${m}</span>
-              <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeHmModFilter(event, '${m}')">├ù</span>
+              <span style="cursor:pointer; font-weight:bold; font-size:11px; opacity:0.8;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'" onclick="window.removeHmModFilter(event, '${m}')">×</span>
             </div>
           `).join('')}
           <div style="position:absolute; right:8px; top:50%; transform:translateY(-50%); display:flex; gap:4px; align-items:center;">
-            ${(S.hmModFilter && S.hmModFilter.length > 0) ? `<span style="cursor:pointer; font-size:14px; color:var(--text3);" onclick="window.clearHmModFilter(event)">├ù</span> <span style="color:var(--border);">|</span>` : ''}
+            ${(S.hmModFilter && S.hmModFilter.length > 0) ? `<span style="cursor:pointer; font-size:14px; color:var(--text3);" onclick="window.clearHmModFilter(event)">×</span> <span style="color:var(--border);">|</span>` : ''}
             <svg viewBox="0 0 24 24" style="width:12px; height:12px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; opacity:0.6;"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
         </div>
@@ -1707,17 +1767,23 @@
     ${buildModuleHeatmap()}
   </div>
   <div class="section">
-    <div class="section-hdr"><div class="section-title">Recent Bug Reports</div><button class="btn btn-ghost btn-sm" onclick="nav('bugs')">View all ΓåÆ</button></div>
+    <div class="section-hdr"><div class="section-title">Recent Bug Reports</div><button class="btn btn-ghost btn-sm" onclick="nav('bugs')">View all →</button></div>
     <div class="tbl-wrap"><table><thead><tr><th>Bug ID</th><th>Test Case</th><th>Module</th><th>Severity</th><th>Status</th><th>Failed On</th></tr></thead><tbody>${recentBugs || '<tr><td colspan="6" class="empty">No bugs yet</td></tr>'}</tbody></table></div>
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ TEST CASES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── TEST CASES ───────────────────────────
     function switchTestCasesTab(tabId) {
       S.testCasesTab = tabId;
       render();
     }
 
+    function getLangSvg(lang) {
+      if (lang === 'python') return `<svg style="width:14px; height:14px; margin-right:4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><linearGradient id="python-original-a" gradientUnits="userSpaceOnUse" x1="70.252" y1="1237.476" x2="170.659" y2="1151.089" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#5A9FD4"/><stop offset="1" stop-color="#306998"/></linearGradient><linearGradient id="python-original-b" gradientUnits="userSpaceOnUse" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#FFD43B"/><stop offset="1" stop-color="#FFE873"/></linearGradient><path fill="url(#python-original-a)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z" transform="translate(0 10.26)"/><path fill="url(#python-original-b)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z" transform="translate(0 10.26)"/></svg>`;
+      if (lang === 'javascript') return `<svg style="width:14px; height:14px; margin-right:4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.508-15.672-14.981-3.832-1.761-8.104-3.022-9.377-5.926-.452-1.69-.512-2.642-.226-3.665.821-3.32 4.784-4.355 7.925-3.403 2.023.678 3.938 2.237 5.093 4.724 5.402-3.498 5.391-3.475 9.163-5.879-1.381-2.141-2.118-3.129-3.022-4.045-3.249-3.629-7.676-5.498-14.756-5.355l-3.688.477c-3.534.893-6.902 2.748-8.877 5.235-5.926 6.724-4.236 18.492 2.975 23.335 7.104 5.332 17.54 6.545 18.873 11.531 1.297 6.104-4.486 8.08-10.234 7.378-4.236-.881-6.592-3.034-9.139-6.949-4.688 2.713-4.688 2.713-9.508 5.485 1.143 2.499 2.344 3.63 4.26 5.795 9.068 9.198 31.76 8.746 35.83-5.176.165-.478 1.261-3.666.38-8.581zM69.462 58.943H57.753l-.048 30.272c0 6.438.333 12.34-.714 14.149-1.713 3.558-6.152 3.117-8.175 2.427-2.059-1.012-3.106-2.451-4.319-4.485-.333-.584-.583-1.036-.667-1.071l-9.52 5.83c1.583 3.249 3.915 6.069 6.902 7.901 4.462 2.678 10.459 3.499 16.731 2.059 4.082-1.189 7.604-3.652 9.448-7.401 2.666-4.915 2.094-10.864 2.07-17.444.06-10.735.001-21.468.001-32.237z"/></svg>`;
+      if (lang === 'java') return `<svg style="width:14px; height:14px; margin-right:4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#0074BD" d="M47.617 98.12s-4.767 2.774 3.397 3.71c9.892 1.13 14.947.968 25.845-1.092 0 0 2.871 1.795 6.873 3.351-24.439 10.47-55.308-.607-36.115-5.969zm-2.988-13.665s-5.348 3.959 2.823 4.805c10.567 1.091 18.91 1.18 33.354-1.6 0 0 1.993 2.025 5.132 3.131-29.542 8.64-62.446.68-41.309-6.336z"/><path fill="#EA2D2E" d="M69.802 61.271c6.025 6.935-1.58 13.17-1.58 13.17s15.289-7.891 8.269-17.777c-6.559-9.215-11.587-13.792 15.635-29.58 0 .001-42.731 10.67-22.324 34.187z"/><path fill="#0074BD" d="M102.123 108.229s3.529 2.91-3.888 5.159c-14.102 4.272-58.706 5.56-71.094.171-4.451-1.938 3.899-4.625 6.526-5.192 2.739-.593 4.303-.485 4.303-.485-4.953-3.487-32.013 6.85-13.743 9.815 49.821 8.076 90.817-3.637 77.896-9.468zM49.912 70.294s-22.686 5.389-8.033 7.348c6.188.828 18.518.638 30.011-.326 9.39-.789 18.813-2.474 18.813-2.474s-3.308 1.419-5.704 3.053c-23.042 6.061-67.544 3.238-54.731-2.958 10.832-5.239 19.644-4.643 19.644-4.643zm40.697 22.747c23.421-12.167 12.591-23.86 5.032-22.285-1.848.385-2.677.72-2.677.72s.688-1.079 2-1.543c14.953-5.255 26.451 15.503-4.823 23.725 0-.002.359-.327.468-.617z"/><path fill="#EA2D2E" d="M76.491 1.587S89.459 14.563 64.188 34.51c-20.266 16.006-4.621 25.13-.007 35.559-11.831-10.673-20.509-20.07-14.688-28.815C58.041 28.42 81.722 22.195 76.491 1.587z"/><path fill="#0074BD" d="M52.214 126.021c22.476 1.437 57-.8 57.817-11.436 0 0-1.571 4.032-18.577 7.231-19.186 3.612-42.854 3.191-56.887.874 0 .001 2.875 2.381 17.647 3.331z"/></svg>`;
+      return '';
+    }
     function buildTestCases() {
       S.testCasesTab = S.testCasesTab || 'all';
 
@@ -1731,7 +1797,7 @@
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
             All Test Cases
           </div>
-          ${S.role === 'qa' ? `
+          ${['qa', 'dev', 'admin'].includes(S.role) ? `
           <div onclick="switchTestCasesTab('add')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.testCasesTab === 'add')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.testCasesTab === 'add' ? '1' : '0.8'}'">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Test Case
@@ -1745,9 +1811,9 @@
       `;
 
       let contentHtml = '';
-      if (S.testCasesTab === 'add' && S.role === 'qa') {
+      if (S.testCasesTab === 'add' && ['qa', 'dev', 'admin'].includes(S.role)) {
         contentHtml = buildAddTestCaseTab();
-      } else if (S.testCasesTab === 'import' && S.role === 'qa') {
+      } else if (S.testCasesTab === 'import' && ['qa', 'dev', 'admin'].includes(S.role)) {
         contentHtml = buildImportTestCaseTab();
       } else {
         contentHtml = buildAllTestCasesTab();
@@ -1757,21 +1823,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Test Cases</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          <span id="live-clock">${formatDate(nowFull())}</span>
-        </div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
+      
     </div>
   </div>
   ${tabsHtml}
@@ -1804,19 +1856,30 @@
         const isQA = S.role === 'qa';
         const idArg = encodeURIComponent(tc.id || '');
         const modArg = encodeURIComponent(tc.module || '');
+        const hasScript = S.automationScripts.some(s => s.testCaseId == tc.id && s.module === tc.module);
+        let iconSvg = '';
+        if (hasScript) {
+          iconSvg = `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#10b981" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        }
+
+        const autoStatusHtml = hasScript
+          ? `<div style="display:flex; gap:8px; align-items:center; justify-content:center;">${iconSvg}<button class="btn btn-ghost btn-sm" onclick="viewScriptModal(decodeURIComponent('${idArg}'), decodeURIComponent('${modArg}'))" title="View Script" style="padding:4px; height:24px; min-height:24px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></button></div>`
+          : `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#ef4444" stroke-width="2" fill="none" style="display:block; margin:0 auto;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+
         return `<tr>
       <td class="td-id">${tc.id}</td>
       <td class="td-title">${tc.testCase}</td>
       <td class="td-truncate">${tc.scenario || ''}</td>
       <td>${tc.module}</td>
-      <td>${tc.screen || 'ΓÇö'}</td>
+      <td>${tc.screen || '—'}</td>
       <td class="td-truncate">${tc.steps || ''}</td>
       <td class="td-truncate">${tc.expected || ''}</td>
       <td class="td-truncate">${tc.actual || ''}</td>
       <td>${statusBadge(tc.status)}</td>
       <td>${sevBadge(tc.severity)}</td>
-      <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td>
-      <td class="td-truncate">${tc.notes || 'ΓÇö'}</td>
+      <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2)}</td>
+      <td class="td-truncate">${tc.notes || '—'}</td>
+      <td style="text-align:center;">${autoStatusHtml}</td>
       <td style="white-space:nowrap;">
         <div style="display:flex; gap:6px; align-items:center; justify-content:flex-end; min-width:max-content;">
           <button class="btn btn-ghost btn-sm" onclick="viewTC(decodeURIComponent('${idArg}'), decodeURIComponent('${modArg}'))">View</button>
@@ -1830,7 +1893,7 @@
       return `
   <div class="section">
     <div class="section-hdr">
-      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">All Test Cases</div><div class="section-meta">${data.length} Shown ┬╖ ${S.testCases.length} Total</div></div>
+      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">All Test Cases</div><div class="section-meta">${data.length} Shown · ${S.testCases.length} Total</div></div>
       <div class="filters">
         <select class="filter-select${modF ? ' filter-active' : ''}" id="tcModF" onchange="render()">
           <option value="">All Modules</option>${modOpts}
@@ -1866,13 +1929,13 @@
       </select>
     </div>
     <div class="tbl-wrap scrollable"><table>
-      <thead><tr><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Evidence</th><th>Notes</th><th>Actions</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="13" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg></div>No test cases matches filters</td></tr>'}</tbody>
+      <thead><tr><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Automation Status</th><th>Actions</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="14" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg></div>No test cases matches filters</td></tr>'}</tbody>
     </table></div>
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ BUGS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── BUGS ───────────────────────────
     function buildBugs() {
       const bugModF = (document.getElementById('bugModF') || { value: '' }).value;
       const bugStF = (document.getElementById('bugStF') || { value: '' }).value;
@@ -1915,17 +1978,17 @@
       <td class="td-id">${b.id}</td>
       <td class="td-id">${b.tcId}</td>
       <td><div class="td-title">${b.testCase}</div></td>
-      <td class="td-truncate">${linkedTc?.scenario || 'ΓÇö'}</td>
+      <td class="td-truncate">${linkedTc?.scenario || '—'}</td>
       <td>${b.module}</td>
-      <td>${b.screen || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.steps || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.expected || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.actual || 'ΓÇö'}</td>
+      <td>${b.screen || '—'}</td>
+      <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.expected || '—'}</td>
+      <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
       <td>${statusBadge(linkedTc?.status)}</td>
       <td>${sevBadge(b.severity)}</td>
-      <td class="td-truncate">${renderEvidenceCell(linkedTc?.evidence)}</td>
-      <td class="td-truncate">${linkedTc?.notes || 'ΓÇö'}</td>
+      <td class="td-truncate">${renderEvidenceCell(linkedTc?.evidence)}</td><td class="td-truncate">${renderEvidenceCell(linkedTc?.evidence2)}</td>
+      <td class="td-truncate">${linkedTc?.notes || '—'}</td>
       <td><div style="display:flex; gap:6px; align-items:center; justify-content:flex-end; min-width:max-content;">${actions}</div></td>
     </tr>`;
       }).join('');
@@ -1936,21 +1999,12 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Bug Reports</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
+    </div>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px; padding:4px; background:var(--bg2); border-radius:30px; display:inline-flex; border:1px solid var(--border);">
+    <div style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; background:var(--text); color:var(--bg); border-color:var(--text); cursor:default; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg>
+      All Bug Reports
     </div>
   </div>
   <div class="section">
@@ -1985,18 +2039,46 @@
       </div>
     </div>
     <div class="tbl-wrap scrollable"><table>
-      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Bug Status</th><th>Status</th><th>Severity</th><th>Evidence</th><th>Notes</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Bug Status</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Actions</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="15" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg></div>No bugs matches filters</td></tr>'}</tbody>
     </table></div>
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ RETEST QUEUE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── RETEST QUEUE ───────────────────────────
+    function switchRetestTab(tabId) {
+      S.retestTab = tabId;
+      render();
+    }
+
     function buildRetest() {
+      S.retestTab = S.retestTab || 'all';
+      const tabStyle = (isActive) => isActive
+        ? `background:var(--text); color:var(--bg); border-color:var(--text); cursor:default; box-shadow:0 2px 8px rgba(0,0,0,0.1);`
+        : `background:transparent; color:var(--text2); border-color:transparent; cursor:pointer; opacity:0.8; transition:all 0.2s;`;
+
       const rtModF = (document.getElementById('rtModF') || { value: '' }).value;
       const rtSevF = (document.getElementById('rtSevF') || { value: '' }).value;
+      const rtQaF = (document.getElementById('rtQaF') || { value: '' }).value;
       const rtQ = (document.getElementById('rtQ') || { value: '' }).value.toLowerCase();
       let bugs = S.bugs.filter(b => normalizeStatus(b.status) === 'fixed');
+      if (S.retestTab === 'my' && S.role === 'qa') {
+        bugs = bugs.filter(b => {
+          const isBugCreator = b.history && b.history.length > 0 && b.history[0].actor === S.auth.user;
+          const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
+          const isTcCreator = linkedTc && linkedTc.createdBy === S.auth.user;
+          return isBugCreator || isTcCreator;
+        });
+      }
+      const tabTotal = bugs.length;
+      if (rtQaF && S.role === 'admin') {
+        bugs = bugs.filter(b => {
+          const isBugCreator = b.history && b.history.length > 0 && b.history[0].actor === rtQaF;
+          const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
+          const isTcCreator = linkedTc && linkedTc.createdBy === rtQaF;
+          return isBugCreator || isTcCreator;
+        });
+      }
       if (rtModF) bugs = bugs.filter(b => b.module === rtModF);
       if (rtSevF) bugs = bugs.filter(b => b.severity === rtSevF);
       if (rtQ) {
@@ -2009,26 +2091,28 @@
         });
       }
       const rtModOpts = S.modules.map(m => `<option value="${m}"${rtModF === m ? ' selected' : ''}>${m}</option>`).join('');
+      const qaUsers = S.users.filter(u => u.role === 'qa');
+      const rtQaOpts = qaUsers.map(u => `<option value="${u.username}"${rtQaF === u.username ? ' selected' : ''}>${u.username}</option>`).join('');
       const rows = bugs.map(b => {
         const linkedTc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
         return `<tr>
       <td class="td-id">${b.id}</td>
       <td class="td-id">${b.tcId}</td>
       <td><div class="td-title">${b.testCase}</div></td>
-      <td class="td-truncate">${linkedTc?.scenario || 'ΓÇö'}</td>
+      <td class="td-truncate">${linkedTc?.scenario || '—'}</td>
       <td>${b.module}</td>
-      <td>${b.screen || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.steps || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.expected || 'ΓÇö'}</td>
-      <td class="td-truncate">${linkedTc?.actual || 'ΓÇö'}</td>
+      <td>${b.screen || '—'}</td>
+      <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.expected || '—'}</td>
+      <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
       <td>${sevBadge(b.severity)}</td>
       <td>
         <div style="display:flex; gap:6px; align-items:center; min-width:max-content;">
           <button class="btn btn-ghost btn-sm" onclick="viewBug('${b.id}')" style="white-space:nowrap;">View Details</button>
           ${S.role === 'qa' ? `
-          <button class="btn btn-success btn-sm" onclick="retestPass('${b.id}')">Pass Γ£ô </button>
-          <button class="btn btn-danger btn-sm" onclick="retestFail('${b.id}')">Fail Γ£ò </button>
+          <button class="btn btn-success btn-sm" onclick="retestPass('${b.id}')">Pass ✓ </button>
+          <button class="btn btn-danger btn-sm" onclick="retestFail('${b.id}')">Fail ✕ </button>
           ` : ''}
         </div>
       </td>
@@ -2039,28 +2123,30 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Retest Queue</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
     </div>
+  </div>
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px; padding:4px; background:var(--bg2); border-radius:30px; display:inline-flex; border:1px solid var(--border);">
+    <div onclick="switchRetestTab('all')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.retestTab === 'all')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.retestTab === 'all' ? '1' : '0.8'}'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      All Retest Queue
+    </div>
+    ${S.role === 'qa' ? `
+    <div onclick="switchRetestTab('my')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.retestTab === 'my')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.retestTab === 'my' ? '1' : '0.8'}'">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      My Retest Queue
+    </div>
+    ` : ''}
   </div>
   <div class="section">
     <div class="section-hdr">
-      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">Retest Queue</div><div class="section-meta">${bugs.length} Shown ┬╖ ${S.bugs.filter(b => normalizeStatus(b.status) === 'fixed').length} Total</div></div>
+      <div style="display:flex; align-items:center; gap:10px;"><div class="section-title">${S.retestTab === 'my' ? 'My Retest Queue' : 'Retest Queue'}</div><div class="section-meta">${bugs.length} Shown · ${tabTotal} Total</div></div>
       <div style="font-size:12px;color:var(--text);position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;">Dev has marked these as fixed</div>
       <div class="filters">
+        ${S.role === 'admin' ? `
+        <select class="filter-select" id="rtQaF" onchange="render()">
+          <option value="">All QA Users</option>${rtQaOpts}
+        </select>
+        ` : ''}
         <select class="filter-select" id="rtModF" onchange="render()">
           <option value="">All Modules</option>${rtModOpts}
         </select>
@@ -2086,33 +2172,62 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ AUTOMATION ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── AUTOMATION ───────────────────────────
     function buildAutomation() {
       const moduleOptions = S.modules.map(mod => `<option value="${mod}"${S.selectedAutomationModule === mod ? ' selected' : ''}>${mod}</option>`).join('');
       const testCaseOptions = S.selectedAutomationModule ? S.testCases.filter(tc => tc.module === S.selectedAutomationModule).map(tc => {
         const tcId = String(tc.id);
         const shortDesc = tc.testCase.length > 50 ? tc.testCase.substring(0, 50) + '...' : tc.testCase;
-        return `<option value="${tcId}"${S.selectedAutomationTc === tcId ? ' selected' : ''}>${tcId}: ${shortDesc} (${tc.status})</option>`;
+        return `<option value="${tcId}"${S.selectedAutomationTc === tcId ? ' selected' : ''}>${tcId}: ${shortDesc}</option>`;
       }).join('') : '';
+
+      let tbodyHtml = `<tr>
+        <td class="td-id">—</td>
+        <td class="td-title">—</td>
+        <td class="td-truncate">—</td>
+        <td>—</td>
+        <td>—</td>
+        <td class="td-truncate">—</td>
+        <td class="td-truncate">—</td>
+        <td class="td-truncate">—</td>
+        <td>—</td>
+        <td>—</td>
+        <td class="td-truncate">—</td>
+        <td class="td-truncate">—</td>
+      </tr>`;
+
+      if (S.selectedAutomationModule && S.selectedAutomationTc) {
+        const tc = S.testCases.find(t => String(t.id) === String(S.selectedAutomationTc) && t.module === S.selectedAutomationModule);
+        if (tc) {
+          tbodyHtml = `<tr>
+            <td class="td-id">${tc.id}</td>
+            <td class="td-title">${tc.testCase}</td>
+            <td class="td-truncate">${tc.scenario || '—'}</td>
+            <td>${tc.module}</td>
+            <td>${tc.screen || '—'}</td>
+            <td class="td-truncate">${tc.steps || '—'}</td>
+            <td class="td-truncate">${tc.expected || '—'}</td>
+            <td class="td-truncate">${tc.actual || '—'}</td>
+            <td>${statusBadge(tc.status)}</td>
+            <td>${sevBadge(tc.severity)}</td>
+            <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2)}</td>
+            <td class="td-truncate">${tc.notes || '—'}</td>
+          </tr>`;
+        }
+      }
+
+      const selectedTcPreview = `
+        <div class="tbl-wrap scrollable" style="margin-top: 20px; margin-bottom: 20px;"><table>
+          <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
+          <tbody>${tbodyHtml}</tbody>
+        </table></div>
+      `;
+
       return `
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Automation</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
+      
     </div>
   </div>
   <style>
@@ -2171,19 +2286,108 @@
       font-size: 16px;
       letter-spacing: 0.1em;
     }
+    .tech-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--font);
+      background: linear-gradient(180deg, var(--bg3) 0%, var(--bg2) 100%);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      cursor: default;
+      position: relative;
+    }
+    [data-theme='light'] .tech-badge {
+      background: linear-gradient(180deg, var(--bg2) 0%, var(--bg) 100%);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    }
+    .tech-stack-container {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+      margin-bottom: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      padding: 14px 18px;
+      background: linear-gradient(90deg, var(--bg3), transparent);
+      border-left: 3px solid var(--border2);
+      border-radius: 6px 12px 12px 6px;
+    }
+    [data-theme='light'] .tech-stack-container {
+      background: linear-gradient(90deg, var(--bg3), transparent);
+    }
+    .tech-stack-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text3);
+      margin-right: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
   </style>
-  <div class="section hover-blur-container">
-    <div class="hover-blur-overlay">
-      <div class="coming-soon-badge">
-        <svg class="coming-soon-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        <span class="coming-soon-text">COMING SOON</span>
+
+  <div style="margin-bottom: 24px;">
+    <div class="tech-stack-container" style="margin: 0; border-radius: 12px;">
+      <span class="tech-stack-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        Supported Tech Stack
+      </span>
+      
+      <div class="tech-badge" title="Python">
+        <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><linearGradient id="python-original-a" gradientUnits="userSpaceOnUse" x1="70.252" y1="1237.476" x2="170.659" y2="1151.089" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#5A9FD4"/><stop offset="1" stop-color="#306998"/></linearGradient><linearGradient id="python-original-b" gradientUnits="userSpaceOnUse" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)"><stop offset="0" stop-color="#FFD43B"/><stop offset="1" stop-color="#FFE873"/></linearGradient><path fill="url(#python-original-a)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z" transform="translate(0 10.26)"/><path fill="url(#python-original-b)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z" transform="translate(0 10.26)"/></svg>
+        Python
       </div>
-      <div style="margin-top: 16px; color: var(--text2); font-size: 13px; font-weight: 500; opacity: 0; transform: translateY(10px); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;">Automation features are currently under development</div>
+
+      <div class="tech-badge" title="JavaScript">
+        <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#F0DB4F" d="M1.408 1.408h125.184v125.185H1.408z"/><path fill="#323330" d="M116.347 96.736c-.917-5.711-4.641-10.508-15.672-14.981-3.832-1.761-8.104-3.022-9.377-5.926-.452-1.69-.512-2.642-.226-3.665.821-3.32 4.784-4.355 7.925-3.403 2.023.678 3.938 2.237 5.093 4.724 5.402-3.498 5.391-3.475 9.163-5.879-1.381-2.141-2.118-3.129-3.022-4.045-3.249-3.629-7.676-5.498-14.756-5.355l-3.688.477c-3.534.893-6.902 2.748-8.877 5.235-5.926 6.724-4.236 18.492 2.975 23.335 7.104 5.332 17.54 6.545 18.873 11.531 1.297 6.104-4.486 8.08-10.234 7.378-4.236-.881-6.592-3.034-9.139-6.949-4.688 2.713-4.688 2.713-9.508 5.485 1.143 2.499 2.344 3.63 4.26 5.795 9.068 9.198 31.76 8.746 35.83-5.176.165-.478 1.261-3.666.38-8.581zM69.462 58.943H57.753l-.048 30.272c0 6.438.333 12.34-.714 14.149-1.713 3.558-6.152 3.117-8.175 2.427-2.059-1.012-3.106-2.451-4.319-4.485-.333-.584-.583-1.036-.667-1.071l-9.52 5.83c1.583 3.249 3.915 6.069 6.902 7.901 4.462 2.678 10.459 3.499 16.731 2.059 4.082-1.189 7.604-3.652 9.448-7.401 2.666-4.915 2.094-10.864 2.07-17.444.06-10.735.001-21.468.001-32.237z"/></svg>
+        JavaScript
+      </div>
+
+      <div class="tech-badge" title="Java">
+        <svg style="width:16px; height:16px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#0074BD" d="M47.617 98.12s-4.767 2.774 3.397 3.71c9.892 1.13 14.947.968 25.845-1.092 0 0 2.871 1.795 6.873 3.351-24.439 10.47-55.308-.607-36.115-5.969zm-2.988-13.665s-5.348 3.959 2.823 4.805c10.567 1.091 18.91 1.18 33.354-1.6 0 0 1.993 2.025 5.132 3.131-29.542 8.64-62.446.68-41.309-6.336z"/><path fill="#EA2D2E" d="M69.802 61.271c6.025 6.935-1.58 13.17-1.58 13.17s15.289-7.891 8.269-17.777c-6.559-9.215-11.587-13.792 15.635-29.58 0 .001-42.731 10.67-22.324 34.187z"/><path fill="#0074BD" d="M102.123 108.229s3.529 2.91-3.888 5.159c-14.102 4.272-58.706 5.56-71.094.171-4.451-1.938 3.899-4.625 6.526-5.192 2.739-.593 4.303-.485 4.303-.485-4.953-3.487-32.013 6.85-13.743 9.815 49.821 8.076 90.817-3.637 77.896-9.468zM49.912 70.294s-22.686 5.389-8.033 7.348c6.188.828 18.518.638 30.011-.326 9.39-.789 18.813-2.474 18.813-2.474s-3.308 1.419-5.704 3.053c-23.042 6.061-67.544 3.238-54.731-2.958 10.832-5.239 19.644-4.643 19.644-4.643zm40.697 22.747c23.421-12.167 12.591-23.86 5.032-22.285-1.848.385-2.677.72-2.677.72s.688-1.079 2-1.543c14.953-5.255 26.451 15.503-4.823 23.725 0-.002.359-.327.468-.617z"/><path fill="#EA2D2E" d="M76.491 1.587S89.459 14.563 64.188 34.51c-20.266 16.006-4.621 25.13-.007 35.559-11.831-10.673-20.509-20.07-14.688-28.815C58.041 28.42 81.722 22.195 76.491 1.587z"/><path fill="#0074BD" d="M52.214 126.021c22.476 1.437 57-.8 57.817-11.436 0 0-1.571 4.032-18.577 7.231-19.186 3.612-42.854 3.191-56.887.874 0 .001 2.875 2.381 17.647 3.331z"/></svg>
+        Java
+      </div>
+
+      <div class="tech-badge" title="Selenium">
+        <svg style="width:16px; height:16px;" viewBox="-6.5 0 269 269" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+          <g>
+            <path d="M234.152874,0.00343857381 C234.808025,-0.0379575263 235.429647,0.297028821 235.755341,0.866994098 C236.081036,1.43695938 236.054047,2.14258032 235.685767,2.68600216 L235.685767,2.68600216 L169.388124,92.7434941 C168.902258,93.2919104 168.204691,93.6058549 167.472007,93.6058549 C166.739323,93.6058549 166.041756,93.2919104 165.55589,92.7434941 L165.55589,92.7434941 L142.179265,66.684305 C141.608302,66.0916135 140.79919,65.7901017 139.979599,65.86461 C139.160008,65.9391182 138.418531,66.3815927 137.963808,67.0675283 L137.963808,67.0675283 L123.784543,85.0790267 C123.335922,86.0932522 123.483294,87.2722249 124.167766,88.1448137 L124.167766,88.1448137 L166.322337,131.832278 C166.808203,132.380694 167.50577,132.694639 168.238454,132.694639 C168.971138,132.694639 169.668705,132.380694 170.154571,131.832278 L170.154571,131.832278 L252.930819,38.708999 C253.419531,38.1837537 254.176911,38.0053627 254.848672,38.2572733 C255.520434,38.5091839 255.973764,39.1415911 255.996606,39.8586691 L255.996606,39.8586691 L255.996606,266.343681 C256.028319,266.860939 255.83665,267.366955 255.470206,267.733398 C255.103763,268.099842 254.597747,268.291511 254.080489,268.259798 L254.080489,268.259798 L1.91951123,268.259798 C1.40225345,268.291511 0.896236952,268.099842 0.529793658,267.733398 C0.163350364,267.366955 -0.0283193115,266.860939 0.00339438157,266.343681 L0.00339438157,266.343681 L0.00339438157,1.91955542 C-0.0283193115,1.40229764 0.163350364,0.896281144 0.529793658,0.52983785 C0.896236952,0.163394556 1.40225345,-0.0282751193 1.91951123,0.00343857381 L1.91951123,0.00343857381 Z M169.004901,152.909563 C157.595908,152.708949 146.600443,157.179283 138.568082,165.284007 C130.535722,173.388731 126.164179,184.423846 126.467107,195.830581 C126.467107,222.272993 145.628275,239.134822 170.537794,239.134822 C182.068736,239.421769 193.375993,235.921903 202.728557,229.171014 C203.595534,228.383773 203.758299,227.081655 203.111781,226.105227 L203.111781,226.105227 L196.21376,215.758196 C195.438224,214.868953 194.118537,214.703992 193.147973,215.374973 C187.152367,219.469543 180.095799,221.73297 172.837134,221.88977 C159.424316,221.88977 150.993402,213.458856 149.460509,203.495048 C149.488325,203.083823 149.815731,202.756417 150.226955,202.728601 L150.226955,202.728601 L208.093684,202.728601 C209.327358,202.645153 210.309577,201.662935 210.393025,200.429261 L210.393025,200.429261 L210.393025,198.129921 C210.393025,171.304285 193.531196,152.909563 169.004901,152.909563 Z M111.904618,138.347075 C100.26487,128.832771 85.5368757,123.923439 70.5164945,124.551034 C44.4573053,124.551034 28.3619238,139.879969 28.3619238,158.27469 C28.3619238,200.046038 91.9770032,186.63322 91.9770032,206.177612 C91.9770032,212.309186 85.8454293,218.44076 72.8158347,218.44076 C60.4410031,218.54287 48.5018438,213.876992 39.4754015,205.411165 C38.9365113,204.907341 38.2064628,204.660494 37.4723971,204.733901 C36.7383313,204.807307 36.0716199,205.19383 35.6431678,205.794388 L35.6431678,205.794388 L25.6793602,219.59043 C25.0328421,220.566858 25.1956068,221.868976 26.0625835,222.656217 C36.4096145,232.236801 50.9721026,238.751598 71.2829412,238.751598 C101.174364,238.751598 115.736852,223.422663 116.503299,203.495048 C116.503299,162.106924 52.8882195,173.986849 52.8882195,156.358574 C52.8882195,149.843776 58.63657,145.245096 68.6003776,145.245096 C79.5839899,145.094583 90.2811092,148.750561 98.8750239,155.592127 C99.3802624,156.006036 100.031063,156.198722 100.680205,156.126595 C101.329346,156.054468 101.921977,155.723624 102.324034,155.208903 L102.324034,155.208903 L112.287842,141.796086 C112.701751,141.290847 112.894437,140.640046 112.82231,139.990905 C112.750183,139.341763 112.419339,138.749133 111.904618,138.347075 Z M169.388124,169.771392 C179.811439,169.188344 188.809537,176.998014 189.698963,187.399667 C189.671147,187.810891 189.34374,188.138297 188.932516,188.166113 L188.932516,188.166113 L149.843732,188.166113 C149.432507,188.138297 149.105101,187.810891 149.077285,187.399667 C150.358676,177.20234 159.111948,169.60516 169.388124,169.771392 Z" fill="#2CB134"></path>
+          </g>
+        </svg>
+        Selenium
+      </div>
+
+      <div class="tech-badge" title="Playwright">
+        <svg style="width:16px; height:16px;" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 508 508" xml:space="preserve">
+          <circle style="fill:#FD8469;" cx="254" cy="254" r="254"/>
+          <path style="fill:#324A5E;" d="M405.6,163.2c-26.8,15.2-60,29.6-96.8,41.6c-36.8,12-72,19.2-102.8,22.8c2,16.4,5.6,33.6,11.2,50.8
+            c29.2,90,99.6,148,157.2,129.6c57.6-18.8,81.2-106.8,52-196.8C420.8,194,413.6,178,405.6,163.2z M236,267.6
+            c26-14.4,58.8-5.2,73.6,20.8l0,0C283.2,303.2,250.4,293.6,236,267.6z M360.8,366c-33.2,10.8-68.8-5.6-82.8-36.4
+            c19.6,11.2,46.4,14,73.2,5.6c26.4-8.4,46.4-26.4,56-47.2C413.6,321.6,394,355.2,360.8,366z M357.2,273.2L357.2,273.2
+            c-3.6-29.6,17.6-56.4,47.2-60C408,242.8,386.8,269.6,357.2,273.2z"/>
+          <path style="fill:#FFFFFF;" d="M322.4,155.2c-34-2-73.6-8-114.8-18.8s-78.4-24.8-109.2-40c-8,16.4-14.8,34.4-20,54
+            C52,251.6,83.2,347.6,148,364.4c64.8,16.8,138.8-51.2,165.2-152.4C318.4,192.4,321.6,173.6,322.4,155.2z M102.4,151.6
+            c32.8,2,58,30.4,56,63.2l0,0C125.6,212.8,100.4,184.4,102.4,151.6z M160.4,317.2c-37.2-9.6-60.8-45.6-55.6-83.2
+            c11.6,22.4,35.2,40.8,64.8,48.4s59.2,2.8,80.4-10.8C236,307.2,197.6,327.2,160.4,317.2z M212.4,228.8L212.4,228.8
+            c14.4-29.6,50-42,79.6-27.6C277.6,230.8,242,243.2,212.4,228.8z"/>
+        </svg>
+        Playwright
+      </div>
     </div>
+  </div>
+
+  <div class="section">
     <div class="section-hdr">
-      <div>
+      <div style="width: 100%;">
         <div class="section-title">Test Case Automation</div>
-        <div class="automation-notice">ΓÜÖ Coming Soon - Automation features are currently under development. Check back soon for updates on automated testing capabilities.</div>
       </div>
     </div>
     <div style="padding: 20px;">
@@ -2203,52 +2407,217 @@
           </select>
         </div>
       </div>
-      <div class="field">
-        <label>Automation Script (Java)</label>
-        <textarea id="auto-script" rows="15" placeholder="Write your Java automation script here. Access test case data via variables like id, testCaseName, expected, actual, etc.
-// Example:
-// if (expected.equals(actual)) {
-//     System.out.println("PASS");
-// } else {
-//     System.out.println("FAIL");
-// }" ${S.role === 'qa' ? '' : 'readonly'}></textarea>
+      <div id="auto-tc-preview">${selectedTcPreview}</div>
+      <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,0.06); display:flex; flex-direction:column; margin-bottom:24px; position:relative;">
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 20px; background:var(--bg3); border-bottom:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--text3)" stroke-width="2" fill="none"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            <span style="font-size:13px; font-weight:600; color:var(--text2);">Bug OS IDE</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <select id="auto-language-select" onchange="onAutoLangChange()" style="background:var(--bg); border:1px solid var(--border); color:var(--text); font-size:12px; padding:4px 28px 4px 12px; border-radius:6px; outline:none; cursor:pointer; min-width: 140px;">
+              <option value="python"${S.selectedAutomationLanguage === 'python' || !S.selectedAutomationLanguage ? ' selected' : ''}>Python</option>
+              <option value="javascript"${S.selectedAutomationLanguage === 'javascript' ? ' selected' : ''}>JavaScript</option>
+              <option value="java"${S.selectedAutomationLanguage === 'java' ? ' selected' : ''}>Java</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="codemirror-container" style="height:400px; width:100%; text-align:left;"></div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 20px; background:var(--bg3); border-top:1px solid var(--border);">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <span style="font-size:11px; color:var(--text3); display:flex; align-items:center; gap:4px;">
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              Auto-saved locally
+            </span>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <button class="btn btn-ghost" onclick="clearAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>
+              Clear
+            </button>
+            <button class="btn btn-ghost" onclick="saveAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="margin-right:6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Save (Ctrl+S)
+            </button>
+            <button class="btn btn-ghost" onclick="runAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="margin-right:6px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg> Run Script
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="automation-actions">
-        <button class="btn btn-primary" onclick="runAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>Run Script</button>
-        <button class="btn btn-success" onclick="saveAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>Save Script</button>
-        <button class="btn btn-ghost" onclick="clearAutomationScript()" ${S.role === 'qa' ? '' : 'disabled style="opacity:0.5;cursor:not-allowed"'}>Clear</button>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:24px;">
+        
+        <div style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:inset 0 2px 10px rgba(0,0,0,0.05);">
+          <div style="padding:10px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; background:var(--bg3);">
+            <div style="display:flex; gap:6px;">
+              <div style="width:10px; height:10px; border-radius:50%; background:#ef4444;"></div>
+              <div style="width:10px; height:10px; border-radius:50%; background:#f59e0b;"></div>
+              <div style="width:10px; height:10px; border-radius:50%; background:#10b981;"></div>
+            </div>
+            <span style="font-weight:bold; font-size:12px; color:var(--text2); margin-left:8px;">Bug OS Bash</span>
+          </div>
+          <div id="script-output" style="padding:16px; font-size:12px; color:var(--text2); height:300px; overflow:auto;">
+            ${S.automationOutput || `<span style="color:var(--text3);">&gt; Waiting for script execution...</span>`}
+          </div>
+        </div>
+
+        <div id="video-preview-container" style="background:var(--bg2); border:1px solid var(--border); border-radius:12px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,0.04); display:flex; flex-direction:column; height:342px;">
+          <div style="padding:10px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; background:var(--bg3);">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="var(--text3)" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+            <span style="font-size:12px; font-weight:600; color:var(--text2);">Live Playback</span>
+          </div>
+          <div style="flex:1; display:flex; align-items:center; justify-content:center; background:var(--bg2); overflow:hidden;">
+            ${S.automationVideo || `
+            <div style="padding:16px; width:100%; height:100%; display:flex; align-items:center; justify-content:center; box-sizing:border-box;">
+              <div style="text-align:center; padding:30px; border:2px dashed var(--border); border-radius:12px; background:var(--bg); transition:all 0.3s; color:var(--text3); width:100%;">
+                <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="1.5" fill="none" style="margin-bottom:12px; opacity:0.6; display:inline-block;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <div style="font-size:14px; font-weight:600; color:var(--text2); margin-bottom:4px;">No Video Recorded</div>
+                <div style="font-size:12px; max-width:240px; margin:0 auto; line-height:1.6;">Configure <code style="background:var(--bg3); padding:2px 6px; border-radius:4px; font-family:var(--mono);">record_video_dir</code> in Playwright to see playback here.</div>
+              </div>
+            </div>
+            `}
+          </div>
+        </div>
+
       </div>
-      <div id="script-output" class="automation-output"></div>
     </div>
-  </div>`;
+  </div> `;
     }
 
     function updateTestCaseOptions() {
       const moduleSelect = document.getElementById('auto-module-select');
       S.selectedAutomationModule = moduleSelect.value;
       S.selectedAutomationTc = ''; // Reset test case selection
+      S.automationOutput = '';
+      S.automationVideo = '';
+      S.currentUnsavedScript = '';
+
+      // Destroy CodeMirror so render() doesn't overwrite S.currentUnsavedScript with the old script
+      if (window.cmEditor) {
+        window.cmEditor.destroy();
+        window.cmEditor = null;
+      }
+
       render();
     }
 
     function loadTestCaseScript() {
       const tcSelect = document.getElementById('auto-tc-select');
       S.selectedAutomationTc = tcSelect.value;
+      S.automationOutput = '';
+      S.automationVideo = '';
       const scriptArea = document.getElementById('auto-script');
+      const langSelect = document.getElementById('auto-language-select');
+      const previewArea = document.getElementById('auto-tc-preview');
+
       if (!S.selectedAutomationModule || !S.selectedAutomationTc) {
-        scriptArea.value = '';
+        if (scriptArea) scriptArea.value = '';
+        S.currentUnsavedScript = '';
+        if (window.cmEditor) {
+          window.cmEditor.dispatch({
+            changes: { from: 0, to: window.cmEditor.state.doc.length, insert: '' }
+          });
+        }
+        if (langSelect) {
+          langSelect.value = S.selectedAutomationLanguage || 'python';
+          langSelect.dispatchEvent(new Event('custom-update'));
+          onAutoLangChange();
+        }
+        if (previewArea) previewArea.innerHTML = '';
         return;
       }
-      const script = S.automationScripts.find(s => s.testCaseId === S.selectedAutomationTc && s.module === S.selectedAutomationModule);
-      scriptArea.value = script ? script.script : '';
+
+      const tc = S.testCases.find(t => String(t.id) === String(S.selectedAutomationTc) && t.module === S.selectedAutomationModule);
+      if (tc && previewArea) {
+        previewArea.innerHTML = `
+          <div class="tbl-wrap scrollable" style="margin-top: 20px; margin-bottom: 20px;" > <table>
+            <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="td-id">${tc.id}</td>
+                <td class="td-title">${tc.testCase}</td>
+                <td class="td-truncate">${tc.scenario || '—'}</td>
+                <td>${tc.module}</td>
+                <td>${tc.screen || '—'}</td>
+                <td class="td-truncate">${tc.steps || '—'}</td>
+                <td class="td-truncate">${tc.expected || '—'}</td>
+                <td class="td-truncate">${tc.actual || '—'}</td>
+                <td>${statusBadge(tc.status)}</td>
+                <td>${sevBadge(tc.severity)}</td>
+                <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2)}</td>
+                <td class="td-truncate">${tc.notes || '—'}</td>
+              </tr>
+            </tbody>
+          </table></div>
+            `;
+      } else if (previewArea) {
+        previewArea.innerHTML = `
+            <div class="tbl-wrap scrollable" style="margin-top: 20px; margin-bottom: 20px;" > <table>
+              <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td class="td-id">—</td>
+                  <td class="td-title">—</td>
+                  <td class="td-truncate">—</td>
+                  <td>—</td>
+                  <td>—</td>
+                  <td class="td-truncate">—</td>
+                  <td class="td-truncate">—</td>
+                  <td class="td-truncate">—</td>
+                  <td>—</td>
+                  <td>—</td>
+                  <td class="td-truncate">—</td>
+                  <td class="td-truncate">—</td>
+                </tr>
+              </tbody>
+            </table></div>
+              `;
+      }
+
+      const langKey = S.selectedAutomationLanguage || (document.getElementById('auto-language-select') || {}).value || 'python';
+      const script = S.automationScripts.find(s => String(s.testCaseId) === String(S.selectedAutomationTc) && s.module === S.selectedAutomationModule && s.language === langKey);
+
+      // Update editor text
+      const templates = {
+        python: `from selenium import webdriver\nfrom selenium.webdriver.chrome.options import Options\n# OR: from playwright.sync_api import sync_playwright\n\ntry: \n    # DOCKER REQUIRED OPTIONS(For Selenium): \n    # options = Options() \n    # options.add_argument("--headless=new") \n    # options.add_argument("--no-sandbox") \n    # options.add_argument("--disable-dev-shm-usage") \n    \n    # Your logic here...\n    \n    # IMPORTANT: BugOS requires the script to explicitly output PASS or FAIL\n    print("PASS") \nexcept Exception as e: \n    print("FAIL") \n    print(str(e))`,
+        javascript: `const { Builder, By } = require("selenium-webdriver"); \nconst chrome = require("selenium-webdriver/chrome"); \n// OR: const { chromium } = require('playwright');\n\n(async function() {\n  try {\n    // DOCKER REQUIRED OPTIONS (For Selenium):\n    // const options = new chrome.Options();\n    // options.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage");\n    \n    // Your logic here...\n    \n    // IMPORTANT: BugOS requires the script to explicitly output PASS or FAIL\n    console.log("PASS");\n  } catch (err) {\n    console.log("FAIL");\n    console.log(err.message);\n  }\n})();`,
+        java: `public class Script {\n    public static void main(String[] args) {\n        try {\n            // DOCKER REQUIRED OPTIONS (For Selenium):\n            // ChromeOptions options = new ChromeOptions();\n            // options.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage");\n\n            // Your logic here...\n\n            // IMPORTANT: BugOS requires the script to explicitly output PASS or FAIL\n            System.out.println("PASS");\n        } catch (Exception e) {\n            System.out.println("FAIL");\n            e.printStackTrace();\n        }\n    }\n}`
+      };
+      const existingScript = (script && script.script && script.script.trim() !== '') ? script.script : '';
+      S.currentUnsavedScript = existingScript ? existingScript : (templates[langKey] || '');
+      if (window.cmEditor) {
+        window.cmEditor.dispatch({
+          changes: { from: 0, to: window.cmEditor.state.doc.length, insert: S.currentUnsavedScript }
+        });
+      }
+
+      // Update language selection
+      if (langSelect) {
+        langSelect.value = langKey;
+        // Explicitly update options so that default selection matches
+        Array.from(langSelect.options).forEach(opt => opt.selected = opt.value === langKey);
+        langSelect.dispatchEvent(new Event('custom-update'));
+        onAutoLangChange(true);
+      }
     }
 
     function clearAutomationScript() {
-      document.getElementById('auto-script').value = '';
-      document.getElementById('script-output').textContent = '';
+      if (window.cmEditor) {
+        window.cmEditor.dispatch({
+          changes: { from: 0, to: window.cmEditor.state.doc.length, insert: '' }
+        });
+      }
+      S.currentUnsavedScript = '';
+      S.automationOutput = '';
+      S.automationVideo = '';
+      render();
     }
 
     function saveAutomationScript() {
-      const script = document.getElementById('auto-script').value.trim();
+      const script = window.cmEditor ? window.cmEditor.state.doc.toString().trim() : (S.currentUnsavedScript || '').trim();
+      const language = document.getElementById('auto-language-select').value;
       if (!S.selectedAutomationModule || !S.selectedAutomationTc) {
         toast('Please select module and test case first', 'error');
         return;
@@ -2261,10 +2630,11 @@
         testCaseId: S.selectedAutomationTc,
         module: S.selectedAutomationModule,
         script,
+        language,
         updatedAt: now(),
         updatedBy: S.auth.user
       };
-      const existingIndex = S.automationScripts.findIndex(s => s.testCaseId === scriptData.testCaseId && s.module === scriptData.module);
+      const existingIndex = S.automationScripts.findIndex(s => String(s.testCaseId) === String(scriptData.testCaseId) && s.module === scriptData.module && s.language === scriptData.language);
       if (existingIndex !== -1) {
         S.automationScripts[existingIndex] = scriptData;
       } else {
@@ -2276,8 +2646,8 @@
     }
 
     async function runAutomationScript() {
-      const script = document.getElementById('auto-script').value.trim();
-      const output = document.getElementById('script-output');
+      const script = window.cmEditor ? window.cmEditor.state.doc.toString().trim() : (S.currentUnsavedScript || '').trim();
+      const language = document.getElementById('auto-language-select').value;
 
       if (!S.selectedAutomationModule || !S.selectedAutomationTc) {
         toast('Please select module and test case first', 'error');
@@ -2289,30 +2659,229 @@
         return;
       }
 
+      const tcBefore = S.testCases.find(t => String(t.id) === String(S.selectedAutomationTc) && t.module === S.selectedAutomationModule);
+      const oldStatus = tcBefore ? tcBefore.status : null;
+
+      S.automationOutput = `
+        <div style="display:flex; align-items:center; gap:8px;">
+          <svg class="spin" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg> 
+          Running automation script...
+        </div>
+      `;
+      S.automationVideo = '';
+      render();
+
       try {
         const response = await fetch('/api/run-automation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ testCaseId: S.selectedAutomationTc, module: S.selectedAutomationModule, script })
+          body: JSON.stringify({ testCaseId: S.selectedAutomationTc, module: S.selectedAutomationModule, script, language })
         });
         const result = await response.json();
-        if (!response.ok) {
-          throw new Error(result.error || 'Execution failed');
+
+        let videoHtml = '';
+        if (result.videoUrl) {
+          videoHtml = `
+             <video src="${result.videoUrl}" controls autoplay muted style="width:100%; height:100%; object-fit:contain; background:#000; display:block;"></video>
+           `;
+        } else {
+          videoHtml = `
+            <div style="padding:16px; width:100%; height:100%; display:flex; align-items:center; justify-content:center; box-sizing:border-box;">
+              <div style="text-align:center; padding:30px; border:2px dashed var(--border); border-radius:12px; background:var(--bg); transition:all 0.3s; color:var(--text3); width:100%;">
+                <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="1.5" fill="none" style="margin-bottom:12px; opacity:0.6; display:inline-block;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <div style="font-size:14px; font-weight:600; color:var(--text2); margin-bottom:4px;">No Video Recorded</div>
+                <div style="font-size:12px; max-width:240px; margin:0 auto; line-height:1.6;">Configure <code style="background:var(--bg3); padding:2px 6px; border-radius:4px; font-family:var(--mono);">record_video_dir</code> in Playwright to see playback here.</div>
+              </div>
+            </div>
+           `;
         }
-        output.textContent = `Result: ${result.result} | Output: ${result.output}`;
-        toast(`Test case updated to ${result.result}`, 'success');
+
+        S.automationVideo = videoHtml;
+
+        if (!response.ok) {
+          S.automationOutput = `<div style="color:#ef4444; font-weight:600; font-size:13px; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Error: ${result.error || 'Execution failed'}</div><pre style="margin-top:12px; white-space:pre-wrap; font-size:12px; color:var(--text2); line-height:1.5; font-family:inherit;">${result.details || result.output || ''}</pre>`;
+          render();
+          toast('Script execution failed', 'error');
+          return;
+        }
+
+        S.automationOutput = `<div style="color:${result.result === 'Pass' ? '#10b981' : '#ef4444'}; font-weight:600; font-size:13px; display:flex; align-items:center; gap:6px;"><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg> Result: ${result.result}</div><pre style="margin-top:12px; white-space:pre-wrap; font-size:12px; color:var(--text2); line-height:1.5; font-family:inherit;">${result.output || ''}</pre>`;
+        render();
+
+        if (tcBefore) {
+          const status = result.result;
+          const wasActive = oldStatus === 'Fail' || oldStatus === 'Hold';
+          const isActive = status === 'Fail' || status === 'Hold';
+
+          // Update test case status globally
+          if (tcBefore.status !== status) {
+            tcBefore.status = status;
+            socket.emit('updateData', { type: 'testCase', data: tcBefore });
+            audit(`Automated test changed status of TC ${tcBefore.id} to ${status}`);
+          }
+
+          if (isActive && !wasActive) {
+            autoCreateBug({ ...tcBefore, status });
+          }
+          if (!isActive && wasActive) {
+            const linkedBugs = S.bugs.filter(b => bugRefsTestCaseKeys(b, tcBefore.id, tcBefore.module) && (b.status === 'Open' || b.status === 'Retest Failed' || b.status === 'Escalated'));
+            linkedBugs.forEach(linked => {
+              linked.status = 'Verified';
+              linked.history = linked.history || [];
+              const actorName = S.auth.user ? (S.auth.user.username || 'SYSTEM') : 'SYSTEM';
+              linked.history.push({ date: now(), event: `Bug auto-closed — automated test passed`, actor: actorName });
+              socket.emit('updateData', { type: 'bug', data: linked });
+              audit(`Bug ${linked.id} auto-closed (TC ${tcBefore.id} automated pass)`);
+            });
+          }
+        }
+        // Skip toast to prevent duplicate with websocket toast
       } catch (error) {
-        output.textContent = `Error: ${error.message}`;
+        S.automationOutput = `<div style="color:var(--red); font-weight:600;">Error: ${error.message}</div>`;
+        render();
         toast('Script execution failed', 'error');
       }
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ MODULES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    function initCodeMirror() {
+      if (window.cmEditor) return;
+      const container = document.getElementById('codemirror-container');
+      if (!container || !window.CM) return;
+
+      const langSelect = document.getElementById('auto-language-select');
+      const langKey = langSelect ? langSelect.value : 'python';
+      const langExt = window.CM.langs[langKey] ? window.CM.langs[langKey]() : window.CM.langs.python();
+
+      window.cmLangCompartment = new window.CM.Compartment();
+      window.cmThemeCompartment = new window.CM.Compartment();
+
+      const themeExt = currentTheme === 'dark' ? window.CM.themes.oneDark : window.CM.EditorView.theme({});
+
+      const customKeymap = window.CM.keymap.of([
+        { key: "Mod-s", run: () => { saveAutomationScript(); return true; } },
+        { key: "Mod-Enter", run: () => { runAutomationScript(); return true; } }
+      ]);
+
+      const state = window.CM.EditorState.create({
+        doc: S.currentUnsavedScript || '',
+        extensions: [
+          window.CM.basicSetup,
+          window.cmLangCompartment.of(langExt),
+          window.cmThemeCompartment.of(themeExt),
+          customKeymap,
+          window.CM.EditorView.updateListener.of((update) => {
+            if (update.docChanged) {
+              S.currentUnsavedScript = update.state.doc.toString();
+            }
+          })
+        ]
+      });
+
+      window.cmEditor = new window.CM.EditorView({ state, parent: container });
+    }
+
+    function onAutoLangChange(skipTemplateInjection = false) {
+      const langSelect = document.getElementById('auto-language-select');
+      const langKey = langSelect ? langSelect.value : 'python';
+      S.selectedAutomationLanguage = langKey;
+      if (window.cmEditor && window.cmLangCompartment && window.CM.langs[langKey]) {
+        window.cmEditor.dispatch({
+          effects: window.cmLangCompartment.reconfigure(window.CM.langs[langKey]())
+        });
+
+        if (skipTemplateInjection !== true) {
+          const templates = {
+            python: `from selenium import webdriver\nfrom selenium.webdriver.chrome.options import Options\n# OR: from playwright.sync_api import sync_playwright\n\ntry:\n    # DOCKER REQUIRED OPTIONS (For Selenium):\n    # options = Options()\n    # options.add_argument("--headless=new")\n    # options.add_argument("--no-sandbox")\n    # options.add_argument("--disable-dev-shm-usage")\n    \n    # Your logic here...\n    \n    # IMPORTANT: BugOS requires the script to explicitly output PASS or FAIL\n    print("PASS")\nexcept Exception as e:\n    print("FAIL")\n    print(str(e))`.trim(),
+            javascript: `const { Builder, By } = require("selenium-webdriver");\nconst chrome = require("selenium-webdriver/chrome");\n// OR: const { chromium } = require('playwright');\n\n(async function() {\n  try {\n    // DOCKER REQUIRED OPTIONS (For Selenium):\n    // const options = new chrome.Options();\n    // options.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage");\n    \n    // Your logic here...\n    \n    // IMPORTANT: BugOS requires the script to explicitly output PASS or FAIL\n    console.log("PASS");\n  } catch (err) {\n    console.log("FAIL");\n    console.log(err.message);\n  }\n})();`.trim(),
+            java: `public class Script {\n    public static void main(String[] args) {\n        try {\n            // DOCKER REQUIRED OPTIONS (For Selenium):\n            // ChromeOptions options = new ChromeOptions();\n            // options.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage");\n\n            // Your logic here...\n\n            // IMPORTANT: BugOS requires the script to explicitly output PASS or FAIL\n            System.out.println("PASS");\n        } catch (Exception e) {\n            System.out.println("FAIL");\n            e.printStackTrace();\n        }\n    }\n}`.trim()
+          };
+          S.currentUnsavedScript = templates[langKey] || '';
+          window.cmEditor.dispatch({
+            changes: { from: 0, to: window.cmEditor.state.doc.length, insert: S.currentUnsavedScript }
+          });
+        }
+      }
+    }
+
+    // ─────────────────────────── MODULES ───────────────────────────
+    
+    function switchModulesTab(tabId) {
+      S.modulesTab = tabId;
+      render();
+    }
+
+    function buildAddModuleTab() {
+      return `
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">Add New Module</div>
+    </div>
+    <div style="padding: 24px;">
+      <div class="field" style="max-width: 400px;">
+        <label>Module Name <span class="required">*</span></label>
+        <input id="f-inline-modname" placeholder="e.g. User Management, Payment, Reports">
+      </div>
+      <div style="margin-top: 24px; display: flex; gap: 12px;">
+        <button class="btn btn-ghost" onclick="submitInlineModule()" style="padding:7px 20px;">Add Module</button>
+        <button class="btn btn-ghost" onclick="if(S.role !== 'qa') { showBannedModal(); return; } document.getElementById('f-inline-modname').value=''" style="padding:7px 20px;">Cancel</button>
+      </div>
+    </div>
+  </div>`;
+    }
+
+    function submitInlineModule() {
+      if (S.role !== 'qa') { showBannedModal(); return; }
+      const name = document.getElementById('f-inline-modname').value.trim();
+      if (!name) { toast('Module name required', 'error'); return; }
+      if (S.modules.includes(name)) { toast('Module already exists', 'error'); return; }
+      S.modules.push(name);
+      audit(`Module "${name}" added`);
+      socket.emit('updateData', { type: 'module', data: { name } });
+      save();
+      toast(`Module "${name}" added`, 'success');
+      switchModulesTab('all');
+    }
+
     function buildModules() {
+      S.modulesTab = S.modulesTab || 'all';
+      const tabStyle = (isActive) => isActive
+        ? `background:var(--text); color:var(--bg); border-color:var(--text); cursor:default; box-shadow:0 2px 8px rgba(0,0,0,0.1);`
+        : `background:transparent; color:var(--text2); border-color:transparent; cursor:pointer; opacity:0.8; transition:all 0.2s;`;
+
       const modQ = (document.getElementById('modQ') || { value: '' }).value.toLowerCase();
       let filteredModules = S.modules;
       if (modQ) {
         filteredModules = filteredModules.filter(m => textMatchesQuery(m, modQ));
+      }
+
+      let approvalsHtml = '';
+      if (S.role === 'admin' && S.modulesPendingDelete && S.modulesPendingDelete.length > 0 && S.modulesTab === 'all') {
+        approvalsHtml = `<div class="section" style="margin-bottom:24px; border:1px solid var(--red-border); border-radius:16px; background:var(--red-bg); padding:16px;">
+          <div style="font-size:14px; font-weight:700; color:var(--red); margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Pending Deletion Approvals
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            ${S.modulesPendingDelete.map(m => `
+              <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg2); padding:12px 16px; border-radius:8px; border:1px solid var(--border);">
+                <div>
+                  <span style="font-weight:600; color:var(--text);">${m.name}</span>
+                  <span style="font-size:12px; color:var(--text3); margin-left:8px;">Requested by: <span style="font-weight:700;">${m.deleteRequestedBy || 'QA'}</span></span>
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-ghost btn-sm" style="color:var(--red); border-color:var(--red-border); background:var(--red-bg); border-radius:6px; cursor:pointer;" onclick="approveModuleDelete('${m.name}')">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    Approve Delete
+                  </button>
+                  <button class="btn btn-ghost btn-sm" style="color:var(--text2); border-color:var(--border); border-radius:6px; cursor:pointer;" onclick="rejectModuleDelete('${m.name}')">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    Reject
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>`;
       }
 
       const cards = filteredModules.map(mod => {
@@ -2323,11 +2892,12 @@
         const bugs = S.bugs.filter(b => b.module === mod);
         const openB = bugs.filter(b => b.status === 'Open').length;
         const pct = tcs.length ? Math.round(pass / tcs.length * 100) : 0;
-        const canDelete = S.role === 'qa';
+        const canDelete = S.role === 'qa' || S.role === 'admin';
+        const isPendingDelete = S.modulesPendingDelete && S.modulesPendingDelete.some(m => m.name === mod);
         return `<div class="section" style="margin-bottom:16px; border-radius:16px; overflow:hidden; transition:all 0.2s; border:1px solid var(--border);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.06)';this.style.borderColor='var(--border2)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.02)';this.style.borderColor='var(--border)'">
       <div class="section-hdr" style="padding:16px 20px; background:linear-gradient(90deg, var(--bg3) 0%, transparent 100%); border-bottom:1px solid var(--border);">
         <div class="section-title" style="font-size:16px; letter-spacing:-0.02em;">${mod}</div>
-        ${canDelete ? `<button class="btn btn-ghost btn-sm" style="border-radius:12px; padding:4px 10px; font-size:11px; color:var(--red); border-color:var(--red-border); background:var(--red-bg);" onclick="deleteModule('${mod}')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete Module</button>` : ''}
+        ${isPendingDelete ? `<button class="btn btn-ghost btn-sm" style="border-radius:12px; padding:4px 10px; font-size:11px; color:var(--orange); border-color:var(--orange-border); background:var(--orange-bg); cursor:not-allowed;" disabled><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Pending Deletion Approval</button>` : canDelete ? `<button class="btn btn-ghost btn-sm" style="border-radius:12px; padding:4px 10px; font-size:11px; color:var(--red); border-color:var(--red-border); background:var(--red-bg);" onclick="deleteModule('${mod}')"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Delete Module</button>` : ''}
       </div>
       <div style="padding:20px; display:grid; grid-template-columns:repeat(5,1fr); gap:16px;">
         <div style="background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center;"><div style="font-size:10px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.08em;">Total Tests</div><div style="font-size:24px; font-weight:700; font-family:var(--mono); margin-top:4px; color:var(--text);">${tcs.length}</div></div>
@@ -2350,35 +2920,42 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Modules</div>
     <div style="display:flex; align-items:center; gap:16px;">
+    </div>
+  </div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+    <div style="display:flex; align-items:center; gap:8px; padding:4px; background:var(--bg2); border-radius:30px; display:inline-flex; border:1px solid var(--border);">
+      <div onclick="switchModulesTab('all')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.modulesTab === 'all')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.modulesTab === 'all' ? '1' : '0.8'}'">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        All Modules
+      </div>
+      ${['qa', 'dev', 'admin'].includes(S.role) ? `
+      <div onclick="switchModulesTab('add')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.modulesTab === 'add')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.modulesTab === 'add' ? '1' : '0.8'}'">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Module
+      </div>
+      ` : ''}
+    </div>
+    <div style="display:flex; align-items:center; gap:16px;">
       <div style="position:relative; width:220px;">
         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" id="modQ" class="filter-select" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search modules..." oninput="liveFilter(this)" value="${escHtml(modQ).replace(/\"/g, '&quot;')}">
       </div>
-      ${S.role === 'qa' ? `<button class="btn btn-ghost" style="padding:6px 16px; font-size:12px; font-weight:600; border-radius:24px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 1px 2px rgba(0,0,0,0.05);" onclick="openAddModule()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Module</button>` : ''}
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
+
+      
     </div>
   </div>`;
       const emptyMsg = S.modules.length === 0
         ? `No modules yet. ${S.role === 'qa' ? 'Add your first module.' : 'Contact QA to add modules.'}`
         : 'No modules matches filters';
-      return header + (cards || `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></div>${emptyMsg}</div>`);
+        
+      if (S.modulesTab === 'add') {
+        return header + buildAddModuleTab();
+      }
+
+      return header + approvalsHtml + (cards || `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg></div>${emptyMsg}</div>`);
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ AUDIT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── AUDIT ───────────────────────────
     function buildAudit() {
       const auditQ = (document.getElementById('auditQ') || { value: '' }).value.toLowerCase();
       const titles = { dashboard: 'Dashboard', testcases: 'Test Cases', bugs: 'Bug Reports', retest: 'Retest Queue', escalations: 'Backend Escalations', automation: 'Automation', modules: 'Modules', audit: 'Audit Log', report: 'Reports', users: 'User Management' };
@@ -2392,9 +2969,9 @@
       const rows = filteredAuditLog.slice(0, 100).map(a => {
         let fullDateStr = formatDate(a.time);
         let parts = fullDateStr.split(' ');
-        let datePart = parts[0] || 'ΓÇö';
-        let timePart = parts[1] || 'ΓÇö';
-        let screenName = a.screen ? (titles[a.screen] || a.screen) : 'ΓÇö';
+        let datePart = parts[0] || '—';
+        let timePart = parts[1] || '—';
+        let screenName = a.screen ? (titles[a.screen] || a.screen) : '—';
 
         let eventIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 16 12 12 12 8"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
         let eventColor = 'var(--text)';
@@ -2453,21 +3030,7 @@
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <div style="font-size:28px;font-weight:700;color:var(--text);">Audit Log</div>
     <div style="display:flex; align-items:center; gap:16px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
+      
     </div>
   </div>
   <div class="section">
@@ -2497,7 +3060,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ REPORT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── REPORT ───────────────────────────
     function buildReport() {
       const reportQ = (document.getElementById('reportQ') || { value: '' }).value.toLowerCase();
       const total = S.testCases.length;
@@ -2538,21 +3101,7 @@
         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text3); pointer-events:none;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <input type="text" id="reportQ" class="filter-select" style="width:100%; padding-left:36px; border-radius:24px; border:1px solid var(--border); box-shadow:0 1px 4px rgba(0,0,0,0.02);" placeholder="Search modules..." oninput="liveFilter(this)" value="${escHtml(reportQ).replace(/\"/g, '&quot;')}">
       </div>
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="display:flex; align-items:center; background:var(--bg2); border:1px solid var(--border); border-radius:24px; padding:4px 8px; box-shadow:0 2px 12px rgba(0,0,0,0.03); gap:6px; margin-left:16px;">
-        <div style="font-variant-numeric:tabular-nums; letter-spacing:0.02em; font-size:12px; font-weight:600; color:var(--text3); padding:4px 12px; display:flex; align-items:center; gap:6px; border-right:1px solid var(--border); margin-right:4px;">
-  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-  <span id="live-clock">${formatDate(nowFull())}</span>
-</div>
-        <button class="theme-btn" onclick="refreshData()" title="Refresh Data" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-        </button>
-        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme" style="background:transparent; border:none; border-radius:50%; width:32px; height:32px; padding:0; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--text2); transition:all 0.2s;" onmouseover="this.style.background='var(--bg3)'; this.style.color='var(--text)'" onmouseout="this.style.background='transparent'; this.style.color='var(--text2)'">
-          ${currentTheme === 'dark' ? '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' : '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'}
-        </button>
-      </div>
-        ${buildUserRing()}
-      </div>
+      
     </div>
   </div>
   <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:24px; margin-bottom:32px;">
@@ -2589,7 +3138,7 @@
   </div>`;
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ BADGES ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── BADGES ───────────────────────────
     function statusBadge(s) {
       const m = { Pass: 'b-pass', Fail: 'b-fail', Hold: 'b-hold', Retest: 'b-retest', Blocked: 'b-blocked', Open: 'b-open', Fixed: 'b-fixed', Verified: 'b-verified', 'Retest Failed': 'b-retest-fail', Escalated: 'b-escalated' };
       return `<span class="badge ${m[s] || 'b-blocked'}">${s}</span>`;
@@ -2619,7 +3168,7 @@
 
     function renderEvidenceCell(evidence) {
       const ev = (evidence || '').trim();
-      if (!ev) return 'ΓÇö';
+      if (!ev) return '—';
       if (/^data:image\//i.test(ev)) {
         return `<a href="${ev}" target="_blank" rel="noopener noreferrer" title="Open attached image" style="display:inline-block;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><img src="${ev}" alt="Evidence" style="width:36px;height:36px;object-fit:cover;border:1px solid var(--border);border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.05);"></a>`;
       }
@@ -2681,7 +3230,7 @@
       renderEvidencePreview(previewId, txt);
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ MODALS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── MODALS ───────────────────────────
     function updateAutoTcId() {
       const mod = document.getElementById('f-mod').value;
       let count = S.testCases.filter(t => t.module === mod).length + 1;
@@ -2748,16 +3297,19 @@
           <select id="f-status"><option>Pass</option><option>Fail</option><option>Hold</option></select>
         </div>
         <div class="field">
-          <label>Evidence (URL/filename) <span class="required">*</span></label>
+          <label>Evidence-1 (URL/filename) <span class="required">*</span></label>
           <input id="f-evidence" placeholder="Paste evidence URL" oninput="onEvidenceTextChange('f-evidence','f-evidence-file','f-evidence-preview')">
           <div id="f-evidence-preview"></div>
+          <label style="margin-top:12px;">Evidence-2 (URL/filename)</label>
+          <input id="f-evidence2" placeholder="Paste evidence 2 URL" oninput="onEvidenceTextChange('f-evidence2','f-evidence2-file','f-evidence2-preview')">
+          <div id="f-evidence2-preview"></div>
         </div>
         <div class="field form-full">
           <label>Notes</label>
           <textarea id="f-notes" placeholder="Additional notes..."></textarea>
         </div>
         <div class="form-full" style="display:flex; flex-direction:row; justify-content:flex-end; align-items:center; gap:12px; margin-top:16px;">
-          <button class="btn btn-ghost" onclick="switchTestCasesTab('add')">Cancel</button>
+          <button class="btn btn-ghost" onclick="if(S.role !== 'qa') { showBannedModal(); return; } switchTestCasesTab('add')">Cancel</button>
           <button class="btn btn-ghost" onclick="submitTC()" style="padding:7px 20px;">Save Test Case</button>
         </div>
       </div>
@@ -2766,6 +3318,9 @@
     }
 
     function submitTC() {
+      if (S.role !== 'qa') {
+        showBannedModal(); return;
+      }
       const id = normalizeTcRowId(document.getElementById('f-id').value);
       const tc = document.getElementById('f-tc').value.trim();
       const mod = normalizeTcModule(document.getElementById('f-mod').value);
@@ -2776,6 +3331,7 @@
       const status = document.getElementById('f-status').value;
       const steps = document.getElementById('f-steps').value.trim();
       const evidenceText = (document.getElementById('f-evidence') || { value: '' }).value.trim();
+      const evidence2Text = (document.getElementById('f-evidence2') || { value: '' }).value.trim();
 
       if (!id || !tc || !mod || !actual || !expected || !steps || !scenario || !screen || !evidenceText) {
         toast('Please fill all required fields', 'error'); return;
@@ -2790,6 +3346,7 @@
         steps, expected, actual, status,
         severity: document.getElementById('f-sev').value,
         evidence: evidenceText,
+        evidence2: evidence2Text,
         notes: document.getElementById('f-notes').value.trim(),
         createdAt: now(), createdBy: S.auth.user, updatedAt: now(), history: []
       };
@@ -2856,7 +3413,7 @@
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">ID</div><div class="detail-value" style="font-family:var(--font);color:var(--text2); font-weight:600; font-size:15px;">${tc.id}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Status</div><div class="detail-value">${statusBadge(tc.status)}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Module</div><div class="detail-value" style="color:var(--text2);">${tc.module}</div></div>
-        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${tc.screen || 'ΓÇö'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${tc.screen || '—'}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Severity</div><div class="detail-value">${sevBadge(tc.severity)}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Created</div><div class="detail-value" style="font-family:var(--font); font-size:13px; color:var(--text2); background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(tc.createdAt)}</div></div>
       </div>
@@ -2871,7 +3428,7 @@
       <div style="display:flex; flex-direction:column; gap:20px;">
         <div>
           <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Scenario</div>
-          <div class="detail-value" style="color:var(--text2); font-size:13px;">${tc.scenario || 'ΓÇö'}</div>
+          <div class="detail-value" style="color:var(--text2); font-size:13px;">${tc.scenario || '—'}</div>
         </div>
         <div>
           <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Test Steps</div>
@@ -2889,8 +3446,10 @@
         </div>
         ${tc.evidence ? `
         <div>
-          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Evidence</div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Evidence-1</div>
           <div><a href="${tc.evidence}" target="_blank" class="attachment-pill" style="display:inline-flex;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> View Attachment</a></div>
+          ${tc.evidence2 ? `<div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-top:8px; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Evidence-2</div>
+          <div><a href="${tc.evidence2}" target="_blank" class="attachment-pill" style="display:inline-flex;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg> View Attachment</a></div>` : ''}
         </div>` : ''}
         ${tc.notes ? `
         <div>
@@ -2947,12 +3506,13 @@
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Module</div><div class="detail-value" style="color:var(--text2);">${b.module}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Severity</div><div class="detail-value">${sevBadge(b.severity)}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Linked Test Case</div><div class="detail-value" style="font-family:var(--font); color:var(--accent);">${b.tcId}</div></div>
-        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${b.screen || 'ΓÇö'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Screen</div><div class="detail-value" style="color:var(--text2);">${b.screen || '—'}</div></div>
       </div>
       
       <div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);">
-        <div class="detail-item" style="margin-bottom:12px;"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Evidence</div><div style="font-size:13px;color:var(--text2)">${renderEvidenceCell(linkedTc?.evidence)}</div></div>
-        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Notes</div><div style="font-size:13px;color:var(--text2); background:var(--bg3); padding:10px; border-radius:6px; margin-top:4px;">${linkedTc?.notes || 'ΓÇö'}</div></div>
+        <div class="detail-item" style="margin-bottom:12px;"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Evidence-1</div><div style="font-size:13px;color:var(--text2)">${renderEvidenceCell(linkedTc?.evidence)}</div></div>
+        <div class="detail-item" style="margin-bottom:12px;"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Evidence-2</div><div style="font-size:13px;color:var(--text2)">${renderEvidenceCell(linkedTc?.evidence2)}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Notes</div><div style="font-size:13px;color:var(--text2); background:var(--bg3); padding:10px; border-radius:6px; margin-top:4px;">${linkedTc?.notes || '—'}</div></div>
       </div>
     </div>
 
@@ -2963,7 +3523,7 @@
         Tracking & Lifecycle
       </h4>
       <div class="detail-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Failed On</div><div style="color:var(--text2);font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.failedAt) || 'ΓÇö'}</div></div>
+        <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Failed On</div><div style="color:var(--text2);font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.failedAt) || '—'}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Fixed On</div><div style="color:${b.fixedAt ? 'var(--green)' : 'var(--text2)'};font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.fixedAt) || 'Not fixed yet'}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Retest On</div><div style="color:var(--text2);font-family:var(--font);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.retestAt) || 'Not retested yet'}</div></div>
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Retest Count</div><div style="font-family:var(--font);color:var(--text2);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${b.retestCount}</div></div>
@@ -2985,7 +3545,7 @@
   `, null, true);
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ACTIONS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── ACTIONS ───────────────────────────
     function markFixed(bugId) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       const viewIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;vertical-align:middle;color:var(--green);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
@@ -3017,7 +3577,7 @@
         audit(`${bugId} marked as Fixed`);
         closeModal();
         save();
-        toast(`Bug ${bugId} marked as fixed ΓÇö awaiting QA retest`, 'success');
+        toast(`Bug ${bugId} marked as fixed — awaiting QA retest`, 'success');
       });
     }
 
@@ -3033,12 +3593,12 @@
           b.retestAt = now();
           b.retestCount++;
           b.retestResult = 'Pass';
-          b.history.push({ date: now(), event: 'Retest PASSED ΓÇö bug verified and closed', actor: S.auth.user });
+          b.history.push({ date: now(), event: 'Retest PASSED — bug verified and closed', actor: S.auth.user });
           if (tc) {
             tc.status = 'Pass';
             tc.updatedAt = now();
             tc.history = tc.history || [];
-            tc.history.push({ date: now(), event: `Retest passed ΓÇö test case restored to PASS status` });
+            tc.history.push({ date: now(), event: `Retest passed — test case restored to PASS status` });
 
             // Send updates to server
             socket.emit('updateData', { type: 'testCase', data: tc });
@@ -3068,7 +3628,7 @@
           b.retestCount++;
           b.retestResult = 'Fail';
           b.fixedAt = null;
-          b.history.push({ date: now(), event: `Retest FAILED ΓÇö bug re-opened (Retest #${b.retestCount})`, actor: S.auth.user });
+          b.history.push({ date: now(), event: `Retest FAILED — bug re-opened (Retest #${b.retestCount})`, actor: S.auth.user });
           const tc = S.testCases.find(t => testcaseKeysMatch(t, { id: b.tcId, module: b.module }));
           if (tc) {
             tc.status = 'Fail';
@@ -3126,8 +3686,51 @@
         });
     }
 
+    function approveModuleDelete(name) {
+      if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+      openConfirm('Approve Deletion', 
+        `Permanently delete module "${name}" and all associated test cases and bugs? This CANNOT be undone.`,
+        () => {
+          const deletedTCs = S.testCases.filter(t => t.module === name).map(t => t.id);
+          const deletedBugIds = S.bugs.filter(b => b.module === name).map(b => b.id);
+          S.testCases = S.testCases.filter(t => t.module !== name);
+          S.bugs = S.bugs.filter(b => b.module !== name);
+          S.modules = S.modules.filter(m => m !== name);
+          S.modulesPendingDelete = (S.modulesPendingDelete || []).filter(m => m.name !== name);
+          audit(`Admin approved deletion of Module "${name}" and ${deletedTCs.length} linked test cases`);
+          deletedTCs.forEach(tcId => {
+            socket.emit('updateData', { type: 'testCase', data: { id: tcId, module: name, deleted: true } });
+          });
+          deletedBugIds.forEach(bugId => {
+            socket.emit('updateData', { type: 'bug', data: { id: bugId, deleted: true } });
+          });
+          socket.emit('updateData', { type: 'module', data: { name, deleted: true } });
+          save();
+          toast(`Module "${name}" permanently deleted`, 'success');
+        });
+    }
+
+    function rejectModuleDelete(name) {
+      if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+      audit(`Admin rejected deletion of Module "${name}"`);
+      socket.emit('updateData', { type: 'module', data: { name, pendingDelete: false, deleteRequestedBy: '' } });
+      save();
+      toast(`Deletion request rejected for "${name}"`, 'success');
+    }
+
     function deleteModule(name) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
+      if (S.role === 'qa') {
+        openConfirm('Request Delete Module',
+          `Are you sure you want to request deletion of module "${name}"? This requires admin approval to prevent accidental data loss.`,
+          () => {
+            audit(`Requested deletion for module "${name}"`);
+            socket.emit('updateData', { type: 'module', data: { name, pendingDelete: true, deleteRequestedBy: S.auth.user } });
+            save();
+            toast(`Deletion request sent to admin for "${name}"`, 'success');
+          });
+        return;
+      }
       openConfirm('Delete Module',
         `Delete module "${name}"?All test cases and bugs in this module will also be permanently deleted. This CANNOT be undone.`,
         () => {
@@ -3136,6 +3739,7 @@
           S.testCases = S.testCases.filter(t => t.module !== name);
           S.bugs = S.bugs.filter(b => b.module !== name);
           S.modules = S.modules.filter(m => m !== name);
+          S.modulesPendingDelete = (S.modulesPendingDelete || []).filter(m => m.name !== name);
           audit(`Module "${name}" and ${deletedTCs.length} linked test cases permanently deleted`);
           deletedTCs.forEach(tcId => {
             socket.emit('updateData', { type: 'testCase', data: { id: tcId, module: name, deleted: true } });
@@ -3150,6 +3754,7 @@
     }
 
     function openAddModule() {
+      if (S.role !== 'qa') { showBannedModal(); return; }
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       showModal('Add Module', `
   <div class="field">
@@ -3169,11 +3774,11 @@
     }
 
     function exportCSV() {
-      let csv = 'Module,Total Tests,Pass,Fail,Total Bugs,Open Bugs,High Severity';
+      let csv = 'Module,Total Tests,Pass,Fail,Total Bugs,Open Bugs,High Severity\n';
       S.modules.forEach(mod => {
         const tcs = S.testCases.filter(t => t.module === mod);
         const bugs = S.bugs.filter(b => b.module === mod);
-        csv += `${mod},${tcs.length},${tcs.filter(t => t.status === 'Pass').length},${tcs.filter(t => t.status === 'Fail').length},${bugs.length},${bugs.filter(b => b.status === 'Open').length},${bugs.filter(b => b.severity === 'High').length}`;
+        csv += `${mod},${tcs.length},${tcs.filter(t => t.status === 'Pass').length},${tcs.filter(t => t.status === 'Fail').length},${bugs.length},${bugs.filter(b => b.status === 'Open').length},${bugs.filter(b => b.severity === 'High').length}\n`;
       });
       const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
       a.download = `qa-report-${now()}.csv`; a.click();
@@ -3181,12 +3786,13 @@
       toast('Report exported', 'success');
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ EDIT TEST CASE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── EDIT TEST CASE ───────────────────────────
     function openEditTC(id, module) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       const tc = S.testCases.find(t => testcaseKeysMatch(t, { id, module }));
       if (!tc) return;
       const evidenceInputValue = /^data:image\//i.test(tc.evidence || '') ? '' : (tc.evidence || '');
+      const evidence2InputValue = /^data:image\//i.test(tc.evidence2 || '') ? '' : (tc.evidence2 || '');
       const mods = S.modules.map(m => `<option${m === tc.module ? ' selected' : ''}>${m}</option>`).join('');
       showModal('<div style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Edit Mode</div>', `
   <div style="margin-bottom:24px;font-size:13px;color:var(--text3);display:flex;align-items:center;gap:8px;">
@@ -3243,10 +3849,15 @@
       </select>
     </div>
     <div class="field">
-      <label>Evidence (URL/filename) <span class="required">*</span></label>
+      <label>Evidence-1 (URL/filename) <span class="required">*</span></label>
       <input id="e-evidence" value="${evidenceInputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence','e-evidence-file','e-evidence-preview')">
       <input id="e-evidence-file" type="hidden">
       <div id="e-evidence-preview"></div>
+      
+      <label style="margin-top:12px;">Evidence-2 (URL/filename)</label>
+      <input id="e-evidence2" value="${evidence2InputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence2','e-evidence2-file','e-evidence2-preview')">
+      <input id="e-evidence2-file" type="hidden">
+      <div id="e-evidence2-preview"></div>
     </div>
     <div class="field form-full">
       <label>Notes</label>
@@ -3259,6 +3870,10 @@
       const eHidden = document.getElementById('e-evidence-file');
       if (eHidden && /^data:image\//i.test(tc.evidence || '')) eHidden.value = tc.evidence;
       renderEvidencePreview('e-evidence-preview', tc.evidence || '');
+
+      const e2Hidden = document.getElementById('e-evidence2-file');
+      if (e2Hidden && /^data:image\//i.test(tc.evidence2 || '')) e2Hidden.value = tc.evidence2;
+      renderEvidencePreview('e-evidence2-preview', tc.evidence2 || '');
     }
 
     function submitEditTC() {
@@ -3295,11 +3910,13 @@
       tc.actual = actual;
       tc.status = status;
       const evidenceText = (document.getElementById('e-evidence') || { value: '' }).value.trim();
+      const evidence2Text = (document.getElementById('e-evidence2') || { value: '' }).value.trim();
       tc.evidence = evidenceText;
+      tc.evidence2 = evidence2Text;
       tc.notes = (document.getElementById('e-notes') || { value: '' }).value.trim();
       tc.updatedAt = now();
       tc.history = tc.history || [];
-      tc.history.push({ date: now(), event: `Edited. Status: ${oldStatus} ΓåÆ ${status}` });
+      tc.history.push({ date: now(), event: `Edited. Status: ${oldStatus} → ${status}` });
 
       // Send test case update to server
       socket.emit('updateData', { type: 'testCase', data: tc });
@@ -3328,7 +3945,7 @@
           bugRefsTestCaseKeys(b, id, tc.module) && (b.status === 'Open' || b.status === 'Retest Failed'));
         if (linked) {
           linked.status = 'Verified';
-          linked.history.push({ date: now(), event: `Bug auto-closed ΓÇö test case changed to ${status}`, actor: S.auth.user });
+          linked.history.push({ date: now(), event: `Bug auto-closed — test case changed to ${status}`, actor: S.auth.user });
 
           // Send bug update to server
           socket.emit('updateData', { type: 'bug', data: linked });
@@ -3337,13 +3954,13 @@
         }
       }
 
-      audit(`Test case ${id} edited ΓÇö status ${oldStatus} ΓåÆ ${status}`);
+      audit(`Test case ${id} edited — status ${oldStatus} → ${status}`);
       closeModal();
       save();
       toast(`Test case ${id} updated`, 'success');
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ESCALATE BUG ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── ESCALATE BUG ───────────────────────────
     function escalateBug(bugId) {
       if (!initialDataReceived) { toast('Waiting for server data...', 'error'); return; }
       const b = S.bugs.find(x => x.id === bugId);
@@ -3357,7 +3974,7 @@
       <div style="font-size:13px; color:var(--text2); margin-bottom:8px;">${b.testCase}</div>
       <div style="font-size:11px; color:var(--text3); display:flex; align-items:center; gap:6px;">
         <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.module}</span>
-        <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.screen || 'ΓÇö'}</span>
+        <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.screen || '—'}</span>
         <span style="background:var(--bg3); padding:4px 8px; border-radius:4px;">${b.severity}</span>
       </div>
     </div>
@@ -3373,18 +3990,23 @@
     </div>
     
     <div class="field" style="margin-bottom:0;">
-      <label style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Affected Backend Area</label>
-      <input id="esc-area" placeholder="e.g. Payment API, Auth service, Database query..." style="background:var(--bg3);">
+      <label style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px;">Escalate To</label>
+      <select id="esc-to" style="background:var(--bg3); padding:8px; border-radius:4px; border:1px solid var(--border); width:100%; color:var(--text); outline:none;">
+        <option value="">Select Developer</option>
+        ${S.users.filter(u => u.role === 'dev').map(u => `<option value="${u.username}">${u.username}</option>`).join('')}
+      </select>
     </div>
   </div>
   `, () => {
         const reason = (document.getElementById('esc-reason') || { value: '' }).value.trim();
-        const area = (document.getElementById('esc-area') || { value: '' }).value.trim();
+        const escTo = (document.getElementById('esc-to') || { value: '' }).value.trim();
         if (!reason) { toast('Please describe the escalation reason', 'error'); return; }
+        if (!escTo) { toast('Please select a developer to escalate to', 'error'); return; }
         b.status = 'Escalated';
         b.escalatedAt = now();
-        b.escalationReason = area ? `${reason} [Area: ${area}]` : reason;
-        b.history.push({ date: now(), event: `Escalated to Backend. Reason: ${b.escalationReason}`, actor: S.auth.user });
+        b.escalatedTo = escTo;
+        b.escalationReason = reason;
+        b.history.push({ date: now(), event: `Escalated to ${escTo}. Reason: ${b.escalationReason}`, actor: S.auth.user });
 
         // Send bug update to server
         socket.emit('updateData', { type: 'bug', data: b });
@@ -3395,16 +4017,16 @@
       });
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ DOWNLOAD TEST CASES CSV ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── DOWNLOAD TEST CASES CSV ───────────────────────────
     function downloadImportTemplate() {
-      const headers = 'Test Case ID,Test Case,Scenario,Module Name,Screen Name,Test Step,Test Data,Expected Results,Actual Results,Status,Severity,Evidence,Notes';
-      const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page2. Enter credentials3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,';
-      const csv = headers + '' + example;
+      const headers = 'Test Case ID,Test Case,Scenario,Module Name,Screen Name,Test Step,Test Data,Expected Results,Actual Results,Status,Severity,Evidence-1,Evidence-2,Notes';
+      const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page2. Enter credentials3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,,';
+      const csv = headers + '\n' + example;
       const a = document.createElement('a');
       a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
       a.download = 'bugos-test-case-template.csv';
       a.click();
-      toast('Template downloaded ΓÇö fill it in and import', 'success');
+      toast('Template downloaded — fill it in and import', 'success');
     }
 
     function downloadTestCasesCSV() {
@@ -3415,9 +4037,9 @@
       if (dlSt) data = data.filter(t => t.status === dlSt);
       if (!data.length) { toast('No test cases match selected filters', 'error'); return; }
       const esc = v => `"${(v || '').replace(/"/g, '""')}"`;
-      let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Expected Results,Actual Results,Status,Severity,Evidence,Notes,Created,Updated';
+      let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Expected Results,Actual Results,Status,Severity,Evidence-1,Evidence-2,Notes,Created,Updated\n';
       data.forEach(tc => {
-        csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.notes)},${formatDate(tc.createdAt)},${formatDate(tc.updatedAt)}`;
+        csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.evidence2)},${esc(tc.notes)},${formatDate(tc.createdAt)},${formatDate(tc.updatedAt)}\n`;
       });
       const fname = `test-cases${dlMod ? '-' + dlMod : ''}${dlSt ? '-' + dlSt : ''}-${now()}.csv`;
       const a = document.createElement('a');
@@ -3426,7 +4048,7 @@
       toast(`Downloaded ${data.length} test cases`, 'success');
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ IMPORT CSV ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── IMPORT CSV ───────────────────────────
     let _importRows = [];
     let _importTargetModule = '';
 
@@ -3466,7 +4088,7 @@
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
             </div>
             <div style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:4px;">Click to upload or drag and drop</div>
-            <div style="font-size:12px;color:var(--text3);">CSV UTFΓÇæ8 or Excel (.xlsx)</div>
+            <div style="font-size:12px;color:var(--text3);">CSV UTF‑8 or Excel (.xlsx)</div>
           </div>
 
           <div style="margin-top:24px;text-align:center;background:var(--bg3);padding:16px;border-radius:var(--radius);border:1px dashed var(--border);">
@@ -3494,7 +4116,7 @@
         </div>
 
         <div class="form-full" style="display:flex; flex-direction:row; justify-content:flex-end; align-items:center; gap:12px; margin-top:40px;">
-          <button class="btn btn-ghost" onclick="_importRows=[]; _importTargetModule=''; switchTestCasesTab('import')">Cancel</button>
+          <button class="btn btn-ghost" onclick="if(S.role !== 'qa') { showBannedModal(); return; } _importRows=[]; _importTargetModule=''; switchTestCasesTab('import')">Cancel</button>
           <button class="btn btn-ghost" id="imp-btn" onclick="doImport()" style="padding:7px 20px; opacity:0.5; pointer-events:none;">Run Import</button>
         </div>
       </div>
@@ -3530,19 +4152,19 @@
       _importTargetModule = selectedModule || _importTargetModule;
 
       if (!_importTargetModule) {
-        if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î Please select a module before importing.</span>`;
+        if (status) status.innerHTML = `<span style="color:var(--red)">❌ Please select a module before importing.</span>`;
         return;
       }
 
       // Accept CSV, TXT, Excel files
       if (!file.name.match(/\.(csv|txt|xlsx|xls)$/i)) {
-        if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î Use a .csv, .txt, .xlsx, or .xls file.</span>`;
+        if (status) status.innerHTML = `<span style="color:var(--red)">❌ Use a .csv, .txt, .xlsx, or .xls file.</span>`;
         return;
       }
 
       const reader = new FileReader();
       reader.onerror = () => {
-        if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î Failed to read file.</span>`;
+        if (status) status.innerHTML = `<span style="color:var(--red)">❌ Failed to read file.</span>`;
       };
       reader.onload = e => {
         try {
@@ -3554,27 +4176,25 @@
           } else {
             raw = e.target.result;
           }
-          // Normalize line endings
-          const lines = raw.replace(/\r/g, '').replace(/\r/g, '').split('');
-          // Remove completely empty lines
-          const nonEmpty = lines.filter(l => l.trim().length > 0);
+          // Parse entire CSV handling quotes properly
+          const parsedRows = parseCSVData(raw);
 
-          if (nonEmpty.length <2) {
-            if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î File appears empty or has no data rows.</span>`;
+          if (parsedRows.length < 2) {
+            if (status) status.innerHTML = `<span style="color:var(--red)">❌ File appears empty or has no data rows.</span>`;
             return;
           }
 
-          // Parse headers ΓÇö be very flexible
-          const rawHeaders = parseImpLine(nonEmpty[0]);
+          // Parse headers — be very flexible
+          const rawHeaders = parsedRows[0];
           const headers = rawHeaders.map(h => h.toLowerCase().trim()
             .replace(/[^a-z0-9 ]/g, ' ')  // strip special chars
             .replace(/\s+/g, ' ')          // collapse spaces
             .trim()
           );
 
-          if (status) status.textContent = `Parsed ${nonEmpty.length - 1} data rows. Mapping columns...`;
+          if (status) status.textContent = `Parsed ${parsedRows.length - 1} data rows. Mapping columns...`;
 
-          // Column finder ΓÇö tries multiple aliases
+          // Column finder — tries multiple aliases
           const col = (aliases) => {
             for (const alias of aliases) {
               const idx = headers.findIndex(h => h === alias);
@@ -3599,15 +4219,16 @@
             actual: col(['actual results', 'actual result']),
             status: col(['status']),
             severity: col(['severity']),
-            evidence: col(['evidence']),
+            evidence: col(['evidence-1', 'evidence']),
+            evidence2: col(['evidence-2', 'evidence 2']),
             notes: col(['notes']),
           };
 
           const rows = [];
           const warnings = [];
 
-          for (let i = 1; i <nonEmpty.length; i++) {
-            const cols = parseImpLine(nonEmpty[i]);
+          for (let i = 1; i < parsedRows.length; i++) {
+            const cols = parsedRows[i];
             if (cols.every(c => !c.trim())) continue; // skip blank rows
 
             const get = (key, fallback = '') => {
@@ -3637,7 +4258,7 @@
             // Generate ID if missing
             let rowId = normalizeTcRowId(get('id', ''));
             if (!rowId) {
-              warnings.push(`Row ${i + 1}: missing Test Case ID ΓÇö row skipped`);
+              warnings.push(`Row ${i + 1}: missing Test Case ID — row skipped`);
               continue;
             }
 
@@ -3653,6 +4274,7 @@
               actual: get('actual'),
               status, severity,
               evidence: get('evidence'),
+              evidence2: get('evidence2'),
               notes: get('notes'),
               _rowNum: i + 1,
             });
@@ -3673,7 +4295,7 @@
             else seenSameFile[k] = true;
           });
           if (intraFileDupRows > 0) {
-            warnings.unshift(`${intraFileDupRows} row(s) repeat the same Test Case ID within the same module ΓÇö extras will be skipped on import`);
+            warnings.unshift(`${intraFileDupRows} row(s) repeat the same Test Case ID within the same module — extras will be skipped on import`);
           }
 
           _importRows = rows;
@@ -3681,7 +4303,7 @@
 
         } catch (err) {
           console.error('Import parse error:', err);
-          if (status) status.innerHTML = `<span style="color:var(--red)">Γ¥î Parse error: ${err.message}</span>`;
+          if (status) status.innerHTML = `<span style="color:var(--red)">❌ Parse error: ${err.message}</span>`;
         }
       };
       if (file.name.match(/\.xlsx?$/i)) {
@@ -3691,24 +4313,31 @@
       }
     }
 
-    // Robust CSV line parser ΓÇö handles quoted fields, commas inside quotes, escaped quotes
-    function parseImpLine(line) {
-      const res = [];
-      let cur = '';
+    // Robust CSV parser — handles quoted fields, commas and newlines inside quotes, escaped quotes
+    function parseCSVData(raw) {
+      const rows = [];
+      let curRow = [];
+      let curCell = '';
       let inQ = false;
-      for (let i = 0; i <line.length; i++) {
-        const ch = line[i];
+      for (let i = 0; i < raw.length; i++) {
+        const ch = raw[i];
         if (ch === '"') {
-          if (inQ && line[i + 1] === '"') { cur += '"'; i++; } // escaped quote ""
+          if (inQ && raw[i + 1] === '"') { curCell += '"'; i++; } // escaped quote ""
           else inQ = !inQ;
         } else if (ch === ',' && !inQ) {
-          res.push(cur.trim()); cur = '';
+          curRow.push(curCell.trim()); curCell = '';
+        } else if ((ch === '\n' || ch === '\r') && !inQ) {
+          if (ch === '\r' && raw[i + 1] === '\n') i++; // handle \r\n
+          curRow.push(curCell.trim());
+          if (curRow.some(c => c.trim().length > 0)) rows.push(curRow);
+          curRow = []; curCell = '';
         } else {
-          cur += ch;
+          curCell += ch;
         }
       }
-      res.push(cur.trim());
-      return res;
+      curRow.push(curCell.trim());
+      if (curRow.some(c => c.trim().length > 0)) rows.push(curRow);
+      return rows;
     }
 
     function renderImpPreview(rows, warnings, filename) {
@@ -3787,7 +4416,7 @@
         const isIntraDup = intraIdx !== idx;
         const isDupe = isStoredDupe || isIntraDup;
         let dupeLbl = ''; if (isStoredDupe) dupeLbl = 'stored'; else if (isIntraDup) dupeLbl = 'repeat in file';
-        return `<tr style="${isDupe ? 'opacity:.45;' : ''}" title="${isDupe ? `Skipped ΓÇö ${dupeLbl}` : ''}">
+        return `<tr style="${isDupe ? 'opacity:.45;' : ''}" title="${isDupe ? `Skipped — ${dupeLbl}` : ''}">
                 <td style="padding:6px 10px;font-family:var(--mono);font-size:11px;color:${isDupe ? 'var(--yellow)' : 'var(--text3)'};border-bottom:1px solid var(--border);">${r.id}${isDupe ? ' (skip)' : ''}</td>
                 <td style="padding:6px 10px;font-size:12px;color:var(--text);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid var(--border);">${r.testCase}</td>
                 <td style="padding:6px 10px;font-size:12px;color:var(--text2);border-bottom:1px solid var(--border);">${r.module}</td>
@@ -3804,8 +4433,11 @@
     }
 
     function doImport() {
+      if (S.role !== 'qa') {
+        showBannedModal(); return;
+      }
       if (!_importRows.length) {
-        toast('No data loaded ΓÇö please select a CSV file first', 'error'); return;
+        toast('No data loaded — please select a CSV file first', 'error'); return;
       }
       let added = 0, skipped = 0, bugs = 0, passed = 0;
       _importRows.forEach(r => {
@@ -3841,12 +4473,21 @@
       audit(`Imported ${added} test cases from CSV (${skipped} duplicates skipped, ${bugs} bugs auto-created, ${passed} passed cases)`);
       _importRows = [];
       save();
-      toast(`Γ£ô Imported ${added} test cases${skipped ? `, ${skipped} skipped` : ''}${bugs ? `, ${bugs} bugs created` : ''}`, 'success');
+      toast(`✓ Imported ${added} test cases${skipped ? `, ${skipped} skipped` : ''}${bugs ? `, ${bugs} bugs created` : ''}`, 'success');
       switchTestCasesTab('all');
     }
 
-    // ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ MODAL ENGINE ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    // ─────────────────────────── MODAL ENGINE ───────────────────────────
     let _submitCb = null;
+    function showBannedModal() {
+      const icon = `<svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text);"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>`;
+      showModal('Access Denied', `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;text-align:center;">
+        ${icon}
+        <h3 style="margin-top:24px;color:var(--text);">Action Not Allowed</h3>
+        <p style="color:var(--text2);margin-top:8px;">Only QA role can perform this action.</p>
+      </div>`, null, true);
+    }
+
     function showModal(title, body, submitCb, viewOnly = false) {
       _submitCb = submitCb;
       const existing = document.getElementById('app-modal');
@@ -3857,7 +4498,7 @@
       overlay.innerHTML = `<div class="modal">
     <div class="modal-hdr">
       <div class="modal-title">${title}</div>
-      <button class="close-btn" onclick="closeModal()">Γ£ò</button>
+      <button class="close-btn" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">${body}</div>
     <div class="modal-footer">
@@ -3879,16 +4520,20 @@
     function attachHandlers() { }
 
     function nav(v) {
+      if (v !== 'automation') {
+        S.automationOutput = '';
+        S.automationVideo = '';
+      }
       S.view = v;
       S._lastHData = null;
       S._lastWPData = null;
       save();
     }
 
-    // ΓöÇΓöÇΓöÇ INIT ΓöÇΓöÇΓöÇ
+    // ─── INIT ───
     render();
 
-    // ΓöÇΓöÇΓöÇ LIVE CLOCK (updates every second without re-rendering) ΓöÇΓöÇΓöÇ
+    // ─── LIVE CLOCK (updates every second without re-rendering) ───
     setInterval(() => {
       const el = document.getElementById('live-clock');
       if (el) el.textContent = formatDate(nowFull());
@@ -3909,13 +4554,13 @@
           let greeting = 'Good Night';
           let greetIcon = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
 
-          if (rawHour >= 5 && rawHour <12) {
+          if (rawHour >= 5 && rawHour < 12) {
             greeting = 'Good Morning';
             greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-          } else if (rawHour >= 12 && rawHour <17) {
+          } else if (rawHour >= 12 && rawHour < 17) {
             greeting = 'Good Afternoon';
             greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--yellow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-          } else if (rawHour >= 17 && rawHour <21) {
+          } else if (rawHour >= 17 && rawHour < 21) {
             greeting = 'Good Evening';
             greetIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"></path><line x1="12" y1="2" x2="12" y2="9"></line><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"></line><line x1="1" y1="18" x2="3" y2="18"></line><line x1="21" y1="18" x2="23" y2="18"></line><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"></line><line x1="23" y1="22" x2="1" y2="22"></line><polyline points="16 5 12 9 8 5"></polyline></svg>';
           }
@@ -3928,4 +4573,30 @@
         fcS.textContent = s;
       }
     }, 1000);
-  
+    function viewScriptModal(tcId, module) {
+      const scriptObj = S.automationScripts.find(s => s.testCaseId == tcId && s.module === module);
+      if (!scriptObj) return;
+
+      const modalHtml = `
+        <div id="script-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px);">
+          <div style="background:var(--bg2); width:800px; max-width:90%; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.2); border:1px solid var(--border); overflow:hidden; display:flex; flex-direction:column; max-height:80vh;">
+            <div style="padding:16px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--bg3);">
+              <div style="font-weight:600; font-size:16px; color:var(--text); display:flex; align-items:center; gap:8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Automation Script - ${tcId}
+                <span style="font-size:12px; font-weight:normal; margin-left:8px; display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:12px; background:var(--bg3); color:var(--text2);">${getLangSvg(scriptObj.language)} ${scriptObj.language === 'python' ? 'Python' : scriptObj.language === 'javascript' ? 'JavaScript' : 'Java'}</span>
+              </div>
+              <button class="btn btn-ghost" onclick="document.getElementById('script-modal').remove()" style="padding:6px; border-radius:50%;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+            </div>
+            <div style="padding:24px; overflow:auto; background:var(--bg);">
+              <div style="margin-bottom:16px; display:flex; gap:12px; align-items:center;">
+                <span style="font-size:12px; font-weight:600; color:var(--text3); text-transform:uppercase;">Language:</span>
+                <span style="font-size:13px; font-weight:600; color:var(--text2); background:var(--bg3); padding:4px 10px; border-radius:12px; display:inline-flex; align-items:center;">${getLangSvg(scriptObj.language)}${scriptObj.language === 'python' ? 'Python' : scriptObj.language === 'javascript' ? 'JavaScript' : 'Java'}</span>
+              </div>
+              <pre style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; padding:16px; overflow:auto; font-size:13px; color:var(--text); line-height:1.5;"><code>${scriptObj.script.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
