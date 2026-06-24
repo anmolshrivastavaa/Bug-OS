@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "BugOS Capture",
+  "version": "1.0",
+  "description": "Capture screenshots and attach them as evidence to BugOS test cases.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "BugOS Capture",
+    "default_icon": "icon.png"
+  }
+}

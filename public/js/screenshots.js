@@ -1,21 +1,28 @@
 import { toast, escHtml, isHttpUrl } from './utils.js';
+import { S } from './state.js';
 
 export function isImageEvidence(v) {
   const ev = (v || '').trim();
   return /^data:image\//i.test(ev) || /\.(png|jpe?g|gif|webp|bmp|svg)(\?|#|$)/i.test(ev);
 }
-export function renderEvidenceCell(evidence) {
+export function renderEvidenceCell(evidence, tc = null, slot = null) {
   const ev = (evidence || '').trim();
-  if (!ev) return '—';
+  if (!ev) {
+    if (tc && slot) {
+      if (S.role === 'qa' && tc.createdBy !== S.auth.user) {
+        return '—';
+      }
+      return `<button class="table-link-pill" style="border:1px dashed var(--border); background:transparent; color:var(--text3); font-size:11px; padding:2px 8px; cursor:pointer;" onclick="requestExtensionFocus('${escHtml(tc.module)}', '${escHtml(tc.id)}', '${slot}')" title="Select in BugOS Extension">+ Add</button>`;
+    }
+    return '—';
+  }
   if (/^data:image\//i.test(ev)) {
     return `<a href="${ev}" target="_blank" rel="noopener noreferrer" title="Open attached image" style="display:inline-block;transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><img src="${ev}" alt="Evidence" style="width:36px;height:36px;object-fit:cover;border:1px solid var(--border);border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.05);"></a>`;
   }
   if (isHttpUrl(ev)) {
     const safe = escHtml(ev);
-    const isImg = isImageEvidence(ev);
-    const text = isImg ? 'Image' : 'Link';
-    const icon = isImg ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>` : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
-    return `<a href="${safe}" target="_blank" rel="noopener noreferrer" class="table-link-pill">${icon} ${text}</a>`;
+    const icon = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
+    return `<a href="${safe}" target="_blank" rel="noopener noreferrer" class="table-link-pill">${icon} Link</a>`;
   }
   return `<span style="color:var(--text2);">${escHtml(ev)}</span>`;
 }

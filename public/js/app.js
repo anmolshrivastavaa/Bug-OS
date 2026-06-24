@@ -23,6 +23,32 @@ Object.assign(window, screenshotsModule);
 import * as utilsModule from './utils.js';
 Object.assign(window, utilsModule);
 
+window.requestExtensionFocus = (moduleName, tcId, slot) => {
+  localStorage.setItem('bugos_auto_select_module', moduleName);
+  localStorage.setItem('bugos_auto_select_tc', tcId);
+  localStorage.setItem('bugos_auto_select_slot', slot);
+  
+  // Create a toast message that doesn't disappear too quickly
+  const toasts = document.getElementById('toasts');
+  const div = document.createElement('div');
+  div.className = 'toast toast-success';
+  div.innerHTML = `<div style="display:flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> <span style="font-size:13px;">Selected <b>${escHtml(tcId)}</b>. Open extension to attach.</span></div>`;
+  if (toasts) toasts.appendChild(div);
+  setTimeout(() => div.classList.add('hide'), 4000);
+  setTimeout(() => div.remove(), 4300);
+};
+
+window.requestExtensionCapture = (inputId) => {
+  localStorage.setItem('bugos_capture_target', inputId);
+  const toasts = document.getElementById('toasts');
+  const div = document.createElement('div');
+  div.className = 'toast toast-success';
+  div.innerHTML = `<div style="display:flex;align-items:center;gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> <span style="font-size:13px;">Ready to capture. Open extension to fill field.</span></div>`;
+  if (toasts) toasts.appendChild(div);
+  setTimeout(() => div.classList.add('hide'), 4000);
+  setTimeout(() => div.remove(), 4300);
+};
+
 window.toggleSidebar = function () {
   S.sidebarCollapsed = !S.sidebarCollapsed;
   render();

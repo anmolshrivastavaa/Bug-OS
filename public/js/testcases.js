@@ -38,6 +38,10 @@ export function buildTestCases() {
             Import Test Cases
           </div>
           ` : ''}
+          <div onclick="switchTestCasesTab('capture')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.testCasesTab === 'capture')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.testCasesTab === 'capture' ? '1' : '0.8'}'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            BugOS Capture
+          </div>
         </div>
       `;
   let contentHtml = '';
@@ -45,6 +49,8 @@ export function buildTestCases() {
     contentHtml = buildAddTestCaseTab();
   } else if (S.testCasesTab === 'import' && ['qa', 'dev', 'admin'].includes(S.role)) {
     contentHtml = buildImportTestCaseTab();
+  } else if (S.testCasesTab === 'capture') {
+    contentHtml = buildCaptureInfoTab();
   } else {
     contentHtml = buildAllTestCasesTab();
   }
@@ -89,6 +95,7 @@ export function buildAllTestCasesTab() {
   const dlModOpts = S.modules.map(m => `<option value="${m}"${dlMod === m ? ' selected' : ''}>${m}</option>`).join('');
   const rows = data.map(tc => {
     const isQA = S.role === 'qa';
+    const canModify = S.role === 'qa' && tc.createdBy === S.auth.user;
     const idArg = encodeURIComponent(tc.id || '');
     const modArg = encodeURIComponent(tc.module || '');
     const hasScript = S.automationScripts.some(s => s.testCaseId == tc.id && s.module === tc.module);
@@ -108,14 +115,14 @@ export function buildAllTestCasesTab() {
       <td class="td-truncate">${tc.actual || ''}</td>
       <td>${statusBadge(tc.status)}</td>
       <td>${sevBadge(tc.severity)}</td>
-      <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2)}</td>
+      <td class="td-truncate">${renderEvidenceCell(tc.evidence, tc, 'evidence')}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2, tc, 'evidence2')}</td>
       <td class="td-truncate">${tc.notes || '—'}</td>
       <td style="text-align:center;">${autoStatusHtml}</td>
       <td style="white-space:nowrap;">
         <div style="display:flex; gap:6px; align-items:center; justify-content:flex-end; min-width:max-content;">
           <button class="btn btn-ghost btn-sm" onclick="viewTC(decodeURIComponent('${idArg}'), decodeURIComponent('${modArg}'))">View</button>
-          ${isQA ? `<button class="btn btn-ghost btn-sm" style="color:var(--yellow);border-color:var(--yellow-border);" onclick="openEditTC(decodeURIComponent('${idArg}'), decodeURIComponent('${modArg}'))">Edit</button>` : ''}
-          ${isQA ? `<button class="btn btn-danger btn-sm" onclick="deleteTC(decodeURIComponent('${idArg}'), decodeURIComponent('${modArg}'))">Delete</button>` : ''}
+          ${canModify ? `<button class="btn btn-ghost btn-sm" style="color:var(--yellow);border-color:var(--yellow-border);" onclick="openEditTC(decodeURIComponent('${idArg}'), decodeURIComponent('${modArg}'))">Edit</button>` : ''}
+          ${canModify ? `<button class="btn btn-danger btn-sm" onclick="deleteTC(decodeURIComponent('${idArg}'), decodeURIComponent('${modArg}'))">Delete</button>` : ''}
         </div>
       </td>
     </tr>`;
@@ -162,6 +169,48 @@ export function buildAllTestCasesTab() {
       <thead><tr><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Automation Status</th><th>Actions</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="14" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg></div>No test cases matches filters</td></tr>'}</tbody>
     </table></div>
+  </div>`;
+}
+
+export function buildCaptureInfoTab() {
+  return `
+  <div class="section">
+    <div class="section-hdr">
+      <div class="section-title">BugOS Capture Extension</div>
+    </div>
+    <div style="padding: 32px; max-width: 800px; line-height: 1.6;">
+      <h2 style="margin-top:0;">How to Install & Use BugOS Capture</h2>
+      <p>BugOS Capture is a Chrome Extension that helps you quickly capture screenshots, annotate them, and directly attach them to test cases as evidence.</p>
+      
+      <div style="margin: 24px 0; padding: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;">
+        <h3 style="margin-top:0;">1. Download the Extension</h3>
+        <p>Download the zipped extension files here:</p>
+        <a href="/extension.zip" download class="btn primary" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none; margin-top:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download BugOS Capture.zip
+        </a>
+      </div>
+
+      <div style="margin: 24px 0;">
+        <h3>2. Install in Chrome</h3>
+        <ol style="padding-left: 20px;">
+          <li style="margin-bottom:24px;">Unzip the downloaded <strong>extension.zip</strong> folder to a location on your computer.<br><img src="assets/1.png" style="width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.05); display:block;"></li>
+          <li style="margin-bottom:24px;">Open Google Chrome and navigate to <code style="background:var(--bg3); padding:2px 6px; border-radius:4px;">chrome://extensions/</code><br><img src="assets/2.png" style="width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.05); display:block;"></li>
+          <li style="margin-bottom:24px;">Turn on <strong>Developer mode</strong> using the toggle switch in the top right corner.<br><img src="assets/3.png" style="width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.05); display:block;"></li>
+          <li style="margin-bottom:24px;">Click the <strong>Load unpacked</strong> button that appears in the top left.<br><img src="assets/4.png" style="width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.05); display:block;"></li>
+          <li style="margin-bottom:24px;">Select the unzipped <code>extension</code> folder you extracted in step 1.<br><img src="assets/5.png" style="width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.05); display:block;"></li>
+          <li style="margin-bottom:24px;">The BugOS Capture extension will now appear in your extensions list! Pin it to your toolbar for easy access.<br><img src="assets/6.png" style="width:100%; border-radius:8px; margin-top:8px; border:1px solid var(--border); box-shadow:0 4px 12px rgba(0,0,0,0.05); display:block;"></li>
+        </ol>
+      </div>
+
+      <div style="margin: 24px 0;">
+        <h3>3. How to Use</h3>
+        <ul style="padding-left: 20px;">
+          <li style="margin-bottom:12px;"><strong>Normal Mode:</strong> Click the extension icon in your toolbar, log in, and select a module and test case. Click "Capture Screen" to take a screenshot of your current tab, then attach or annotate it.</li>
+          <li style="margin-bottom:12px;"><strong>Auto-Fill Mode:</strong> When creating or editing a test case in BugOS, click the "Capture" button next to an evidence field. Then open the extension—it will automatically enter Draft Mode and fill the field with your captured screenshot!</li>
+        </ul>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -226,7 +275,7 @@ export function loadTestCaseScript() {
                 <td class="td-truncate">${tc.actual || '—'}</td>
                 <td>${statusBadge(tc.status)}</td>
                 <td>${sevBadge(tc.severity)}</td>
-                <td class="td-truncate">${renderEvidenceCell(tc.evidence)}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2)}</td>
+                <td class="td-truncate">${renderEvidenceCell(tc.evidence, tc, 'evidence')}</td><td class="td-truncate">${renderEvidenceCell(tc.evidence2, tc, 'evidence2')}</td>
                 <td class="td-truncate">${tc.notes || '—'}</td>
               </tr>
             </tbody>
@@ -338,10 +387,20 @@ export function buildAddTestCaseTab() {
         </div>
         <div class="field">
           <label>Evidence-1 (URL/filename) <span class="required">*</span></label>
-          <input id="f-evidence" placeholder="Paste evidence URL" oninput="onEvidenceTextChange('f-evidence','f-evidence-file','f-evidence-preview')">
+          <div style="display:flex; gap:8px;">
+            <input id="f-evidence" placeholder="Paste evidence URL" oninput="onEvidenceTextChange('f-evidence','f-evidence-file','f-evidence-preview')" style="flex:1;">
+            <button type="button" class="btn btn-ghost btn-sm" style="border:1px dashed var(--border); display:flex; align-items:center; gap:6px;" onclick="requestExtensionCapture('f-evidence')" title="Capture with Extension">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> Capture
+            </button>
+          </div>
           <div id="f-evidence-preview"></div>
           <label style="margin-top:12px;">Evidence-2 (URL/filename)</label>
-          <input id="f-evidence2" placeholder="Paste evidence 2 URL" oninput="onEvidenceTextChange('f-evidence2','f-evidence2-file','f-evidence2-preview')">
+          <div style="display:flex; gap:8px;">
+            <input id="f-evidence2" placeholder="Paste evidence 2 URL" oninput="onEvidenceTextChange('f-evidence2','f-evidence2-file','f-evidence2-preview')" style="flex:1;">
+            <button type="button" class="btn btn-ghost btn-sm" style="border:1px dashed var(--border); display:flex; align-items:center; gap:6px;" onclick="requestExtensionCapture('f-evidence2')" title="Capture with Extension">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> Capture
+            </button>
+          </div>
           <div id="f-evidence2-preview"></div>
         </div>
         <div class="field form-full">
@@ -619,12 +678,22 @@ function openEditTC(id, module) {
     </div>
     <div class="field">
       <label>Evidence-1 (URL/filename) <span class="required">*</span></label>
-      <input id="e-evidence" value="${evidenceInputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence','e-evidence-file','e-evidence-preview')">
+      <div style="display:flex; gap:8px;">
+        <input id="e-evidence" value="${evidenceInputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence','e-evidence-file','e-evidence-preview')" style="flex:1;">
+        <button type="button" class="btn btn-ghost btn-sm" style="border:1px dashed var(--border); display:flex; align-items:center; gap:6px;" onclick="requestExtensionCapture('e-evidence')" title="Capture with Extension">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> Capture
+        </button>
+      </div>
       <input id="e-evidence-file" type="hidden">
       <div id="e-evidence-preview"></div>
       
       <label style="margin-top:12px;">Evidence-2 (URL/filename)</label>
-      <input id="e-evidence2" value="${evidence2InputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence2','e-evidence2-file','e-evidence2-preview')">
+      <div style="display:flex; gap:8px;">
+        <input id="e-evidence2" value="${evidence2InputValue.replace(/"/g, '&quot;')}" oninput="onEvidenceTextChange('e-evidence2','e-evidence2-file','e-evidence2-preview')" style="flex:1;">
+        <button type="button" class="btn btn-ghost btn-sm" style="border:1px dashed var(--border); display:flex; align-items:center; gap:6px;" onclick="requestExtensionCapture('e-evidence2')" title="Capture with Extension">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> Capture
+        </button>
+      </div>
       <input id="e-evidence2-file" type="hidden">
       <div id="e-evidence2-preview"></div>
     </div>

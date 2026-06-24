@@ -147,7 +147,7 @@ const User = mongoose.model('User', userSchema);
 
 // Serve static files from current directory
 app.use(express.static(path.join(__dirname)));
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 function normalizeTcId(value) {
   if (value === undefined || value === null) return '';
@@ -218,7 +218,39 @@ io.on('connection', (socket) => {
   });
 });
 
+const axios = require('axios');
+const FormData = require('form-data');
+
 // API endpoints
+app.post('/api/upload-evidence', async (req, res) => {
+  try {
+    const { imageBase64 } = req.body;
+    if (!imageBase64) {
+      return res.status(400).json({ error: 'Missing imageBase64' });
+    }
+
+    // Extract the base64 data
+    const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, 'base64');
+    
+    // Upload anonymously to Catbox to ensure the URL doesn't expose the domain
+    const form = new FormData();
+    form.append('reqtype', 'fileupload');
+    form.append('fileToUpload', buffer, { filename: 'evidence.png', contentType: 'image/png' });
+
+    const response = await axios.post('https://catbox.moe/user/api.php', form, {
+      headers: form.getHeaders()
+    });
+
+    const imageUrl = response.data.trim();
+    res.json({ imageUrl });
+
+  } catch (error) {
+    console.error('Error uploading evidence to anonymous host:', error.message);
+    res.status(500).json({ error: 'Failed to upload image' });
+  }
+});
+
 app.post('/api/run-automation', express.json(), async (req, res) => {
   const { testCaseId, module, script, language = 'java' } = req.body;
   if (!testCaseId || !module || !script) {
@@ -265,7 +297,7 @@ app.post('/api/run-automation', express.json(), async (req, res) => {
       } catch (e) {
         console.error("Error cleaning up temp dir:", e);
       }
-      
+
       if (runErr && runErr.code !== 0) {
         return res.status(400).json({ error: 'Execution failed', details: runStderr || runErr.message, output: runStdout, videoUrl });
       }
