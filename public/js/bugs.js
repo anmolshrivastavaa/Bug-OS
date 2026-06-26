@@ -49,7 +49,7 @@ export function buildEscalations() {
         id: b.tcId,
         module: b.module
       }));
-      return [b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity, b.escalationReason, b.devNotes, linkedTc?.scenario, linkedTc?.steps, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes].some(v => textMatchesQuery(v, escQ));
+      return [b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity, b.escalationReason, b.devNotes, linkedTc?.scenario, linkedTc?.steps, linkedTc?.testData, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes].some(v => textMatchesQuery(v, escQ));
     });
   }
   const modOpts = S.modules.map(m => `<option value="${m}"${escModF === m ? ' selected' : ''}>${m}</option>`).join('');
@@ -70,6 +70,7 @@ export function buildEscalations() {
       <td>${b.module}</td>
       <td>${b.screen || '—'}</td>
       <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.testData || '—'}</td>
       <td class="td-truncate">${linkedTc?.expected || '—'}</td>
       <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
@@ -125,7 +126,7 @@ export function buildEscalations() {
       </div>
     </div>
     ${bugs.length === 0 ? S.bugs.filter(b => b.status === 'Escalated').length > 0 ? `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>No escalated bugs matches filters</div>` : `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>No escalations. All bugs are frontend-resolvable!</div>` : `<div class="tbl-wrap scrollable"><table>
-          <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Test Data</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Actions</th></tr></thead>
           <tbody>${rows}</tbody>
         </table></div>`}
   </div>`;
@@ -133,8 +134,8 @@ export function buildEscalations() {
 
 // ─────────────────────────── MODULE-WISE TRACKER ───────────────────────────
 export
-// ─────────────────────────── BUGS ───────────────────────────
-function buildBugs() {
+  // ─────────────────────────── BUGS ───────────────────────────
+  function buildBugs() {
   const bugModF = (document.getElementById('bugModF') || {
     value: ''
   }).value;
@@ -168,7 +169,7 @@ function buildBugs() {
         id: b.tcId,
         module: b.module
       }));
-      return [b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity, b.devNotes, b.escalationReason, linkedTc?.scenario, linkedTc?.steps, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes, linkedTc?.evidence].some(v => textMatchesQuery(v, bugQ));
+      return [b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity, b.devNotes, b.escalationReason, linkedTc?.scenario, linkedTc?.steps, linkedTc?.testData, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes, linkedTc?.evidence].some(v => textMatchesQuery(v, bugQ));
     });
   }
   const modOpts = S.modules.map(m => `<option value="${m}"${bugModF === m ? ' selected' : ''}>${m}</option>`).join('');
@@ -193,6 +194,7 @@ function buildBugs() {
       <td>${b.module}</td>
       <td>${b.screen || '—'}</td>
       <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.testData || '—'}</td>
       <td class="td-truncate">${linkedTc?.expected || '—'}</td>
       <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
@@ -248,7 +250,7 @@ function buildBugs() {
       </div>
     </div>
     <div class="tbl-wrap scrollable"><table>
-      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Bug Status</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Test Data</th><th>Expected</th><th>Actual</th><th>Bug Status</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Actions</th></tr></thead>
       <tbody>${rows || '<tr><td colspan="15" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"/><path d="m19 7-3 2"/><path d="m5 7 3 2"/><path d="m19 19-3-2"/><path d="m5 19 3-2"/><path d="M20 13h-4"/><path d="M4 13h4"/><path d="m10 4 1 2"/><path d="m14 4-1 2"/></svg></div>No bugs matches filters</td></tr>'}</tbody>
     </table></div>
   </div>`;
@@ -306,7 +308,7 @@ export function buildRetest() {
         id: b.tcId,
         module: b.module
       }));
-      return [b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity, b.devNotes, linkedTc?.scenario, linkedTc?.steps, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes, linkedTc?.evidence].some(v => textMatchesQuery(v, rtQ));
+      return [b.id, b.tcId, b.testCase, b.module, b.screen, b.status, b.severity, b.devNotes, linkedTc?.scenario, linkedTc?.steps, linkedTc?.testData, linkedTc?.expected, linkedTc?.actual, linkedTc?.notes, linkedTc?.evidence].some(v => textMatchesQuery(v, rtQ));
     });
   }
   const rtModOpts = S.modules.map(m => `<option value="${m}"${rtModF === m ? ' selected' : ''}>${m}</option>`).join('');
@@ -325,6 +327,7 @@ export function buildRetest() {
       <td>${b.module}</td>
       <td>${b.screen || '—'}</td>
       <td class="td-truncate">${linkedTc?.steps || '—'}</td>
+      <td class="td-truncate">${linkedTc?.testData || '—'}</td>
       <td class="td-truncate">${linkedTc?.expected || '—'}</td>
       <td class="td-truncate">${linkedTc?.actual || '—'}</td>
       <td>${statusBadge(b.status)}</td>
@@ -385,7 +388,7 @@ export function buildRetest() {
     </div>
     ${bugs.length === 0 ? S.bugs.filter(b => normalizeStatus(b.status) === 'fixed').length > 0 ? `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>No bugs marked as fixed matches filters</div>` : `<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>No bugs awaiting retest. All clear!</div>` : `
     <div class="tbl-wrap scrollable"><table>
-      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>ACTIONS</th></tr></thead>
+      <thead><tr><th>Bug ID</th><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Test Data</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>ACTIONS</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`}
   </div>`;
@@ -491,6 +494,24 @@ export function viewBug(id) {
         <div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Retest Count</div><div style="font-family:var(--font);color:var(--text2);font-size:13px; background:var(--bg3); padding:4px 8px; border-radius:4px; display:inline-block;">${b.retestCount}</div></div>
         ${b.escalatedAt ? `<div class="detail-item"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Escalated On</div><div style="color:var(--red);font-family:var(--font);font-size:13px; background:var(--red-bg); padding:4px 8px; border-radius:4px; display:inline-block;">${formatDate(b.escalatedAt)}</div></div>` : ''}
       </div>
+        <div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Test Steps</div>
+          <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${linkedTc?.steps || '—'}</div>
+        </div>
+        <div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Test Data</div>
+          <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${linkedTc?.testData || '—'}</div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+          <div>
+            <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Expected Results</div>
+            <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${linkedTc?.expected || '—'}</div>
+          </div>
+          <div>
+            <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Actual Results</div>
+            <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${linkedTc?.actual || '—'}</div>
+          </div>
+        </div>
       ${b.devNotes ? `<div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Dev Notes</div><div style="font-size:13px;color:var(--text2); background:var(--bg3); padding:12px; border-radius:6px; border-left:3px solid var(--accent);">${b.devNotes}</div></div>` : ''}
       ${b.escalationReason ? `<div style="margin-top:20px; padding-top:16px; border-top:1px dashed var(--border);"><div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Escalation Reason</div><div style="font-size:13px;color:var(--text2); background:var(--red-bg); padding:12px; border-radius:6px; border-left:3px solid var(--red);">${b.escalationReason}</div></div>` : ''}
     </div>
@@ -666,8 +687,8 @@ export function deleteBug(id) {
   });
 }
 export
-// ─────────────────────────── ESCALATE BUG ───────────────────────────
-function escalateBug(bugId) {
+  // ─────────────────────────── ESCALATE BUG ───────────────────────────
+  function escalateBug(bugId) {
   if (!S.initialDataReceived) {
     toast('Waiting for server data...', 'error');
     return;

@@ -3,8 +3,8 @@ import { toggleHmModDropdown, toggleHmModFilter, removeHmModFilter, clearHmModFi
 import { formatDate, now, statusBadge, sevBadge, nav } from './utils.js';
 
 export
-// ─────────────────────────── MODULE-WISE TRACKER ───────────────────────────
-function buildModuleTracker() {
+  // ─────────────────────────── MODULE-WISE TRACKER ───────────────────────────
+  function buildModuleTracker() {
   // Collect all dates with data
   const allDates = new Set();
   S.testCases.forEach(tc => {
@@ -407,7 +407,7 @@ export function buildDashboard() {
   if (dashModFilter.length > 0) tData = tData.filter(t => dashModFilter.includes(t.module));
   if (dashStF) tData = tData.filter(t => t.status === dashStF);
   if (dashQ) {
-    tData = tData.filter(t => [t.id, t.testCase, t.scenario, t.module, t.screen, t.steps, t.expected, t.actual, t.notes, t.evidence, t.status, t.severity].some(v => textMatchesQuery(v, dashQ)));
+    tData = tData.filter(t => [t.id, t.testCase, t.scenario, t.module, t.screen, t.steps, t.testData, t.expected, t.actual, t.notes, t.evidence, t.status, t.severity].some(v => textMatchesQuery(v, dashQ)));
   }
   let bData = [...S.bugs];
   if (dashModFilter.length > 0) bData = bData.filter(b => dashModFilter.includes(b.module));

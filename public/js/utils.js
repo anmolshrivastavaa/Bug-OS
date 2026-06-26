@@ -187,27 +187,33 @@ export function topNavItem(id, label, iconHtml, badge = 0, badgeColor = 'var(--r
 export
 // ─────────────────────────── BADGES ───────────────────────────
 function statusBadge(s) {
+  if (!s) return '';
+  const key = String(s).trim().toLowerCase();
   const m = {
-    Pass: 'b-pass',
-    Fail: 'b-fail',
-    Hold: 'b-hold',
-    Retest: 'b-retest',
-    Blocked: 'b-blocked',
-    Open: 'b-open',
-    Fixed: 'b-fixed',
-    Verified: 'b-verified',
-    'Retest Failed': 'b-retest-fail',
-    Escalated: 'b-escalated'
+    pass: 'b-pass',
+    fail: 'b-fail',
+    hold: 'b-hold',
+    retest: 'b-retest',
+    blocked: 'b-blocked',
+    open: 'b-open',
+    fixed: 'b-fixed',
+    verified: 'b-verified',
+    'retest failed': 'b-retest-fail',
+    escalated: 'b-escalated'
   };
-  return `<span class="badge ${m[s] || 'b-blocked'}">${s}</span>`;
+  const displayStr = key.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  return `<span class="badge ${m[key] || 'b-blocked'}">${displayStr}</span>`;
 }
 export function sevBadge(s) {
+  if (!s) return '';
+  const key = String(s).trim().toLowerCase();
   const m = {
-    High: 'b-high',
-    Medium: 'b-medium',
-    Low: 'b-low'
+    high: 'b-high',
+    medium: 'b-medium',
+    low: 'b-low'
   };
-  return `<span class="badge ${m[s] || 'b-medium'}">${s}</span>`;
+  const displayStr = key.charAt(0).toUpperCase() + key.slice(1);
+  return `<span class="badge ${m[key] || 'b-medium'}">${displayStr}</span>`;
 }
 export function escHtml(v) {
   return (v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');

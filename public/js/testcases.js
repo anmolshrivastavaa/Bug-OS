@@ -14,8 +14,8 @@ export function bugRefsTestCaseKeys(bug, tcId, module) {
   return normalizeTcRowId(bug.tcId) === normalizeTcRowId(tcId) && normalizeTcModule(bug.module) === normalizeTcModule(module);
 }
 export
-// ─────────────────────────── TEST CASES ───────────────────────────
-function switchTestCasesTab(tabId) {
+  // ─────────────────────────── TEST CASES ───────────────────────────
+  function switchTestCasesTab(tabId) {
   S.testCasesTab = tabId;
   render();
 }
@@ -42,6 +42,10 @@ export function buildTestCases() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
             BugOS Capture
           </div>
+          <div onclick="switchTestCasesTab('excel')" style="padding:8px 20px; font-size:13px; font-weight:600; border-radius:24px; border:1px solid; display:inline-flex; align-items:center; gap:6px; ${tabStyle(S.testCasesTab === 'excel')}" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='${S.testCasesTab === 'excel' ? '1' : '0.8'}'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            BugOS Excel
+          </div>
         </div>
       `;
   let contentHtml = '';
@@ -51,6 +55,8 @@ export function buildTestCases() {
     contentHtml = buildImportTestCaseTab();
   } else if (S.testCasesTab === 'capture') {
     contentHtml = buildCaptureInfoTab();
+  } else if (S.testCasesTab === 'excel') {
+    contentHtml = buildExcelTab();
   } else {
     contentHtml = buildAllTestCasesTab();
   }
@@ -89,7 +95,7 @@ export function buildAllTestCasesTab() {
   if (stF) data = data.filter(t => t.status === stF);
   if (sevF) data = data.filter(t => t.severity === sevF);
   if (tcQ) {
-    data = data.filter(t => [t.id, t.testCase, t.scenario, t.module, t.screen, t.steps, t.expected, t.actual, t.status, t.severity, t.evidence, t.notes].some(v => textMatchesQuery(v, tcQ)));
+    data = data.filter(t => [t.id, t.testCase, t.scenario, t.module, t.screen, t.steps, t.testData, t.expected, t.actual, t.status, t.severity, t.evidence, t.notes].some(v => textMatchesQuery(v, tcQ)));
   }
   const modOpts = S.modules.map(m => `<option${modF === m ? ' selected' : ''}>${m}</option>`).join('');
   const dlModOpts = S.modules.map(m => `<option value="${m}"${dlMod === m ? ' selected' : ''}>${m}</option>`).join('');
@@ -111,6 +117,7 @@ export function buildAllTestCasesTab() {
       <td>${tc.module}</td>
       <td>${tc.screen || '—'}</td>
       <td class="td-truncate">${tc.steps || ''}</td>
+      <td class="td-truncate">${tc.testData || ''}</td>
       <td class="td-truncate">${tc.expected || ''}</td>
       <td class="td-truncate">${tc.actual || ''}</td>
       <td>${statusBadge(tc.status)}</td>
@@ -166,8 +173,8 @@ export function buildAllTestCasesTab() {
       </select>
     </div>
     <div class="tbl-wrap scrollable"><table>
-      <thead><tr><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Automation Status</th><th>Actions</th></tr></thead>
-      <tbody>${rows || '<tr><td colspan="14" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg></div>No test cases matches filters</td></tr>'}</tbody>
+      <thead><tr><th>ID</th><th>Test Case</th><th>Scenario</th><th>Module</th><th>Screen</th><th>Test Steps</th><th>Test Data</th><th>Expected</th><th>Actual</th><th>Status</th><th>Severity</th><th>Evidence-1</th><th>Evidence-2</th><th>Notes</th><th>Automation Status</th><th>Actions</th></tr></thead>
+      <tbody>${rows || '<tr><td colspan="15" class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M9 15l2 2 4-4"></path></svg></div>No test cases matches filters</td></tr>'}</tbody>
     </table></div>
   </div>`;
 }
@@ -212,6 +219,275 @@ export function buildCaptureInfoTab() {
       </div>
     </div>
   </div>`;
+}
+
+export function buildExcelTab() {
+  return `
+  <style>
+    /* Fix for Jspreadsheet auto-fill handle floating due to global body zoom: 0.9 */
+    #spreadsheet-container {
+      zoom: 1.11111111;
+    }
+    .jexcel_container * {
+      box-sizing: content-box !important;
+    }
+    .jexcel_corner {
+      box-sizing: content-box !important;
+    }
+  </style>
+  <div class="section" style="display: flex; flex-direction: column; height: 800px; padding: 0;">
+    <div class="section-hdr" style="padding: 16px 24px; flex-shrink: 0; display: flex; justify-content: space-between; align-items: center;">
+      <div class="section-title">BugOS Excel</div>
+      <button class="btn btn-ghost" onclick="saveExcelData()">Save to System</button>
+    </div>
+    <div id="spreadsheet-container" style="flex: 1; width: 100%; border-top: 1px solid var(--border); overflow: hidden;"></div>
+  </div>`;
+}
+
+export function saveExcelData() {
+  if (S.role !== 'qa' && S.role !== 'admin') {
+    toast('You do not have permission to save test cases.', 'error');
+    return;
+  }
+  if (!window.spreadsheetInstance) return;
+
+  const data = window.spreadsheetInstance.getData();
+  const validRows = [];
+  const errors = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    // ID: row[0], TestCase: row[1], Scenario: row[2], Module: row[3], Screen: row[4], Steps: row[5], TestData: row[6], Expected: row[7], Actual: row[8], Status: row[9], Severity: row[10], Ev1: row[11], Ev2: row[12], Notes: row[13]
+    const id = normalizeTcRowId(row[0]);
+    const moduleStr = normalizeTcModule(row[3]);
+    const tcTitle = String(row[1] || '').trim();
+    const scenario = String(row[2] || '').trim();
+    const screen = String(row[4] || '').trim();
+    const steps = String(row[5] || '').trim();
+    const expected = String(row[7] || '').trim();
+    const actual = String(row[8] || '').trim();
+    const status = String(row[9] || '').trim();
+    const severity = String(row[10] || '').trim();
+    const ev1 = String(row[11] || '').trim();
+
+    if (!id && !moduleStr && !tcTitle) continue; // Skip entirely empty rows
+
+    const missingFields = [];
+    if (!id) missingFields.push('ID');
+    if (!tcTitle) missingFields.push('Test Case');
+    if (!scenario) missingFields.push('Scenario');
+    if (!moduleStr) missingFields.push('Module');
+    if (!screen) missingFields.push('Screen');
+    if (!steps) missingFields.push('Test Steps');
+    if (!expected) missingFields.push('Expected');
+    if (!actual) missingFields.push('Actual');
+    if (!status) missingFields.push('Status');
+    if (!severity) missingFields.push('Severity');
+    if (!ev1) missingFields.push('Evidence-1');
+
+    if (missingFields.length > 0) {
+      errors.push(`Row ${i + 1}: Missing mandatory fields: ${missingFields.join(', ')}.`);
+      continue;
+    }
+
+    if (S.testCases.find(t => testcaseKeysMatch(t, { id, module: moduleStr }))) {
+      errors.push(`Row ${i + 1}: Test Case ID "${id}" already exists in module "${moduleStr}".`);
+      continue;
+    }
+
+    validRows.push({
+      id,
+      testCase: tcTitle,
+      scenario,
+      module: moduleStr,
+      screen,
+      steps,
+      testData: String(row[6] || '').trim(),
+      expected,
+      actual,
+      status: status.toLowerCase(),
+      severity: severity.toLowerCase(),
+      evidence: ev1,
+      evidence2: String(row[12] || '').trim(),
+      notes: String(row[13] || '').trim(),
+      createdAt: now(),
+      createdBy: S.auth.user,
+      updatedAt: now(),
+      history: []
+    });
+  }
+
+  if (errors.length > 0) {
+    toast(`Cannot save. ${errors.length} errors found: ${errors[0]}`, 'error');
+    return;
+  }
+
+  if (validRows.length === 0) {
+    toast('No valid data found to save.', 'error');
+    return;
+  }
+
+  // Save all valid rows
+  validRows.forEach(tc => {
+    S.testCases.push(tc);
+    S.tcCounter++;
+    audit(`${tc.id} added from BugOS Excel to module ${tc.module} with status ${tc.status}`);
+
+    socket.emit('updateData', {
+      type: 'testCase',
+      data: tc
+    });
+
+    if (tc.status === 'fail' || tc.status === 'hold') {
+      autoCreateBug(tc);
+    }
+  });
+
+  socket.emit('updateData', {
+    type: 'counters',
+    data: {
+      tcCounter: S.tcCounter,
+      bugCounter: S.bugCounter
+    }
+  });
+
+  save();
+  toast(`Successfully saved ${validRows.length} test cases to the system!`, 'success');
+
+  // Clear excel grid and local draft
+  const emptyData = Array(100).fill().map(() => Array(14).fill(''));
+  window.spreadsheetInstance.setData(emptyData);
+  const u = S.users.find(x => x.username === (S.auth?.user || 'guest'));
+  if (u) {
+    u.excelDraft = '';
+    socket.emit('updateData', { type: 'user', data: u });
+  }
+}
+
+export function initJspreadsheet() {
+  const container = document.getElementById('spreadsheet-container');
+  if (!container) return;
+
+  // Bypass native window.confirm for Jspreadsheet deletions
+  if (!window.originalConfirm) {
+    window.originalConfirm = window.confirm;
+    window.confirm = function (msg) {
+      if (msg && msg.toLowerCase().includes("delete")) {
+        return true; // Auto-confirm to prevent ugly native prompts
+      }
+      return window.originalConfirm(msg);
+    };
+  }
+
+  try {
+    if (window.spreadsheetInstance) {
+      window.spreadsheetInstance.destroy();
+      window.spreadsheetInstance = null;
+    }
+
+    let draftData = null;
+    try {
+      const u = S.users.find(x => x.username === (S.auth?.user || 'guest'));
+      if (u && u.excelDraft) {
+        draftData = JSON.parse(u.excelDraft);
+      }
+    } catch (e) {
+      console.warn("Failed to load excel draft", e);
+    }
+
+    const initialData = draftData || Array(100).fill().map(() => Array(14).fill(''));
+
+    let draftTimeout;
+    const saveDraft = () => {
+      if (window.spreadsheetInstance) {
+        clearTimeout(draftTimeout);
+        draftTimeout = setTimeout(() => {
+          const u = S.users.find(x => x.username === (S.auth?.user || 'guest'));
+          if (u) {
+            u.excelDraft = JSON.stringify(window.spreadsheetInstance.getData());
+            socket.emit('updateData', { type: 'user', data: u });
+          }
+        }, 500); // Debounce to prevent lag when editing fast
+      }
+    };
+
+    // Initialize the spreadsheet
+    window.spreadsheetInstance = window.jspreadsheet(container, {
+      about: false,
+      data: initialData, // Use draft data or empty rows
+      columns: [
+        { type: 'text', title: 'ID', width: 80 },
+        { type: 'text', title: 'Test Case', width: 200, wordWrap: true },
+        { type: 'text', title: 'Scenario', width: 150, wordWrap: true },
+        { type: 'dropdown', title: 'Module', width: 100, source: S.modules.length ? S.modules : ['No modules available'] },
+        { type: 'text', title: 'Screen', width: 100, wordWrap: true },
+        { type: 'text', title: 'Test Steps', width: 250, wordWrap: true },
+        { type: 'text', title: 'Test Data', width: 150, wordWrap: true },
+        { type: 'text', title: 'Expected', width: 200, wordWrap: true },
+        { type: 'text', title: 'Actual', width: 200, wordWrap: true },
+        { type: 'dropdown', title: 'Status', width: 100, source: ['pass', 'fail', 'hold'] },
+        { type: 'dropdown', title: 'Severity', width: 100, source: ['high', 'medium', 'low'] },
+        { type: 'text', title: 'Evidence-1', width: 150, wordWrap: true },
+        { type: 'text', title: 'Evidence-2', width: 150, wordWrap: true },
+        { type: 'text', title: 'Notes', width: 200, wordWrap: true },
+      ],
+      minDimensions: [14, 100],
+      tableOverflow: true,
+      tableWidth: "100%",
+      tableHeight: "100%",
+      defaultColWidth: 100,
+      allowInsertRow: true,
+      allowManualInsertRow: true,
+      allowInsertColumn: false,
+      allowManualInsertColumn: false,
+      allowDeleteColumn: false,
+      allowRenameColumn: false,
+      onchange: saveDraft,
+      oninsertrow: saveDraft,
+      ondeleterow: saveDraft,
+      onundo: saveDraft,
+      onredo: saveDraft,
+      updateTable: function(instance, cell, col, row, val, label, cellName) {
+        if (col === 11 || col === 12) {
+          cell.style.position = 'relative';
+          // Ensure button is appended after jspreadsheet renders text
+          setTimeout(() => {
+            let btn = cell.querySelector('.excel-capture-btn');
+            if (!btn) {
+              btn = document.createElement('button');
+              btn.className = 'excel-capture-btn btn btn-ghost btn-sm';
+              btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>';
+              btn.style.position = 'absolute';
+              btn.style.right = '2px';
+              btn.style.top = '50%';
+              btn.style.transform = 'translateY(-50%)';
+              btn.style.padding = '2px 4px';
+              btn.style.zIndex = '10';
+              btn.style.background = 'var(--bg)';
+              btn.style.border = '1px dashed var(--border)';
+              btn.title = 'Capture Evidence';
+              btn.onmousedown = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.excelActiveCell = { row, col };
+                window.requestExtensionCapture('excel-capture-target');
+              };
+              cell.appendChild(btn);
+            }
+          }, 0);
+        }
+      }
+    });
+  } catch (err) {
+    container.innerHTML = `<div style="color:red; padding: 24px; font-family: monospace;"><b>Failed to initialize BugOS Excel:</b><br><br>${err.message}<br><br>${err.stack}</div>`;
+  }
+}
+
+export function destroyJspreadsheet() {
+  if (window.spreadsheetInstance) {
+    try { window.spreadsheetInstance.destroy(); } catch (e) { }
+    window.spreadsheetInstance = null;
+  }
 }
 
 // ─────────────────────────── BUGS ───────────────────────────
@@ -262,7 +538,7 @@ export function loadTestCaseScript() {
   if (tc && previewArea) {
     previewArea.innerHTML = `
           <div class="tbl-wrap scrollable" style="margin-top: 20px; margin-bottom: 20px;" > <table>
-            <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
+            <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>TEST DATA</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
             <tbody>
               <tr>
                 <td class="td-id">${tc.id}</td>
@@ -271,6 +547,7 @@ export function loadTestCaseScript() {
                 <td>${tc.module}</td>
                 <td>${tc.screen || '—'}</td>
                 <td class="td-truncate">${tc.steps || '—'}</td>
+                <td class="td-truncate">${tc.testData || '—'}</td>
                 <td class="td-truncate">${tc.expected || '—'}</td>
                 <td class="td-truncate">${tc.actual || '—'}</td>
                 <td>${statusBadge(tc.status)}</td>
@@ -284,7 +561,7 @@ export function loadTestCaseScript() {
   } else if (previewArea) {
     previewArea.innerHTML = `
             <div class="tbl-wrap scrollable" style="margin-top: 20px; margin-bottom: 20px;" > <table>
-              <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
+              <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>TEST DATA</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
               <tbody>
                 <tr>
                   <td class="td-id">—</td>
@@ -292,6 +569,7 @@ export function loadTestCaseScript() {
                   <td class="td-truncate">—</td>
                   <td>—</td>
                   <td>—</td>
+                  <td class="td-truncate">—</td>
                   <td class="td-truncate">—</td>
                   <td class="td-truncate">—</td>
                   <td class="td-truncate">—</td>
@@ -374,6 +652,10 @@ export function buildAddTestCaseTab() {
           <textarea id="f-steps" placeholder="1. Go to...&#10;2. Click...&#10;3. Observe..."></textarea>
         </div>
         <div class="field form-full">
+          <label>Test Data</label>
+          <textarea id="f-testData" placeholder="Enter test data..."></textarea>
+        </div>
+        <div class="field form-full">
           <label>Expected Results <span class="required">*</span></label>
           <textarea id="f-expected" placeholder="What should happen?"></textarea>
         </div>
@@ -408,7 +690,7 @@ export function buildAddTestCaseTab() {
           <textarea id="f-notes" placeholder="Additional notes..."></textarea>
         </div>
         <div class="form-full" style="display:flex; flex-direction:row; justify-content:flex-end; align-items:center; gap:12px; margin-top:16px;">
-          <button class="btn btn-ghost" onclick="if(S.role !== 'qa') { showBannedModal(); return; } switchTestCasesTab('add')">Cancel</button>
+          <button class="btn btn-ghost" onclick="clearAddTestCase()">Cancel</button>
           <button class="btn btn-ghost" onclick="submitTC()" style="padding:7px 20px;">Save Test Case</button>
         </div>
       </div>
@@ -427,6 +709,7 @@ export function submitTC() {
   const screen = document.getElementById('f-screen').value.trim();
   const actual = document.getElementById('f-actual').value.trim();
   const expected = document.getElementById('f-expected').value.trim();
+  const testData = document.getElementById('f-testData').value.trim();
   const status = document.getElementById('f-status').value;
   const steps = document.getElementById('f-steps').value.trim();
   const evidenceText = (document.getElementById('f-evidence') || {
@@ -453,6 +736,7 @@ export function submitTC() {
     module: mod,
     screen: document.getElementById('f-screen').value.trim(),
     steps,
+    testData,
     expected,
     actual,
     status,
@@ -528,6 +812,10 @@ export function viewTC(id, module) {
         <div>
           <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Test Steps</div>
           <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${tc.steps}</div>
+        </div>
+        <div>
+          <div class="detail-label" style="font-size:11px; color:var(--text); text-shadow:0 0 8px rgba(255,255,255,0.3); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em;">Test Data</div>
+          <div class="minimal-well" style="color:var(--text2); font-size:13px; margin:0;">${tc.testData || '—'}</div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
           <div>
@@ -608,8 +896,8 @@ export function deleteTC(id, module) {
   });
 }
 export
-// ─────────────────────────── EDIT TEST CASE ───────────────────────────
-function openEditTC(id, module) {
+  // ─────────────────────────── EDIT TEST CASE ───────────────────────────
+  function openEditTC(id, module) {
   if (!S.initialDataReceived) {
     toast('Waiting for server data...', 'error');
     return;
@@ -659,6 +947,10 @@ function openEditTC(id, module) {
     <div class="field form-full">
       <label>Test Steps <span class="required">*</span></label>
       <textarea id="e-steps">${(tc.steps || '').replace(/</g, '&lt;')}</textarea>
+    </div>
+    <div class="field form-full">
+      <label>Test Data</label>
+      <textarea id="e-testData">${(tc.testData || '').replace(/</g, '&lt;')}</textarea>
     </div>
     <div class="field form-full">
       <label>Expected Results <span class="required">*</span></label>
@@ -734,6 +1026,9 @@ export function submitEditTC() {
   const steps = (document.getElementById('e-steps') || {
     value: ''
   }).value.trim();
+  const testData = (document.getElementById('e-testData') || {
+    value: ''
+  }).value.trim();
   const expected = (document.getElementById('e-expected') || {
     value: ''
   }).value.trim();
@@ -779,6 +1074,7 @@ export function submitEditTC() {
     value: 'Medium'
   }).value;
   tc.steps = steps;
+  tc.testData = testData;
   tc.expected = expected;
   tc.actual = actual;
   tc.status = status;
@@ -856,8 +1152,8 @@ export function submitEditTC() {
 
 // ─────────────────────────── ESCALATE BUG ───────────────────────────
 export
-// ─────────────────────────── DOWNLOAD TEST CASES CSV ───────────────────────────
-function downloadImportTemplate() {
+  // ─────────────────────────── DOWNLOAD TEST CASES CSV ───────────────────────────
+  function downloadImportTemplate() {
   const headers = 'Test Case ID,Test Case,Scenario,Module Name,Screen Name,Test Step,Test Data,Expected Results,Actual Results,Status,Severity,Evidence-1,Evidence-2,Notes';
   const example = 'TC-1,Verify login button,User enters valid credentials,DMS,Login Page,1. Go to login page2. Enter credentials3. Click login,valid@email.com / Pass@123,User should be logged in successfully,User logged in,Pass,Medium,,,';
   const csv = headers + '\n' + example;
@@ -882,9 +1178,9 @@ export function downloadTestCasesCSV() {
     return;
   }
   const esc = v => `"${(v || '').replace(/"/g, '""')}"`;
-  let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Expected Results,Actual Results,Status,Severity,Evidence-1,Evidence-2,Notes,Created,Updated\n';
+  let csv = 'Test Case ID,Test Case,Scenario,Module,Screen Name,Test Steps,Test Data,Expected Results,Actual Results,Status,Severity,Evidence-1,Evidence-2,Notes,Created,Updated\n';
   data.forEach(tc => {
-    csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.evidence2)},${esc(tc.notes)},${formatDate(tc.createdAt)},${formatDate(tc.updatedAt)}\n`;
+    csv += `${tc.id},${esc(tc.testCase)},${esc(tc.scenario)},${tc.module},${esc(tc.screen)},${esc(tc.steps)},${esc(tc.testData)},${esc(tc.expected)},${esc(tc.actual)},${tc.status},${tc.severity},${esc(tc.evidence)},${esc(tc.evidence2)},${esc(tc.notes)},${formatDate(tc.createdAt)},${formatDate(tc.updatedAt)}\n`;
   });
   const fname = `test-cases${dlMod ? '-' + dlMod : ''}${dlSt ? '-' + dlSt : ''}-${now()}.csv`;
   const a = document.createElement('a');
@@ -965,7 +1261,7 @@ export function buildImportTestCaseTab() {
         </div>
 
         <div class="form-full" style="display:flex; flex-direction:row; justify-content:flex-end; align-items:center; gap:12px; margin-top:40px;">
-          <button class="btn btn-ghost" onclick="if(S.role !== 'qa') { showBannedModal(); return; } S._importRows=[]; S._importTargetModule=''; switchTestCasesTab('import')">Cancel</button>
+          <button class="btn btn-ghost" onclick="clearImportTestCase()">Cancel</button>
           <button class="btn btn-ghost" id="imp-btn" onclick="doImport()" style="padding:7px 20px; opacity:0.5; pointer-events:none;">Run Import</button>
         </div>
       </div>
@@ -975,3 +1271,55 @@ export function buildImportTestCaseTab() {
 export function setImportModule(moduleName) {
   S._importTargetModule = moduleName || '';
 }
+
+// Listen for captures from the BugOS extension for the Excel grid
+const excelCaptureTarget = document.getElementById('excel-capture-target');
+if (excelCaptureTarget) {
+  excelCaptureTarget.addEventListener('input', (e) => {
+    const url = e.target.value;
+    if (window.excelActiveCell && window.spreadsheetInstance && url) {
+      const { row, col } = window.excelActiveCell;
+      const currentVal = window.spreadsheetInstance.getValueFromCoords(col, row);
+      const newVal = currentVal ? currentVal + '\n' + url : url;
+      window.spreadsheetInstance.setValueFromCoords(col, row, newVal);
+    }
+    e.target.value = '';
+  });
+}
+
+window.clearAddTestCase = function() {
+  if (S.role !== 'qa') { showBannedModal(); return; }
+  document.querySelectorAll('#f-tc, #f-scenario, #f-screen, #f-steps, #f-testData, #f-expected, #f-actual, #f-evidence, #f-evidence2, #f-notes').forEach(el => el.value = '');
+  const sev = document.getElementById('f-sev'); if(sev) sev.value = 'Medium';
+  const st = document.getElementById('f-status'); if(st) st.value = 'Pass';
+  const pv1 = document.getElementById('f-evidence-preview'); if(pv1) pv1.innerHTML = '';
+  const pv2 = document.getElementById('f-evidence2-preview'); if(pv2) pv2.innerHTML = '';
+  toast('Form cleared', 'info');
+};
+
+window.clearImportTestCase = function() {
+  if (S.role !== 'qa') { showBannedModal(); return; }
+  S._importRows = [];
+  S._importTargetModule = '';
+  const f = document.getElementById('imp-file');
+  if (f) f.value = '';
+  const stats = document.getElementById('imp-stats');
+  if (stats) stats.innerHTML = '';
+  const status = document.getElementById('imp-status');
+  if (status) status.innerHTML = '';
+  const preview = document.getElementById('imp-preview');
+  if (preview) {
+    preview.innerHTML = `
+      <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; border:1px dashed var(--border); border-radius:var(--radius); background:var(--bg3); padding:24px; text-align:center; color:var(--text3);">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.3;margin-bottom:16px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px;">No File Uploaded</div>
+        <div style="font-size:12px;">Upload a CSV or Excel file to see the preview here.</div>
+      </div>`;
+  }
+  const btn = document.getElementById('imp-btn');
+  if (btn) {
+    btn.style.opacity = '0.5';
+    btn.style.pointerEvents = 'none';
+  }
+  toast('Import cleared', 'info');
+};

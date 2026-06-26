@@ -63,7 +63,8 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   initialPassword: { type: String },
   role: { type: String, required: true, enum: ['qa', 'dev', 'admin'] },
-  createdAt: { type: String, required: true }
+  createdAt: { type: String, required: true },
+  excelDraft: { type: String }
 });
 
 const testCaseSchema = new mongoose.Schema({

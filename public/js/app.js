@@ -314,6 +314,9 @@ export function render() {
     window.cmEditor.destroy();
     window.cmEditor = null;
   }
+  if (window.testcasesModule && testcasesModule.destroyJspreadsheet) {
+    testcasesModule.destroyJspreadsheet();
+  }
   const app = document.getElementById('app');
   let scrollContent = 0;
   const contentEl = document.getElementById('content');
@@ -331,6 +334,13 @@ export function render() {
   upgradeSelects(app);
   if (S.view === 'automation') {
     initCodeMirror();
+  }
+  if (S.view === 'testcases' && S.testCasesTab === 'excel') {
+    setTimeout(() => {
+      if (testcasesModule.initJspreadsheet) {
+        testcasesModule.initJspreadsheet();
+      }
+    }, 50);
   }
   const newContentEl = document.getElementById('content');
   if (newContentEl) newContentEl.scrollTop = scrollContent;
@@ -492,7 +502,7 @@ export function buildAddModuleTab() {
       </div>
       <div style="margin-top: 24px; display: flex; gap: 12px;">
         <button class="btn btn-ghost" onclick="submitInlineModule()" style="padding:7px 20px;">Add Module</button>
-        <button class="btn btn-ghost" onclick="if(S.role !== 'qa') { showBannedModal(); return; } document.getElementById('f-inline-modname').value=''" style="padding:7px 20px;">Cancel</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('f-inline-modname').value=''" style="padding:7px 20px;">Cancel</button>
       </div>
     </div>
   </div>`;

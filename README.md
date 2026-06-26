@@ -18,6 +18,7 @@ Developed to simplify QA operations, BugOS enables testers and developers to col
 * Comprehensive test case management system
 * Playwright automation execution
 * Selenium automation execution
+* BugOS Capture Chrome Extension for rapid evidence gathering
 * Screenshot and evidence management
 * Live execution logs and reporting
 * Dockerized deployment architecture
@@ -70,6 +71,12 @@ Capabilities:
 * Store supporting artifacts
 * Image preview support
 * Centralized evidence repository
+
+### 🧩 BugOS Capture Chrome Extension
+
+* Capture screenshots of the active browser tab
+* Built-in annotation tools (draw, highlight, text, crop)
+* Automatically upload and attach evidence directly to BugOS test cases
 
 ### 📊 Dynamic Dashboards
 

@@ -36,8 +36,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Load saved credentials
   chrome.storage.local.get(['bugos_username'], (result) => {
     if (result.bugos_username) {
+      viewLogin.classList.add('hidden');
+      const loader = document.createElement('div');
+      loader.id = 'initLoader';
+      loader.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:9999;font-weight:600;color:var(--text);';
+      loader.textContent = 'Connecting...';
+      document.body.appendChild(loader);
+      
       // Try auto-login silently
       connectToServer(SERVER_URL, result.bugos_username, null, true);
+    } else {
+      viewLogin.classList.remove('hidden');
     }
   });
 
@@ -60,6 +69,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   btnLogout.addEventListener('click', () => {
     chrome.storage.local.remove(['bugos_username']);
     if (socket) socket.disconnect();
+    const loader = document.getElementById('initLoader');
+    if (loader) loader.remove();
     showLoginView();
   });
 
@@ -176,10 +187,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   btnCancelDraft.addEventListener('click', () => {
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      if (tabs[0]) {
+    chrome.tabs.query({}, (tabs) => {
+      const bugosTab = tabs.find(t => t.url && (t.url.includes('localhost') || t.url.includes('bugos.app')));
+      if (bugosTab) {
         chrome.scripting.executeScript({
-          target: {tabId: tabs[0].id},
+          target: {tabId: bugosTab.id},
           func: () => localStorage.removeItem('bugos_capture_target')
         });
       }
@@ -234,22 +246,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!res.ok) throw new Error(data.error || 'Failed to upload image');
       const imageUrl = data.imageUrl;
 
-      chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-        chrome.scripting.executeScript({
-          target: {tabId: tabs[0].id},
-          args: [currentDraftTarget, imageUrl],
-          func: (targetId, url) => {
-            const input = document.getElementById(targetId);
-            if (input) {
-              input.value = url;
-              input.dispatchEvent(new Event('input'));
+      chrome.tabs.query({}, (tabs) => {
+        const bugosTab = tabs.find(t => t.url && (t.url.includes('localhost') || t.url.includes('bugos.app')));
+        if (bugosTab) {
+          chrome.scripting.executeScript({
+            target: {tabId: bugosTab.id},
+            args: [currentDraftTarget, imageUrl],
+            func: (targetId, url) => {
+              const input = document.getElementById(targetId);
+              if (input) {
+                input.value = url;
+                input.dispatchEvent(new Event('input'));
+              }
+              localStorage.removeItem('bugos_capture_target');
             }
-            localStorage.removeItem('bugos_capture_target');
-          }
-        }, () => {
-          btnDraftFill.innerHTML = 'Filled successfully!';
-          setTimeout(() => window.close(), 1000);
-        });
+          }, () => {
+            btnDraftFill.innerHTML = 'Filled successfully!';
+            setTimeout(() => window.close(), 1000);
+          });
+        }
       });
     } catch (err) {
       showStatus(err.message, true);
@@ -373,6 +388,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnLogin.disabled = false;
         btnLogin.textContent = 'Sign In';
       } else {
+        const loader = document.getElementById('initLoader');
+        if (loader) loader.remove();
+        showLoginView();
         connectionError.classList.remove('hidden');
       }
     });
@@ -402,10 +420,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     populateMissingEvidence();
 
     // Check for auto-select from web page
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      if (tabs[0] && (tabs[0].url.includes('localhost') || tabs[0].url.includes('bugos.app'))) {
+    chrome.tabs.query({}, (tabs) => {
+      const bugosTab = tabs.find(t => t.url && (t.url.includes('localhost') || t.url.includes('bugos.app')));
+      if (bugosTab) {
         chrome.scripting.executeScript({
-          target: {tabId: tabs[0].id},
+          target: {tabId: bugosTab.id},
           func: () => {
             const draftTarget = localStorage.getItem('bugos_capture_target');
             if (draftTarget) {
@@ -469,6 +488,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function showMainView() {
+    const loader = document.getElementById('initLoader');
+    if (loader) loader.remove();
     viewLogin.classList.add('hidden');
     viewMain.classList.remove('hidden');
     btnLogout.classList.remove('hidden');

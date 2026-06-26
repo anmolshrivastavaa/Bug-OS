@@ -8,8 +8,8 @@ import { renderEvidenceCell } from './screenshots.js';
 import { autoCreateBug } from './bugs.js';
 
 export
-// ─────────────────────────── AUTOMATION ───────────────────────────
-function buildAutomation() {
+  // ─────────────────────────── AUTOMATION ───────────────────────────
+  function buildAutomation() {
   const moduleOptions = S.modules.map(mod => `<option value="${mod}"${S.selectedAutomationModule === mod ? ' selected' : ''}>${mod}</option>`).join('');
   const testCaseOptions = S.selectedAutomationModule ? S.testCases.filter(tc => tc.module === S.selectedAutomationModule).map(tc => {
     const tcId = String(tc.id);
@@ -40,6 +40,7 @@ function buildAutomation() {
             <td>${tc.module}</td>
             <td>${tc.screen || '—'}</td>
             <td class="td-truncate">${tc.steps || '—'}</td>
+            <td class="td-truncate">${tc.testData || '—'}</td>
             <td class="td-truncate">${tc.expected || '—'}</td>
             <td class="td-truncate">${tc.actual || '—'}</td>
             <td>${statusBadge(tc.status)}</td>
@@ -51,7 +52,7 @@ function buildAutomation() {
   }
   const selectedTcPreview = `
         <div class="tbl-wrap scrollable" style="margin-top: 20px; margin-bottom: 20px;"><table>
-          <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
+          <thead><tr><th>ID</th><th>TEST CASE</th><th>SCENARIO</th><th>MODULE</th><th>SCREEN</th><th>TEST STEPS</th><th>TEST DATA</th><th>EXPECTED</th><th>ACTUAL</th><th>STATUS</th><th>SEVERITY</th><th>EVIDENCE</th><th>NOTES</th></tr></thead>
           <tbody>${tbodyHtml}</tbody>
         </table></div>
       `;
@@ -534,8 +535,8 @@ export function onAutoLangChange(skipTemplateInjection = false) {
 
 // ─────────────────────────── MODULES ───────────────────────────
 export
-// ─────────────────────────── MODALS ───────────────────────────
-function updateAutoTcId() {
+  // ─────────────────────────── MODALS ───────────────────────────
+  function updateAutoTcId() {
   const mod = document.getElementById('f-mod').value;
   let count = S.testCases.filter(t => t.module === mod).length + 1;
   let newId = 'TC-' + count;
