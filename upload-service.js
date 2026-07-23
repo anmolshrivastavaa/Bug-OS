@@ -35,18 +35,20 @@ module.exports = function(io) {
       let apiSecret = process.env.CLOUDINARY_API_SECRET;
 
       // Fallback parsing from CLOUDINARY_URL if available
-      const url = process.env.CLOUDINARY_URL;
-      if (url && url.startsWith('cloudinary://')) {
-        const parts = url.replace('cloudinary://', '').split('@');
-        if (!cloudName) cloudName = parts[1];
-        
-        const auth = parts[0].split(':');
-        if (!apiKey) apiKey = auth[0];
-        if (!apiSecret) apiSecret = auth[1];
+      const url = (process.env.CLOUDINARY_URL || '').trim();
+      if (url) {
+        const cleanUrl = url.replace(/^cloudinary:\/\//, '');
+        const parts = cleanUrl.split('@');
+        if (parts.length === 2) {
+          if (!cloudName) cloudName = parts[1].trim();
+          const auth = parts[0].split(':');
+          if (!apiKey) apiKey = auth[0].trim();
+          if (!apiSecret) apiSecret = auth[1].trim();
+        }
       }
 
       if (!cloudName || !apiKey || !apiSecret) {
-        console.error("Cloudinary config missing.");
+        console.error("Cloudinary config missing. CLOUDINARY_URL was:", process.env.CLOUDINARY_URL);
         return res.status(500).json({ success: false, error: 'Cloudinary configuration missing' });
       }
 
