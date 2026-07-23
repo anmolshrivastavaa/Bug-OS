@@ -219,6 +219,9 @@ io.on('connection', (socket) => {
   });
 });
 
+const uploadService = require('./upload-service')(io);
+app.use('/api', uploadService);
+
 const axios = require('axios');
 const FormData = require('form-data');
 
