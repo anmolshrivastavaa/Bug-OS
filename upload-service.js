@@ -30,22 +30,24 @@ module.exports = function(io) {
 
   router.post('/upload', async (req, res) => {
     try {
-      const cloudName = process.env.CLOUDINARY_CLOUD_NAME || (process.env.CLOUDINARY_URL ? process.env.CLOUDINARY_URL.split('@')[1] : '');
+      let cloudName = process.env.CLOUDINARY_CLOUD_NAME;
       let apiKey = process.env.CLOUDINARY_API_KEY;
       let apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-      if (!cloudName) {
-        // Fallback parsing from CLOUDINARY_URL if available
-        const url = process.env.CLOUDINARY_URL;
-        if (url && url.startsWith('cloudinary://')) {
-          const parts = url.replace('cloudinary://', '').split('@');
-          const auth = parts[0].split(':');
-          apiKey = auth[0];
-          apiSecret = auth[1];
-        } else {
-          console.error("Cloudinary config missing.");
-          return res.status(500).json({ success: false, error: 'Cloudinary configuration missing' });
-        }
+      // Fallback parsing from CLOUDINARY_URL if available
+      const url = process.env.CLOUDINARY_URL;
+      if (url && url.startsWith('cloudinary://')) {
+        const parts = url.replace('cloudinary://', '').split('@');
+        if (!cloudName) cloudName = parts[1];
+        
+        const auth = parts[0].split(':');
+        if (!apiKey) apiKey = auth[0];
+        if (!apiSecret) apiSecret = auth[1];
+      }
+
+      if (!cloudName || !apiKey || !apiSecret) {
+        console.error("Cloudinary config missing.");
+        return res.status(500).json({ success: false, error: 'Cloudinary configuration missing' });
       }
 
       // Check if it's empty body
