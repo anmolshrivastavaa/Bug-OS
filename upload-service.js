@@ -25,8 +25,8 @@ function generateSignature(params, apiSecret) {
 module.exports = function(io) {
   const router = express.Router();
 
-  // Middleware to parse raw JSON body for the upload endpoint
-  router.use(express.json({ limit: '50mb' }));
+  // Middleware to parse ALL body types as raw Buffer so we don't reject Cimplr's XML/Text
+  router.use(express.raw({ type: '*/*', limit: '50mb' }));
 
   router.post('/upload', async (req, res) => {
     try {
@@ -49,12 +49,19 @@ module.exports = function(io) {
       }
 
       // Check if it's empty body
-      if (!req.body || Object.keys(req.body).length === 0) {
-        return res.status(400).json({ success: false, error: 'Empty payload' });
+      if (!req.body || req.body.length === 0) {
+        if (!Buffer.isBuffer(req.body) && Object.keys(req.body || {}).length === 0) {
+          return res.status(400).json({ success: false, error: 'Empty payload' });
+        }
       }
 
-      const jsonString = JSON.stringify(req.body, null, 2);
-      const buffer = Buffer.from(jsonString, 'utf-8');
+      let buffer;
+      if (Buffer.isBuffer(req.body)) {
+        buffer = req.body;
+      } else {
+        const jsonString = JSON.stringify(req.body, null, 2);
+        buffer = Buffer.from(jsonString, 'utf-8');
+      }
       
       const timestamp = Math.round((new Date()).getTime() / 1000);
       const fileId = `transformed_${Date.now()}`;
